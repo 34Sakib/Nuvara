@@ -1,3 +1,5 @@
+<img width="1920" height="6309" alt="image" src="https://github.com/user-attachments/assets/9fe0704c-6c3c-4893-a095-f72b66a3493a" />
+
 # 🛍️ Nuvara Storefront
 
 **Nuvara** is a premium, high-fidelity modern e-commerce web application. Designed with sophisticated aesthetics, it features full theme customizability (dark/light modes), multi-language internationalization with complete Right-to-Left (RTL) support, a robust shopping cart system with promo code mechanics, a product wishlist, and interactive checkout workflows.
