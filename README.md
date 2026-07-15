@@ -1,28 +1,11 @@
-<h3 align="center">Home</h3>
-
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/9fe0704c-6c3c-4893-a095-f72b66a3493a"
-       alt="Home"
-       width="800">
+  <img src="https://github.com/user-attachments/assets/9fe0704c-6c3c-4893-a095-f72b66a3493a" width="750" alt="Home" />
 </p>
 
-<table align="center">
-  <tr>
-    <td align="center">
-      <img src="https://github.com/user-attachments/assets/3bc64bd2-d442-467b-8c7b-e9bcf5f3d6b6"
-           alt="Shop"
-           width="280">
-      <br><b>Shop</b>
-    </td>
-    <td width="40"></td>
-    <td align="center">
-      <img src="https://github.com/user-attachments/assets/f333a802-a9f7-4a08-a30d-dfb3d07fb3e4"
-           alt="Cart"
-           width="280">
-      <br><b>Cart</b>
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3bc64bd2-d442-467b-8c7b-e9bcf5f3d6b6" width="280" alt="Shop" />
+  <img src="https://github.com/user-attachments/assets/f333a802-a9f7-4a08-a30d-dfb3d07fb3e4" width="280" alt="Cart" />
+</p>
 
 
 # 🛍️ Nuvara Storefront
