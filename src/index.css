@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: #FAF6EF;
+    --surface: #FFFFFF;
+    --surface-2: #F3EEE3;
+    --text-primary: #211D1A;
+    --text-secondary: #635C53;
+    --green: #1F3A2E;        /* primary accent */
+    --green-soft: #2C4B3C;
+    --brass: #B8863B;        /* secondary accent */
+    --brass-bright: #C9A24B;
+    --wine: #6B2737;         /* reserved ONLY for discount/sale badges */
+    --border: #E7DFCF;
+    --shadow: 0 10px 30px rgba(33,29,26,0.08);
+  }
+
+  [data-theme="dark"] {
+    --bg: #14110E;
+    --surface: #1E1A15;
+    --surface-2: #241F19;
+    --text-primary: #F5EFE4;
+    --text-secondary: #B8AFA3;
+    --green: #4A7862;
+    --green-soft: #3D6650;
+    --brass: #E0B968;
+    --brass-bright: #F0CB80;
+    --wine: #B25569;
+    --border: #33291f;
+    --shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    margin: 0;
+  }
+
+  h1, h2, .font-display {
+    font-family: 'Fraunces', serif;
+  }
+}
+
+/* Custom UI utility classes */
+@layer components {
+  /* Line clamp for description and titles */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Shimmer skeleton animation using theme variables */
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(243, 238, 227, 0.3) 25%,
+      rgba(243, 238, 227, 0.7) 50%,
+      rgba(243, 238, 227, 0.3) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  
+  [data-theme="dark"] .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(36, 31, 25, 0.3) 25%,
+      rgba(36, 31, 25, 0.7) 50%,
+      rgba(36, 31, 25, 0.3) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Custom Scrollbar matching theme styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* RTL flips for icons */
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* Custom Utility overrides to force compilation on Vite HMR without server restarts */
+.bg-accent {
+  background-color: var(--green) !important;
+}
+.bg-bg-primary {
+  background-color: var(--bg) !important;
+}
+.bg-bg-secondary {
+  background-color: var(--surface-2) !important;
+}
+.text-accent {
+  color: var(--green) !important;
+}
+.border-accent {
+  border-color: var(--green) !important;
+}
+.hover\:text-accent:hover {
+  color: var(--green) !important;
+}
+.hover\:bg-bg-primary:hover {
+  background-color: var(--bg) !important;
+}
+.focus\:ring-accent\/50:focus {
+  --tw-ring-color: rgba(31, 58, 46, 0.5) !important;
+}
+
+[data-theme="dark"] .text-accent {
+  color: var(--brass) !important;
+}
+[data-theme="dark"] .border-accent {
+  border-color: var(--brass) !important;
+}
+[data-theme="dark"] .hover\:text-accent:hover {
+  color: var(--brass) !important;
+}
+[data-theme="dark"] .focus\:ring-accent\/50:focus {
+  --tw-ring-color: rgba(224, 185, 104, 0.5) !important;
+}
+
