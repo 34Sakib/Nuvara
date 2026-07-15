@@ -1,4 +1,6 @@
 <img width="1920" height="6309" alt="image" src="https://github.com/user-attachments/assets/9fe0704c-6c3c-4893-a095-f72b66a3493a" />
+<img width="1920" height="3192" alt="image" src="https://github.com/user-attachments/assets/3bc64bd2-d442-467b-8c7b-e9bcf5f3d6b6" />
+
 
 # 🛍️ Nuvara Storefront
 
