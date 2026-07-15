@@ -6,17 +6,25 @@ import { useToastStore } from '../../store/toastStore';
 export const Toast = ({ toast }) => {
   const { removeToast } = useToastStore();
   
-  const icons = {
-    success: <CheckCircle className="w-5 h-5 text-green-500" />,
-    danger: <AlertCircle className="w-5 h-5 text-red-500" />,
-    info: <Info className="w-5 h-5 text-indigo-500" />
+  const toastStyles = {
+    success: {
+      border: 'border-green-500/30 dark:border-green-500/20',
+      bg: 'bg-surface',
+      icon: <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+    },
+    danger: {
+      border: 'border-red-500/30 dark:border-red-500/20',
+      bg: 'bg-surface',
+      icon: <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+    },
+    info: {
+      border: 'border-indigo-500/30 dark:border-indigo-500/20',
+      bg: 'bg-surface',
+      icon: <Info className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+    }
   };
 
-  const borderColors = {
-    success: 'border-green-200 dark:border-green-900 bg-white dark:bg-green-950/20',
-    danger: 'border-red-200 dark:border-red-900 bg-white dark:bg-red-950/20',
-    info: 'border-indigo-200 dark:border-indigo-900 bg-white dark:bg-indigo-950/20'
-  };
+  const style = toastStyles[toast.type] || toastStyles.info;
 
   return (
     <motion.div
@@ -24,10 +32,10 @@ export const Toast = ({ toast }) => {
       initial={{ opacity: 0, y: -20, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20, scale: 0.9 }}
-      className={`flex items-center justify-between p-4 mb-3 border rounded-xl shadow-lg w-80 max-w-full ${borderColors[toast.type]}`}
+      className={`flex items-center justify-between p-4 mb-3 border rounded-xl shadow-xl w-80 max-w-full ${style.bg} ${style.border}`}
     >
       <div className="flex items-center space-x-3 rtl:space-x-reverse">
-        {icons[toast.type]}
+        {style.icon}
         <p className="text-sm font-semibold text-text-primary">{toast.message}</p>
       </div>
       <button

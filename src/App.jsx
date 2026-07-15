@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useLocaleStore } from './store/localeStore';
 import { useThemeStore } from './store/themeStore';
 import { Header } from './components/layout/Header';
@@ -15,6 +15,17 @@ import { Checkout } from './pages/Checkout';
 import { OrderSuccess } from './pages/OrderSuccess';
 import { Dashboard } from './pages/Dashboard';
 import { About, Contact, FAQ } from './pages/StaticPages';
+
+// Scroll to top on page navigation
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 function App() {
   const { locale } = useLocaleStore();
@@ -45,6 +56,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="flex flex-col min-h-screen transition-colors duration-200">
         <Header />
         
