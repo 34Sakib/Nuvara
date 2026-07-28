@@ -11,6 +11,7 @@ import { Home } from './pages/Home';
 import { Category } from './pages/Category';
 import { ProductDetail } from './pages/ProductDetail';
 import { Cart } from './pages/Cart';
+import { Wishlist } from './pages/Wishlist';
 import { Checkout } from './pages/Checkout';
 import { OrderSuccess } from './pages/OrderSuccess';
 import { Dashboard } from './pages/Dashboard';
@@ -76,6 +77,7 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/order/:id/success" element={<OrderSuccess />} />
+            <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/about" element={<About />} />

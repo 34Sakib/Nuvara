@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { 
-  User, Package, MapPin, Heart, Settings, 
-  Trash2, ShoppingCart, ChevronRight 
+import {
+  User, Package, MapPin, Heart, Settings,
+  Trash2, ShoppingCart, ChevronRight, X, Plus, LogOut
 } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
 import { useLocaleStore } from '../store/localeStore';
@@ -45,7 +45,23 @@ export const Dashboard = () => {
   const { addToast } = useToastStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const { wishlist, toggleWishlist, addToCart } = useCartStore();
-  const { user, loadProfile, updateProfile } = useAuthStore();
+  const { user, isAuthenticated, loadProfile, updateProfile, addAddress, updateAddress, deleteAddress, logout } = useAuthStore();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/auth', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      addToast(t('nav.logout') || 'Logged out successfully', 'info');
+      navigate('/auth');
+    } catch (err) {
+      addToast('Failed to log out', 'danger');
+    }
+  };
 
   const activeTab = searchParams.get('tab') || 'profile';
 
@@ -106,6 +122,75 @@ export const Dashboard = () => {
     }
   };
 
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState(null);
+  const [addressForm, setAddressForm] = useState({
+    label: 'Home',
+    fullName: '',
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
+    country: '',
+    is_default: false
+  });
+
+  const handleOpenAddAddressModal = () => {
+    setEditingAddressId(null);
+    setAddressForm({
+      label: 'Home',
+      fullName: user?.name || '',
+      address: '',
+      city: '',
+      state: '',
+      zip: '',
+      country: 'United States',
+      is_default: addresses.length === 0
+    });
+    setIsAddressModalOpen(true);
+  };
+
+  const handleOpenEditAddressModal = (addr) => {
+    setEditingAddressId(addr.id);
+    setAddressForm({
+      label: addr.label || 'Home',
+      fullName: addr.fullName || '',
+      address: addr.address || '',
+      city: addr.city || '',
+      state: addr.state || '',
+      zip: addr.zip || '',
+      country: addr.country || 'United States',
+      is_default: addr.is_default || false
+    });
+    setIsAddressModalOpen(true);
+  };
+
+  const handleSaveAddress = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingAddressId) {
+        await updateAddress(editingAddressId, addressForm);
+        addToast('Address updated successfully!', 'success');
+      } else {
+        await addAddress(addressForm);
+        addToast('New address added successfully!', 'success');
+      }
+      setIsAddressModalOpen(false);
+    } catch (err) {
+      addToast('Failed to save address', 'danger');
+    }
+  };
+
+  const handleDeleteAddress = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this address?')) return;
+    try {
+      await deleteAddress(id);
+      addToast('Address deleted successfully!', 'info');
+    } catch (err) {
+      addToast('Failed to delete address', 'danger');
+    }
+  };
+
   const handleWishlistAddCart = (prod) => {
     addToCart(prod, {}, 1);
     addToast(`${getLocalized(prod.name, locale)} ${t('product.cart_added')}`, 'success');
@@ -116,8 +201,10 @@ export const Dashboard = () => {
     addToast(t('product.wishlist_removed'), 'info');
   };
 
-  const activeWishlist = user?.wishlist || wishlist;
+  const activeWishlist = wishlist;
   const activeOrders = user?.orders || mockPastOrders;
+
+  if (!isAuthenticated) return null;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in text-left rtl:text-right">
@@ -129,7 +216,7 @@ export const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-        
+
         {/* Sidebar Nav */}
         <nav className="lg:col-span-1 bg-bg-secondary border border-border rounded-2xl overflow-hidden p-2 space-y-1 transition-colors shadow-sm">
           {[
@@ -146,8 +233,8 @@ export const Dashboard = () => {
                 onClick={() => handleTabChange(item.id)}
                 className={`
                   flex items-center justify-between w-full px-4 py-3 text-sm font-bold rounded-xl transition-all
-                  ${isActive 
-                    ? 'bg-green text-[#F5EFE4] shadow-sm' 
+                  ${isActive
+                    ? 'bg-green text-[#F5EFE4] shadow-sm'
                     : 'text-text-secondary hover:text-text-primary hover:bg-bg-primary'
                   }
                 `}
@@ -164,11 +251,21 @@ export const Dashboard = () => {
               </button>
             );
           })}
+
+          <div className="pt-2 border-t border-border mt-2">
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-3 rtl:space-x-reverse w-full px-4 py-3 text-sm font-bold rounded-xl text-red-500 hover:bg-red-500/10 transition-all text-left rtl:text-right"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>{t('nav.logout') || 'Log Out'}</span>
+            </button>
+          </div>
         </nav>
 
         {/* Content Display Area (3 cols) */}
         <div className="lg:col-span-3">
-          
+
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <Card>
@@ -204,7 +301,7 @@ export const Dashboard = () => {
                     className="w-full px-4 py-2.5 rounded-lg border border-border bg-bg-primary text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
                   />
                 </div>
-                
+
                 <div className="pt-2">
                   <Button type="submit" variant="primary">
                     {t('dashboard.save_changes')}
@@ -265,33 +362,52 @@ export const Dashboard = () => {
                 <h3 className="text-base font-bold text-text-primary uppercase tracking-wider">
                   {t('dashboard.addresses')}
                 </h3>
-                <Button variant="secondary" size="sm">
+                <Button variant="secondary" size="sm" onClick={handleOpenAddAddressModal} className="flex items-center gap-1.5">
+                  <Plus className="w-4 h-4" />
                   {t('dashboard.add_new')}
                 </Button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {addresses.map((addr) => (
-                  <div key={addr.id} className="border border-border rounded-xl p-5 bg-bg-primary/30 relative flex flex-col justify-between">
-                    <div>
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="text-xs font-bold text-brass bg-brass/5 border border-brass/15 px-2 py-0.5 rounded">
-                          {addr.label}
-                        </span>
+              {addresses.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {addresses.map((addr) => (
+                    <div key={addr.id} className="border border-border rounded-xl p-5 bg-bg-primary/30 relative flex flex-col justify-between shadow-sm">
+                      <div>
+                        <div className="flex justify-between items-center mb-3">
+                          <span className="text-xs font-bold text-brass bg-brass/5 border border-brass/15 px-2.5 py-0.5 rounded-md">
+                            {addr.label}
+                          </span>
+                        </div>
+                        <p className="text-sm font-bold text-text-primary">{addr.fullName}</p>
+                        <p className="text-xs text-text-secondary mt-1">{addr.address}</p>
+                        <p className="text-xs text-text-secondary">{addr.city}, {addr.state} {addr.zip}</p>
+                        <p className="text-xs text-text-secondary">{addr.country}</p>
                       </div>
-                      <p className="text-sm font-bold text-text-primary">{addr.fullName}</p>
-                      <p className="text-xs text-text-secondary mt-1">{addr.address}</p>
-                      <p className="text-xs text-text-secondary">{addr.city}, {addr.state} {addr.zip}</p>
-                      <p className="text-xs text-text-secondary">{addr.country}</p>
-                    </div>
 
-                    <div className="flex space-x-3.5 rtl:space-x-reverse mt-6 border-t border-border pt-3 text-xs font-bold">
-                      <button className="text-brass hover:underline">{t('dashboard.edit')}</button>
-                      <button className="text-red-500 hover:underline">{t('dashboard.delete')}</button>
+                      <div className="flex space-x-4 rtl:space-x-reverse mt-6 border-t border-border pt-3 text-xs font-bold">
+                        <button
+                          onClick={() => handleOpenEditAddressModal(addr)}
+                          className="text-brass hover:underline focus:outline-none"
+                        >
+                          {t('dashboard.edit')}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteAddress(addr.id)}
+                          className="text-red-500 hover:underline focus:outline-none"
+                        >
+                          {t('dashboard.delete')}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-text-secondary">
+                  <MapPin className="w-8 h-8 mx-auto mb-2 opacity-40 text-brass" />
+                  <p className="font-semibold text-sm">No saved addresses found.</p>
+                  <p className="text-xs mt-1">Click "Add New Address" above to add your shipping location.</p>
+                </div>
+              )}
             </Card>
           )}
 
@@ -306,9 +422,9 @@ export const Dashboard = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {activeWishlist.map((prod) => (
                     <div key={prod.id} className="border border-border rounded-xl p-4 flex space-x-4 rtl:space-x-reverse bg-bg-primary/20">
-                      <img 
-                        src={prod.images[0]} 
-                        alt="" 
+                      <img
+                        src={prod.images[0]}
+                        alt=""
                         className="w-20 h-20 rounded-lg object-cover border border-border"
                       />
                       <div className="flex-1 flex flex-col justify-between text-left rtl:text-right">
@@ -353,6 +469,122 @@ export const Dashboard = () => {
 
         </div>
       </div>
+
+      {/* Address Form Modal */}
+      {isAddressModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-bg-secondary border border-border rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl p-6 relative">
+            <div className="flex justify-between items-center pb-4 border-b border-border mb-5">
+              <h3 className="text-base font-bold text-text-primary uppercase tracking-wider">
+                {editingAddressId ? 'Edit Address' : 'Add New Address'}
+              </h3>
+              <button
+                onClick={() => setIsAddressModalOpen(false)}
+                className="p-1.5 rounded-lg text-text-secondary hover:bg-bg-primary hover:text-text-primary transition-colors"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveAddress} className="space-y-4 text-left rtl:text-right">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5">Address Label</label>
+                  <input
+                    type="text"
+                    value={addressForm.label}
+                    onChange={(e) => setAddressForm({ ...addressForm, label: e.target.value })}
+                    required
+                    placeholder="e.g. Home, Work, Office"
+                    className="w-full px-3.5 py-2 rounded-xl border border-border bg-bg-primary text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5">Full Name</label>
+                  <input
+                    type="text"
+                    value={addressForm.fullName}
+                    onChange={(e) => setAddressForm({ ...addressForm, fullName: e.target.value })}
+                    required
+                    placeholder="Recipient name"
+                    className="w-full px-3.5 py-2 rounded-xl border border-border bg-bg-primary text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5">Street Address</label>
+                <input
+                  type="text"
+                  value={addressForm.address}
+                  onChange={(e) => setAddressForm({ ...addressForm, address: e.target.value })}
+                  required
+                  placeholder="123 Main St, Apt / Suite"
+                  className="w-full px-3.5 py-2 rounded-xl border border-border bg-bg-primary text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5">City</label>
+                  <input
+                    type="text"
+                    value={addressForm.city}
+                    onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
+                    required
+                    placeholder="City"
+                    className="w-full px-3 py-2 rounded-xl border border-border bg-bg-primary text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5">State</label>
+                  <input
+                    type="text"
+                    value={addressForm.state}
+                    onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
+                    required
+                    placeholder="State / Region"
+                    className="w-full px-3 py-2 rounded-xl border border-border bg-bg-primary text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5">ZIP Code</label>
+                  <input
+                    type="text"
+                    value={addressForm.zip}
+                    onChange={(e) => setAddressForm({ ...addressForm, zip: e.target.value })}
+                    required
+                    placeholder="ZIP / Postal"
+                    className="w-full px-3 py-2 rounded-xl border border-border bg-bg-primary text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5">Country</label>
+                <input
+                  type="text"
+                  value={addressForm.country}
+                  onChange={(e) => setAddressForm({ ...addressForm, country: e.target.value })}
+                  required
+                  placeholder="Country"
+                  className="w-full px-3.5 py-2 rounded-xl border border-border bg-bg-primary text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 rtl:space-x-reverse pt-4 border-t border-border mt-6">
+                <Button type="button" variant="secondary" size="sm" onClick={() => setIsAddressModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" size="sm">
+                  {editingAddressId ? 'Update Address' : 'Save Address'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );

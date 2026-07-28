@@ -3,11 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
   Search, Heart, User, ShoppingBag, Menu, X, 
-  ChevronDown, HelpCircle, PhoneCall 
+  ChevronDown, HelpCircle, PhoneCall, LogOut 
 } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { useLocaleStore } from '../../store/localeStore';
 import { useAuthStore } from '../../store/authStore';
+import { useToastStore } from '../../store/toastStore';
 import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import { mockProducts, getLocalized, mockCategories } from '../../utils/mockData';
@@ -16,9 +17,10 @@ export const Header = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { locale } = useLocaleStore();
+  const { addToast } = useToastStore();
   const { getCartTotals, wishlist } = useCartStore();
   const { count: cartCount } = getCartTotals();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, logout } = useAuthStore();
 
   const [showPromo, setShowPromo] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -73,6 +75,16 @@ export const Header = () => {
     if (searchQuery.trim()) {
       setShowSuggestions(false);
       navigate(`/category/all?search=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  const handleHeaderLogout = async () => {
+    try {
+      await logout();
+      addToast(t('nav.logout') || 'Logged out successfully', 'info');
+      navigate('/auth');
+    } catch (e) {
+      addToast('Failed to log out', 'danger');
     }
   };
 
@@ -188,7 +200,7 @@ export const Header = () => {
 
               {/* Wishlist Link */}
               <Link 
-                to={isAuthenticated ? "/dashboard?tab=wishlist" : "/auth?redirect=/dashboard?tab=wishlist"} 
+                to="/wishlist" 
                 className="relative p-2 text-text-primary hover:text-accent rounded-full hover:bg-bg-primary transition-colors hidden sm:block"
                 aria-label="View wishlist"
               >
@@ -200,14 +212,25 @@ export const Header = () => {
                 )}
               </Link>
 
-              {/* Account Link */}
+              {/* Account & Logout Link */}
               <Link 
                 to={isAuthenticated ? "/dashboard" : "/auth"} 
                 className="p-2 text-text-primary hover:text-accent rounded-full hover:bg-bg-primary transition-colors"
                 aria-label="View account"
+                title="Dashboard"
               >
                 <User className="w-5 h-5" />
               </Link>
+              {isAuthenticated && (
+                <button
+                  onClick={handleHeaderLogout}
+                  className="p-2 text-text-secondary hover:text-red-500 rounded-full hover:bg-bg-primary transition-colors"
+                  aria-label="Log out"
+                  title={t('nav.logout') || 'Log Out'}
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              )}
 
               {/* Cart Link */}
               <Link 

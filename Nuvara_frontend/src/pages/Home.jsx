@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Truck, ShieldCheck, RefreshCw, Headphones, ArrowRight, Flame } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Truck, ShieldCheck, RefreshCw, Headphones, ArrowRight, Flame, ChevronLeft, ChevronRight, Star, Sparkles } from 'lucide-react';
 import { mockCategories, mockProducts, getLocalized } from '../utils/mockData';
 import { useLocaleStore } from '../store/localeStore';
 import { ProductCard } from '../components/product/ProductCard';
@@ -74,6 +74,8 @@ export const Home = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('best');
   const [timeLeft, setTimeLeft] = useState({ hours: 4, minutes: 34, seconds: 12 });
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -110,6 +112,14 @@ export const Home = () => {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    if (isHovered) return;
+    const slideTimer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % 4);
+    }, 5000);
+    return () => clearInterval(slideTimer);
+  }, [isHovered]);
+
   const padZero = (num) => String(num).padStart(2, '0');
 
   if (loading) {
@@ -135,108 +145,300 @@ export const Home = () => {
   const bestSellers = activeProductList.filter((p) => p.is_best_seller || p.isBestSeller);
   const newArrivals = activeProductList.filter((p) => p.is_new || p.isNew);
   const activeProducts = activeTab === 'best' ? bestSellers : newArrivals;
-  const heroProduct = activeProductList[0] || mockProducts[0];
+
+  const heroSlides = [
+    {
+      id: 1,
+      badge: 'EXCLUSIVE',
+      badgeText: 'Sale',
+      headline: 'Happening Now!',
+      sub: 'Discover amazing deals and discounts on our eCommerce website! Shop now for the best offers!',
+      buttonText: 'SHOP NOW',
+      link: '/category/electronics',
+      product: activeProductList[0] || mockProducts[0],
+      bgGradient: 'from-[#FDE047] via-[#FACC15] to-[#EAB308]',
+      textColor: 'text-gray-950',
+      subTextColor: 'text-gray-900/90 font-medium',
+      badgeBg: 'bg-white text-black font-black uppercase tracking-wider px-3.5 py-1.5 rounded-md shadow-md text-xs sm:text-sm inline-block',
+      badgeSecondaryText: 'text-gray-950 font-black text-3xl sm:text-4xl md:text-5xl ml-2 rtl:mr-2 rtl:ml-0 inline-block',
+      btnStyle: 'bg-black text-white hover:bg-gray-800 shadow-2xl border-none font-black uppercase tracking-wider px-8 py-3.5 rounded-xl text-sm',
+      dotActive: 'bg-black w-9',
+      dotInactive: 'bg-black/30 hover:bg-black/60',
+      starsColor: 'text-white/90'
+    },
+    {
+      id: 2,
+      badge: 'NEW ARRIVAL',
+      badgeText: 'Audio Pro',
+      headline: 'Next-Gen Wireless Sound',
+      sub: 'Immerse yourself in crystal clear studio audio with ultra active noise cancellation.',
+      buttonText: 'EXPLORE DEAL',
+      link: '/product/aerosound-pro-wireless-headphones',
+      product: activeProductList[1] || mockProducts[1],
+      bgGradient: 'from-[#10B981] via-[#059669] to-[#047857]',
+      textColor: 'text-white',
+      subTextColor: 'text-emerald-50/95 font-medium',
+      badgeBg: 'bg-emerald-300 text-emerald-950 font-black uppercase tracking-wider px-3.5 py-1.5 rounded-md shadow-md text-xs sm:text-sm inline-block',
+      badgeSecondaryText: 'text-white font-black text-3xl sm:text-4xl md:text-5xl ml-2 rtl:mr-2 rtl:ml-0 inline-block',
+      btnStyle: 'bg-white text-emerald-950 hover:bg-emerald-50 shadow-2xl border-none font-black uppercase tracking-wider px-8 py-3.5 rounded-xl text-sm',
+      dotActive: 'bg-white w-9',
+      dotInactive: 'bg-white/30 hover:bg-white/60',
+      starsColor: 'text-emerald-200/90'
+    },
+    {
+      id: 3,
+      badge: 'HOT DEAL',
+      badgeText: 'Style',
+      headline: 'Urban Lifestyle Fashion',
+      sub: 'Step out in confidence with our premium crafted street footwear & boutique fashion trends.',
+      buttonText: 'SHOP FASHION',
+      link: '/category/fashion',
+      product: activeProductList[2] || mockProducts[2],
+      bgGradient: 'from-[#F43F5E] via-[#E11D48] to-[#BE123C]',
+      textColor: 'text-white',
+      subTextColor: 'text-rose-50/95 font-medium',
+      badgeBg: 'bg-white text-rose-950 font-black uppercase tracking-wider px-3.5 py-1.5 rounded-md shadow-md text-xs sm:text-sm inline-block',
+      badgeSecondaryText: 'text-white font-black text-3xl sm:text-4xl md:text-5xl ml-2 rtl:mr-2 rtl:ml-0 inline-block',
+      btnStyle: 'bg-gray-950 text-white hover:bg-gray-900 shadow-2xl border-none font-black uppercase tracking-wider px-8 py-3.5 rounded-xl text-sm',
+      dotActive: 'bg-white w-9',
+      dotInactive: 'bg-white/30 hover:bg-white/60',
+      starsColor: 'text-rose-200/90'
+    },
+    {
+      id: 4,
+      badge: 'TRENDING',
+      badgeText: 'Decor',
+      headline: 'Modern Living & Home',
+      sub: 'Redefine your living space with minimal aesthetic lighting and smart home accessories.',
+      buttonText: 'DISCOVER MORE',
+      link: '/category/home-living',
+      product: activeProductList[3] || mockProducts[3],
+      bgGradient: 'from-[#6366F1] via-[#4F46E5] to-[#3730A3]',
+      textColor: 'text-white',
+      subTextColor: 'text-indigo-50/95 font-medium',
+      badgeBg: 'bg-amber-300 text-indigo-950 font-black uppercase tracking-wider px-3.5 py-1.5 rounded-md shadow-md text-xs sm:text-sm inline-block',
+      badgeSecondaryText: 'text-white font-black text-3xl sm:text-4xl md:text-5xl ml-2 rtl:mr-2 rtl:ml-0 inline-block',
+      btnStyle: 'bg-white text-indigo-950 hover:bg-indigo-50 shadow-2xl border-none font-black uppercase tracking-wider px-8 py-3.5 rounded-xl text-sm',
+      dotActive: 'bg-white w-9',
+      dotInactive: 'bg-white/30 hover:bg-white/60',
+      starsColor: 'text-indigo-200/90'
+    }
+  ];
+
+  const activeSlide = heroSlides[currentSlide];
 
   return (
     <div className="space-y-16 animate-fade-in">
       
-      {/* 1. Still-Life Hero (Fades & Rises with Staggered Entrance) */}
-      <motion.section 
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 md:pt-16 pb-8 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center"
+      {/* 1. Dynamic Color-Changing Full-Width Hero Slider */}
+      <section 
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={`w-full relative overflow-hidden transition-all duration-700 ease-in-out bg-gradient-to-r ${activeSlide.bgGradient} py-12 md:py-20 flex items-center shadow-lg`}
       >
-        {/* Left Column: Overlapping Typography Block (Cols 1-6) */}
-        <motion.div 
-          variants={textVariants}
-          className="lg:col-span-6 z-10 text-left rtl:text-right lg:-mr-12 rtl:lg:-ml-12 rtl:lg:-mr-0"
-        >
-          <span className="text-[10px] text-brass uppercase font-bold tracking-widest bg-brass/5 border border-brass/15 px-3.5 py-1.5 rounded-full select-none">
-            Boutique Collection
-          </span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium tracking-tight leading-[1.05] text-text-primary uppercase mt-5">
-            {getLocalized(heroProduct.name, locale)}
-          </h1>
-          
-          {/* Left Aligned Divider */}
-          <div className="flex items-center justify-start my-5 select-none">
-            <div className="w-14 h-[1px] bg-brass/65"></div>
-            <span className="mx-2.5 text-[8px] text-brass leading-none">◆</span>
-            <div className="w-14 h-[1px] bg-brass/65"></div>
-          </div>
+        {/* Floating Sparkles & Stars Decoration */}
+        <div className={`absolute inset-0 overflow-hidden pointer-events-none select-none ${activeSlide.starsColor}`}>
+          <Star className="w-5 h-5 absolute top-10 left-12 opacity-80 animate-pulse" />
+          <Sparkles className="w-6 h-6 absolute top-16 right-1/3 opacity-70 animate-bounce" />
+          <Star className="w-4 h-4 absolute bottom-20 left-1/4 opacity-60" />
+          <Star className="w-6 h-6 absolute bottom-12 right-12 opacity-80 animate-pulse" />
+        </div>
 
-          <p className="text-sm md:text-base text-text-secondary max-w-lg leading-relaxed font-sans mb-8">
-            {getLocalized(heroProduct.description, locale)}
-          </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+            
+            {/* Left Content Column (Cols 1-7) */}
+            <div className="lg:col-span-7 text-left rtl:text-right">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSlide.id}
+                  initial={{ opacity: 0, x: -35 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 35 }}
+                  transition={{ duration: 0.45, ease: 'easeOut' }}
+                >
+                  {/* Badge Line: EXCLUSIVE Sale */}
+                  <div className="flex items-center space-x-3 rtl:space-x-reverse mb-4 flex-wrap gap-y-2">
+                    <span className={activeSlide.badgeBg}>
+                      {activeSlide.badge}
+                    </span>
+                    <span className={activeSlide.badgeSecondaryText}>
+                      {activeSlide.badgeText}
+                    </span>
+                  </div>
 
-          {/* Outlined Secondary Button CTA - quiet until PDP/actions */}
-          <RouterLink to={`/product/${heroProduct.slug}`}>
-            <Button 
-              variant="secondary" 
-              className="px-6 py-3 uppercase text-xs tracking-wider"
-              icon={ArrowRight}
-            >
-              View Product
-            </Button>
-          </RouterLink>
-        </motion.div>
+                  {/* Headline */}
+                  <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05] ${activeSlide.textColor} mb-4`}>
+                    {activeSlide.headline}
+                  </h1>
 
-        {/* Right Column: Still-Life Photo on a --surface-2 field (Cols 7-12) */}
-        <motion.div 
-          variants={imageVariants}
-          className="lg:col-span-6 flex justify-center items-center"
-        >
-          <div className="bg-surface-2 rounded-[8px] p-6 sm:p-12 w-full max-w-lg aspect-square flex items-center justify-center shadow-sm overflow-hidden relative">
-            <img
-              src={heroProduct.images[0]}
-              alt={getLocalized(heroProduct.name, locale)}
-              className="w-full h-full object-cover rounded-[4px] shadow-sm transform hover:scale-[1.02] transition-transform duration-500"
-            />
-          </div>
-        </motion.div>
-      </motion.section>
+                  {/* Subtitle */}
+                  <p className={`text-sm sm:text-base max-w-lg leading-relaxed ${activeSlide.subTextColor} mb-8`}>
+                    {activeSlide.sub}
+                  </p>
 
-      {/* 2. Trust Bar */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 bg-surface border border-border rounded-[8px] p-6 md:p-8 transition-colors" style={{ boxShadow: 'var(--shadow)' }}>
-          <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
-            <div className="p-3 rounded-lg bg-green/5 text-green">
-              <Truck className="w-6 h-6" />
+                  {/* CTA Button */}
+                  <RouterLink to={activeSlide.link}>
+                    <button className={`${activeSlide.btnStyle} transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2.5`}>
+                      <span>{activeSlide.buttonText}</span>
+                      <ArrowRight className="w-4 h-4 rtl-flip" />
+                    </button>
+                  </RouterLink>
+                </motion.div>
+              </AnimatePresence>
             </div>
-            <div>
-              <h4 className="text-sm font-bold text-text-primary">{t('home.free_shipping')}</h4>
-              <p className="text-xs text-text-secondary mt-0.5">{t('home.free_shipping_sub')}</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
-            <div className="p-3 rounded-lg bg-green/5 text-green">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-text-primary">{t('home.secure_payment')}</h4>
-              <p className="text-xs text-text-secondary mt-0.5">{t('home.secure_payment_sub')}</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
-            <div className="p-3 rounded-lg bg-green/5 text-green">
-              <RefreshCw className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-text-primary">{t('home.easy_returns')}</h4>
-              <p className="text-xs text-text-secondary mt-0.5">{t('home.easy_returns_sub')}</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
-            <div className="p-3 rounded-lg bg-green/5 text-green">
-              <Headphones className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-text-primary">{t('home.support')}</h4>
-              <p className="text-xs text-text-secondary mt-0.5">{t('home.support_sub')}</p>
+
+            {/* Right Product Image Column (Cols 8-12) */}
+            <div className="lg:col-span-5 flex justify-center items-center relative">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSlide.id}
+                  initial={{ opacity: 0, scale: 0.85, rotate: -4 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.85, rotate: 4 }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                  className="w-full max-w-md aspect-square flex items-center justify-center relative"
+                >
+                  <div className="w-full h-full rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 relative group bg-black/10 backdrop-blur-sm">
+                    <img
+                      src={activeSlide.product?.images?.[0] || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80'}
+                      alt={getLocalized(activeSlide.product?.name, locale)}
+                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+                      <span className="text-white text-xs font-bold truncate">
+                        {getLocalized(activeSlide.product?.name, locale)} — ${activeSlide.product?.price}
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </div>
+
+        {/* Bottom Pagination Dots */}
+        <div className="absolute bottom-6 left-8 sm:left-12 lg:left-24 rtl:right-8 rtl:sm:right-12 rtl:lg:right-24 rtl:left-auto flex items-center space-x-2.5 rtl:space-x-reverse z-20">
+          {heroSlides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`h-2.5 rounded-full transition-all duration-400 ${
+                currentSlide === index 
+                  ? activeSlide.dotActive 
+                  : activeSlide.dotInactive + ' w-2.5'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Side Arrow Navigation Controls */}
+        <div className="hidden sm:flex absolute right-8 sm:right-12 lg:right-24 bottom-6 rtl:left-8 rtl:sm:left-12 rtl:lg:left-24 rtl:right-auto items-center space-x-2 rtl:space-x-reverse z-20">
+          <button
+            onClick={() => setCurrentSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1))}
+            className="p-2.5 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors backdrop-blur-sm focus:outline-none"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="w-5 h-5 rtl-flip" />
+          </button>
+          <button
+            onClick={() => setCurrentSlide((prev) => (prev + 1) % heroSlides.length)}
+            className="p-2.5 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors backdrop-blur-sm focus:outline-none"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="w-5 h-5 rtl-flip" />
+          </button>
+        </div>
+      </section>
+
+      {/* 2. Trust Bar */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          variants={{
+            hidden: { opacity: 0, y: 25 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: {
+                staggerChildren: 0.12,
+                duration: 0.5
+              }
+            }
+          }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 bg-surface/90 backdrop-blur-md border border-border/80 rounded-2xl p-6 md:p-8 shadow-md hover:shadow-xl transition-all duration-300"
+        >
+          {[
+            {
+              key: 'free_shipping',
+              title: t('home.free_shipping'),
+              sub: t('home.free_shipping_sub'),
+              icon: Truck,
+              iconColor: 'text-emerald-500 dark:text-emerald-400',
+              bgColor: 'bg-emerald-500/10 dark:bg-emerald-500/15',
+              hoverEffect: { x: [0, 6, -2, 0] }
+            },
+            {
+              key: 'secure_payment',
+              title: t('home.secure_payment'),
+              sub: t('home.secure_payment_sub'),
+              icon: ShieldCheck,
+              iconColor: 'text-amber-500 dark:text-amber-400',
+              bgColor: 'bg-amber-500/10 dark:bg-amber-500/15',
+              hoverEffect: { scale: 1.15, rotate: [0, -10, 10, 0] }
+            },
+            {
+              key: 'easy_returns',
+              title: t('home.easy_returns'),
+              sub: t('home.easy_returns_sub'),
+              icon: RefreshCw,
+              iconColor: 'text-blue-500 dark:text-blue-400',
+              bgColor: 'bg-blue-500/10 dark:bg-blue-500/15',
+              hoverEffect: { rotate: 180 }
+            },
+            {
+              key: 'support',
+              title: t('home.support'),
+              sub: t('home.support_sub'),
+              icon: Headphones,
+              iconColor: 'text-purple-500 dark:text-purple-400',
+              bgColor: 'bg-purple-500/10 dark:bg-purple-500/15',
+              hoverEffect: { y: [-3, 3, -3] }
+            }
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <motion.div 
+                key={item.key}
+                variants={{
+                  hidden: { opacity: 0, y: 20, scale: 0.95 },
+                  visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 260, damping: 20 } }
+                }}
+                whileHover={{ y: -4, scale: 1.02 }}
+                className="group flex items-center space-x-4 rtl:space-x-reverse p-3.5 rounded-xl hover:bg-bg-primary/60 border border-transparent hover:border-border/60 transition-all duration-300 cursor-pointer"
+              >
+                <motion.div 
+                  whileHover={item.hoverEffect}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className={`p-3.5 rounded-xl ${item.bgColor} ${item.iconColor} group-hover:scale-110 transition-transform duration-300 flex-shrink-0 shadow-sm`}
+                >
+                  <Icon className="w-6 h-6" />
+                </motion.div>
+                <div>
+                  <h4 className="text-sm font-bold text-text-primary group-hover:text-accent transition-colors duration-200">
+                    {item.title}
+                  </h4>
+                  <p className="text-xs text-text-secondary mt-0.5 font-medium leading-relaxed">
+                    {item.sub}
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
       </section>
 
       {/* 3. Shop by Category */}
@@ -247,9 +449,9 @@ export const Home = () => {
           </h2>
           <SectionDivider />
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {activeCategories.map((cat) => (
-            <CategoryCard key={cat.id} category={cat} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {activeCategories.map((cat, idx) => (
+            <CategoryCard key={cat.id || cat.slug} category={cat} index={idx} />
           ))}
         </div>
       </section>

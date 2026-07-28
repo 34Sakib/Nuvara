@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\NewsletterController;
 use App\Http\Controllers\Api\V1\CouponController;
 
+use App\Http\Controllers\Api\V1\AddressController;
+
 Route::prefix('v1')->group(function () {
     // Categories
     Route::get('/categories', [CategoryController::class, 'index']);
@@ -38,6 +40,12 @@ Route::prefix('v1')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
         Route::put('/me', [AuthController::class, 'updateProfile']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+        // Addresses
+        Route::get('/addresses', [AddressController::class, 'index']);
+        Route::post('/addresses', [AddressController::class, 'store']);
+        Route::put('/addresses/{id}', [AddressController::class, 'update']);
+        Route::delete('/addresses/{id}', [AddressController::class, 'destroy']);
 
         // Wishlist
         Route::post('/wishlist/{product}', [WishlistController::class, 'toggle']);

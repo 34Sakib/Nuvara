@@ -138,7 +138,7 @@ export const Footer = () => {
       {/* Bottom Bar */}
       <div className="bg-bg-primary py-6 transition-colors border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-xs text-text-secondary">
-          <p>© {new Date().getFullYear()} Nuvara. {t('footer.rights')}</p>
+          <p>© {new Date().getFullYear()} Unknown . {t('footer.rights')}</p>
           <div className="flex space-x-6 rtl:space-x-reverse mt-4 md:mt-0">
             <a href="#" className="hover:text-accent">{t('footer.privacy')}</a>
             <a href="#" className="hover:text-accent">{t('footer.terms')}</a>

@@ -54,8 +54,25 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        $user->load(['addresses', 'orders.items.product', 'wishlists.product.brand', 'wishlists.product.images']);
+        
+        $wishlistProducts = $user->wishlists->map(function ($wish) {
+            if (!$wish->product) return null;
+            $imageUrls = $wish->product->images->pluck('path')->toArray();
+            if (empty($imageUrls)) {
+                $imageUrls = ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80'];
+            }
+            $pArray = $wish->product->toArray();
+            $pArray['images'] = $imageUrls;
+            $pArray['brand'] = $wish->product->brand->name;
+            return $pArray;
+        })->filter()->values();
+
+        $userArray = $user->toArray();
+        $userArray['wishlist'] = $wishlistProducts;
+
         return response()->json([
-            'user' => $user,
+            'user' => $userArray,
             'token' => $token,
         ]);
     }

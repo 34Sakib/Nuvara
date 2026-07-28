@@ -80,6 +80,23 @@ export const useCartStore = create((set, get) => {
       syncStorage('nuvara_coupon', null);
     },
 
+    setWishlist: (wishlistItems) => {
+      const items = Array.isArray(wishlistItems) ? wishlistItems : [];
+      set({ wishlist: items });
+      syncStorage('nuvara_wishlist', items);
+    },
+
+    setCart: (cartItems) => {
+      const items = Array.isArray(cartItems) ? cartItems : [];
+      set({ cart: items });
+      syncStorage('nuvara_cart', items);
+    },
+
+    clearWishlist: () => {
+      set({ wishlist: [] });
+      syncStorage('nuvara_wishlist', []);
+    },
+
     toggleWishlist: (product) => {
       const currentWishlist = get().wishlist;
       const isAlreadyWish = currentWishlist.some((item) => item.id === product.id);
@@ -93,6 +110,13 @@ export const useCartStore = create((set, get) => {
 
       set({ wishlist: newWishlist });
       syncStorage('nuvara_wishlist', newWishlist);
+
+      // Async API call if authenticated
+      const token = typeof window !== 'undefined' ? localStorage.getItem('nuvara_token') : null;
+      if (token) {
+        api.post(`/wishlist/${product.id}`).catch(() => {});
+      }
+
       return !isAlreadyWish; // returns true if added, false if removed
     },
 
