@@ -285,7 +285,7 @@ export const Checkout = () => {
                   <input
                     type="text"
                     name="cardHolder"
-                    placeholder="John Doe"
+                    placeholder="Your Name"
                     value={formData.cardHolder}
                     onChange={handleInputChange}
                     className={`w-full px-4 py-2.5 rounded-lg border bg-bg-primary text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 ${errors.cardHolder ? 'border-danger' : 'border-border'}`}

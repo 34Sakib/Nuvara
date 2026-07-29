@@ -65,7 +65,7 @@
             box-shadow: 0 4px 20px rgba(197, 168, 128, 0.08);
             color: #1c1917;
         }
-        
+
         /* Light mode global overrides */
         .light .text-\[\#F5EFE4\] {
             color: #1c1917 !important;
@@ -148,7 +148,7 @@
     </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col md:flex-row relative overflow-x-hidden">
-    <!-- Sophisticated background glowing accents -->
+    <!-- Background glowing accents -->
     <div class="absolute w-[500px] h-[500px] top-10 left-10 bg-green/5 dark:bg-green/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
     <div class="absolute w-[500px] h-[500px] bottom-10 right-10 bg-brass/5 dark:bg-brass/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
 
@@ -165,11 +165,11 @@
             </div>
         </div>
 
-        <nav class="flex-grow p-4 space-y-1">
+        <nav class="flex-grow p-4 space-y-1 overflow-y-auto">
             <!-- Dashboard Link -->
             <a 
                 href="{{ route('admin.dashboard') }}" 
-                class="flex items-center space-x-3 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/dashboard') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/dashboard') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
             >
                 <span class="text-sm">📊</span>
                 <span>Dashboard</span>
@@ -178,7 +178,7 @@
             <!-- Products Link -->
             <a 
                 href="{{ route('admin.products') }}" 
-                class="flex items-center space-x-3 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/products*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/products*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
             >
                 <span class="text-sm">📦</span>
                 <span>Products</span>
@@ -187,16 +187,79 @@
             <!-- Categories Link -->
             <a 
                 href="{{ route('admin.categories') }}" 
-                class="flex items-center space-x-3 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/categories*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/categories*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
             >
                 <span class="text-sm">🏷️</span>
                 <span>Categories</span>
             </a>
 
+            <!-- Banners & Sliders Link -->
+            <a 
+                href="{{ route('admin.banners') }}" 
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/banners*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+            >
+                <span class="text-sm">🖼️</span>
+                <span>Sliders & Banners</span>
+            </a>
+
+            <!-- Trust Features Link -->
+            <a 
+                href="{{ route('admin.features') }}" 
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/features*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+            >
+                <span class="text-sm">🛡️</span>
+                <span>Trust Features</span>
+            </a>
+
+            <!-- Flash Sale Link -->
+            <a 
+                href="{{ route('admin.flash-sale') }}" 
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/flash-sale*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+            >
+                <span class="text-sm">⚡</span>
+                <span>Flash Sale</span>
+            </a>
+
+            <!-- Testimonials Link -->
+            <a 
+                href="{{ route('admin.testimonials') }}" 
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/testimonials*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+            >
+                <span class="text-sm">💬</span>
+                <span>Testimonials</span>
+            </a>
+
+            <!-- About Page Link -->
+            <a 
+                href="{{ route('admin.pages.about') }}" 
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/pages/about*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+            >
+                <span class="text-sm">📖</span>
+                <span>About Page</span>
+            </a>
+
+            <!-- Contact Page Link -->
+            <a 
+                href="{{ route('admin.pages.contact') }}" 
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/pages/contact*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+            >
+                <span class="text-sm">📞</span>
+                <span>Contact Page</span>
+            </a>
+
+            <!-- FAQs Link -->
+            <a 
+                href="{{ route('admin.faqs') }}" 
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/faqs*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+            >
+                <span class="text-sm">❓</span>
+                <span>FAQs</span>
+            </a>
+
             <!-- Orders Link -->
             <a 
                 href="{{ route('admin.orders') }}" 
-                class="flex items-center space-x-3 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/orders*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/orders*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
             >
                 <span class="text-sm">🛍️</span>
                 <span>Orders</span>
@@ -205,7 +268,7 @@
             <!-- Coupons Link -->
             <a 
                 href="{{ route('admin.coupons') }}" 
-                class="flex items-center space-x-3 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/coupons*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/coupons*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
             >
                 <span class="text-sm">🎟️</span>
                 <span>Coupons</span>
@@ -214,7 +277,7 @@
             <!-- Users Link -->
             <a 
                 href="{{ route('admin.users') }}" 
-                class="flex items-center space-x-3 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/users*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/users*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
             >
                 <span class="text-sm">👥</span>
                 <span>Users</span>
@@ -223,7 +286,7 @@
             <!-- Profile Link -->
             <a 
                 href="{{ route('admin.profile') }}" 
-                class="flex items-center space-x-3 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/profile*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
+                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all {{ request()->is('admin/profile*') ? 'bg-brass text-black shadow-lg shadow-brass/10' : 'text-stone-600 dark:text-gray-400 hover:bg-stone-200/50 dark:hover:bg-white/5 hover:text-stone-900 dark:hover:text-white' }}"
             >
                 <span class="text-sm">⚙️</span>
                 <span>Profile</span>
@@ -323,6 +386,57 @@
         </main>
     </div>
 
+    <!-- Custom Compact Delete Modal (Matches reference image) -->
+    <div id="nuvara-delete-modal-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div id="nuvara-delete-modal-card" class="bg-white dark:bg-[#141414] border border-gray-100 dark:border-border text-center rounded-[28px] p-6 sm:p-7 max-w-[340px] w-full shadow-2xl relative transform transition-all duration-200 scale-95 opacity-0">
+            
+            <!-- Red Trash Can Icon with Sparkles -->
+            <div class="mx-auto w-14 h-14 mb-3.5 flex items-center justify-center relative select-none">
+                <svg class="w-10 h-10 text-[#E05252]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                <!-- Sparkle Dots -->
+                <span class="absolute -top-1 left-0 text-[10px] text-[#E05252]">✦</span>
+                <span class="absolute top-1 -right-1 text-[8px] text-[#E05252]">✦</span>
+                <span class="absolute bottom-0 -left-1 text-[8px] text-[#E05252]">✦</span>
+                <span class="absolute bottom-2 -right-1.5 text-[10px] text-[#E05252]">✦</span>
+            </div>
+
+            <!-- Title -->
+            <h3 id="nuvara-modal-title" class="text-base font-bold text-gray-900 dark:text-white mb-1.5 leading-snug">
+                Confirm Deletion?
+            </h3>
+
+            <!-- Description -->
+            <p id="nuvara-modal-desc" class="text-[12px] text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
+                Are you sure you want to delete this item?<br>This action cannot be undone.
+            </p>
+
+            <!-- Buttons -->
+            <div class="grid grid-cols-2 gap-3">
+                <button 
+                    type="button" 
+                    onclick="closeNuvaraDeleteModal()" 
+                    class="py-2.5 px-4 rounded-full border-2 border-[#E05252] text-[#E05252] bg-transparent hover:bg-[#E05252]/10 font-bold text-xs transition-all duration-150 active:scale-95"
+                >
+                    Cancel
+                </button>
+
+                <button 
+                    type="button" 
+                    id="nuvara-confirm-delete-btn" 
+                    class="py-2.5 px-4 rounded-full bg-[#E05252] hover:bg-[#c93f3f] text-white font-bold text-xs shadow-md transition-all duration-150 active:scale-95"
+                >
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Init theme state from localStorage
         const htmlElement = document.documentElement;
@@ -366,6 +480,50 @@
                 if (!btn.contains(event.target) && !menu.contains(event.target)) {
                     menu.classList.add('hidden');
                 }
+            }
+        });
+
+        // Compact Delete Modal Controller (matching user reference image)
+        let activeDeleteForm = null;
+
+        function confirmDelete(event, itemName = '') {
+            event.preventDefault();
+            activeDeleteForm = event.target.closest('form');
+
+            const title = document.getElementById('nuvara-modal-title');
+            const overlay = document.getElementById('nuvara-delete-modal-overlay');
+            const card = document.getElementById('nuvara-delete-modal-card');
+
+            if (itemName && itemName !== 'this item') {
+                title.innerText = `Confirm ${itemName} Deletion?`;
+            } else {
+                title.innerText = 'Confirm Deletion?';
+            }
+
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                card.classList.remove('scale-95', 'opacity-0');
+                card.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            return false;
+        }
+
+        function closeNuvaraDeleteModal() {
+            const overlay = document.getElementById('nuvara-delete-modal-overlay');
+            const card = document.getElementById('nuvara-delete-modal-card');
+
+            card.classList.remove('scale-100', 'opacity-100');
+            card.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                activeDeleteForm = null;
+            }, 150);
+        }
+
+        document.getElementById('nuvara-confirm-delete-btn')?.addEventListener('click', function() {
+            if (activeDeleteForm) {
+                activeDeleteForm.submit();
             }
         });
     </script>

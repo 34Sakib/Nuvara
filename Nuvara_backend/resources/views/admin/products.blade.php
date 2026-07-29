@@ -13,44 +13,44 @@
             </h3>
             <span class="text-[10px] text-gray-500 font-mono">Catalog: {{ count($products) }} Items</span>
         </div>
-        
+
         <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-3 gap-6">
             @csrf
             <div>
                 <label class="block text-[10px] font-bold text-brass uppercase tracking-wider mb-2">Product Name (EN)</label>
-                <input type="text" id="name_en" name="name_en" required placeholder="AeroSound Headphones" oninput="document.getElementById('slug').value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
+                <input type="text" id="name_en" name="name_en" required placeholder="product name" oninput="document.getElementById('slug').value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
             </div>
-            
+
             <div>
                 <label class="block text-[10px] font-bold text-brass uppercase tracking-wider mb-2">Product Name (BN)</label>
-                <input type="text" name="name_bn" required placeholder="অ্যারোসাউন্ড হেডফোন" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
+                <input type="text" name="name_bn" required placeholder="প্রোডাক্ট নাম" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
             </div>
 
             <div>
                 <label class="block text-[10px] font-bold text-brass uppercase tracking-wider mb-2">Slug</label>
-                <input type="text" id="slug" name="slug" required placeholder="aerosound-headphones" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
+                <input type="text" id="slug" name="slug" required placeholder="product-slug" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
             </div>
 
             <div>
                 <label class="block text-[10px] font-bold text-brass uppercase tracking-wider mb-2">Price ($)</label>
-                <input type="number" step="0.01" name="price" required placeholder="199.99" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
+                <input type="number" step="0.01" name="price" required placeholder=" " class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
             </div>
 
             <div>
                 <label class="block text-[10px] font-bold text-brass uppercase tracking-wider mb-2">Stock Inventory</label>
-                <input type="number" name="stock" required placeholder="25" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
+                <input type="number" name="stock" required placeholder=" " class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
             </div>
 
             <div>
                 <label class="block text-[10px] font-bold text-brass uppercase tracking-wider mb-2">SKU Identifier</label>
-                <input type="text" name="sku" required placeholder="NVR-AERO-01" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
+                <input type="text" name="sku" required placeholder=" " class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
             </div>
 
             <div>
                 <label class="block text-[10px] font-bold text-brass uppercase tracking-wider mb-2">Category Selection</label>
                 <select name="category_id" required class="w-full px-4 py-2.5 rounded-lg border border-border bg-surface text-gray-400 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass">
                     @foreach($categories as $cat)
-                        <option value="{{ $cat->id }}">{{ $cat->getLocalized('name', 'en') }}</option>
+                    <option value="{{ $cat->id }}">{{ $cat->getLocalized('name', 'en') }}</option>
                     @endforeach
                 </select>
             </div>
@@ -84,63 +84,62 @@
                 </thead>
                 <tbody class="divide-y divide-border text-sm">
                     @foreach($products as $prod)
-                        <tr class="hover:bg-white/5 transition-colors duration-250">
-                            <td class="p-5">
-                                <img 
-                                    src="{{ $prod->images->first()->path ?? 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80' }}" 
-                                    alt="" 
-                                    class="w-14 h-14 object-cover rounded-lg border border-border/80 shadow"
-                                >
-                            </td>
-                            <td class="p-5">
-                                <div class="font-bold text-[#F5EFE4] text-sm">
-                                    {{ $prod->getLocalized('name', 'en') }}
-                                </div>
-                                <div class="flex items-center space-x-2 mt-1 select-none">
-                                    <span class="text-[9px] font-mono text-gray-500 bg-black/40 border border-border px-2 py-0.5 rounded uppercase">SKU: {{ $prod->sku }}</span>
-                                    @if($prod->status === 'active')
-                                        <span class="text-[8px] font-bold bg-green-950/20 border border-green-900/30 text-green-400 px-1.5 py-0.5 rounded uppercase">Active</span>
-                                    @else
-                                        <span class="text-[8px] font-bold bg-red-950/20 border border-red-900/30 text-red-400 px-1.5 py-0.5 rounded uppercase">Hidden</span>
-                                    @endif
-                                    @if($prod->is_best_seller)
-                                        <span class="text-[8px] font-bold bg-amber-500/10 border border-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded uppercase">Best Seller</span>
-                                    @endif
-                                </div>
-                            </td>
-                            <td class="p-5">
-                                <span class="text-xs font-semibold text-gray-400">
-                                    {{ $prod->category ? $prod->category->getLocalized('name', 'en') : 'Unassigned' }}
-                                </span>
-                            </td>
-                            <td class="p-5 font-black text-brass text-base font-serif">
-                                ${{ number_format($prod->price, 2) }}
-                            </td>
-                            <td class="p-5">
-                                @if($prod->stock > 5)
-                                    <span class="px-2.5 py-1 text-[9px] font-extrabold uppercase bg-green-950/30 border border-green-900/40 text-green-400 rounded-full">
-                                        {{ $prod->stock }} In Stock
-                                    </span>
+                    <tr class="hover:bg-white/5 transition-colors duration-250">
+                        <td class="p-5">
+                            <img
+                                src="{{ $prod->images->first()->path ?? 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80' }}"
+                                alt=""
+                                class="w-14 h-14 object-cover rounded-lg border border-border/80 shadow">
+                        </td>
+                        <td class="p-5">
+                            <div class="font-bold text-[#F5EFE4] text-sm">
+                                {{ $prod->getLocalized('name', 'en') }}
+                            </div>
+                            <div class="flex items-center space-x-2 mt-1 select-none">
+                                <span class="text-[9px] font-mono text-gray-500 bg-black/40 border border-border px-2 py-0.5 rounded uppercase">SKU: {{ $prod->sku }}</span>
+                                @if($prod->status === 'active')
+                                <span class="text-[8px] font-bold bg-green-950/20 border border-green-900/30 text-green-400 px-1.5 py-0.5 rounded uppercase">Active</span>
                                 @else
-                                    <span class="px-2.5 py-1 text-[9px] font-extrabold uppercase bg-red-950/30 border border-red-900/40 text-red-400 rounded-full">
-                                        LOW STOCK ({{ $prod->stock }})
-                                    </span>
+                                <span class="text-[8px] font-bold bg-red-950/20 border border-red-900/30 text-red-400 px-1.5 py-0.5 rounded uppercase">Hidden</span>
                                 @endif
-                            </td>
-                            <td class="p-5 text-right">
-                                <div class="flex items-center justify-end space-x-2">
-                                    <button onclick='openEditModal({!! json_encode($prod) !!})' class="px-3 py-1.5 border border-brass/35 text-brass hover:bg-brass/10 rounded-lg text-xs font-bold transition-all duration-150">
-                                        Edit
+                                @if($prod->is_best_seller)
+                                <span class="text-[8px] font-bold bg-amber-500/10 border border-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded uppercase">Best Seller</span>
+                                @endif
+                            </div>
+                        </td>
+                        <td class="p-5">
+                            <span class="text-xs font-semibold text-gray-400">
+                                {{ $prod->category ? $prod->category->getLocalized('name', 'en') : 'Unassigned' }}
+                            </span>
+                        </td>
+                        <td class="p-5 font-black text-brass text-base font-serif">
+                            ${{ number_format($prod->price, 2) }}
+                        </td>
+                        <td class="p-5">
+                            @if($prod->stock > 5)
+                            <span class="px-2.5 py-1 text-[9px] font-extrabold uppercase bg-green-950/30 border border-green-900/40 text-green-400 rounded-full">
+                                {{ $prod->stock }} In Stock
+                            </span>
+                            @else
+                            <span class="px-2.5 py-1 text-[9px] font-extrabold uppercase bg-red-950/30 border border-red-900/40 text-red-400 rounded-full">
+                                LOW STOCK ({{ $prod->stock }})
+                            </span>
+                            @endif
+                        </td>
+                        <td class="p-5 text-right">
+                            <div class="flex items-center justify-end space-x-2">
+                                <button onclick='openEditModal({!! json_encode($prod) !!})' class="px-3 py-1.5 border border-brass/35 text-brass hover:bg-brass/10 rounded-lg text-xs font-bold transition-all duration-150">
+                                    Edit
+                                </button>
+                                <form action="{{ route('admin.products.delete', $prod->id) }}" method="POST" onsubmit="return confirmDelete(event, '{{ addslashes($prod->getLocalized('name', 'en')) }}');" class="inline">
+                                    @csrf
+                                    <button type="submit" class="px-3 py-1.5 border border-red-950/40 border-red-900/30 text-red-400 hover:bg-red-950/20 rounded-lg text-xs font-bold transition-all duration-150">
+                                        Remove
                                     </button>
-                                    <form action="{{ route('admin.products.delete', $prod->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');" class="inline">
-                                        @csrf
-                                        <button type="submit" class="px-3 py-1.5 border border-red-950/40 border-red-900/30 text-red-400 hover:bg-red-950/20 rounded-lg text-xs font-bold transition-all duration-150">
-                                            Remove
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -155,14 +154,14 @@
         <h3 class="text-sm font-bold text-brass uppercase tracking-wider mb-6 border-b border-border pb-3">
             Edit Product Configuration
         </h3>
-        
+
         <form id="edit-form" action="" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-3 gap-6">
             @csrf
             <div>
                 <label class="block text-[10px] font-bold text-brass uppercase tracking-wider mb-2">Product Name (EN)</label>
                 <input type="text" id="edit-name-en" name="name_en" required oninput="document.getElementById('edit-slug').value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
             </div>
-            
+
             <div>
                 <label class="block text-[10px] font-bold text-brass uppercase tracking-wider mb-2">Product Name (BN)</label>
                 <input type="text" id="edit-name-bn" name="name_bn" required class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
@@ -192,7 +191,7 @@
                 <label class="block text-[10px] font-bold text-brass uppercase tracking-wider mb-2">Category</label>
                 <select id="edit-category" name="category_id" required class="w-full px-4 py-2.5 rounded-lg border border-border bg-surface text-gray-400 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass">
                     @foreach($categories as $cat)
-                        <option value="{{ $cat->id }}">{{ $cat->getLocalized('name', 'en') }}</option>
+                    <option value="{{ $cat->id }}">{{ $cat->getLocalized('name', 'en') }}</option>
                     @endforeach
                 </select>
             </div>
@@ -235,6 +234,7 @@
         document.getElementById('edit-status').value = prod.status || 'active';
         document.getElementById('edit-modal').classList.remove('hidden');
     }
+
     function closeEditModal() {
         document.getElementById('edit-modal').classList.add('hidden');
     }

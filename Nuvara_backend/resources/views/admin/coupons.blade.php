@@ -111,7 +111,7 @@
                                     <button onclick='openEditModal({!! json_encode($coup) !!})' class="px-3 py-1.5 border border-brass/35 text-brass hover:bg-brass/10 rounded-lg text-xs font-bold transition-all duration-150">
                                         Edit
                                     </button>
-                                    <form action="{{ route('admin.coupons.delete', $coup->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this coupon?');" class="inline">
+                                    <form action="{{ route('admin.coupons.delete', $coup->id) }}" method="POST" onsubmit="return confirmDelete(event, 'coupon {{ $coup->code }}');" class="inline">
                                         @csrf
                                         <button type="submit" class="px-3 py-1.5 border border-red-950/40 border-red-900/30 text-red-400 hover:bg-red-950/20 rounded-lg text-xs font-bold transition-all duration-150">
                                             Delete

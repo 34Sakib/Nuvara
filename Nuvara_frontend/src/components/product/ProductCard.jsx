@@ -16,10 +16,21 @@ export const ProductCard = ({ product }) => {
   const { addToCart, toggleWishlist, isInWishlist } = useCartStore();
   const { addToast } = useToastStore();
 
+  if (!product) return null;
+
   const isLiked = isInWishlist(product.id);
   const discountPercent = product.compare_price 
     ? Math.round(((product.compare_price - product.price) / product.compare_price) * 100)
     : 0;
+
+  let mainImage = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80';
+  if (Array.isArray(product.images) && product.images.length > 0) {
+    mainImage = typeof product.images[0] === 'object' ? (product.images[0].path || product.images[0].url || mainImage) : product.images[0];
+  } else if (typeof product.images === 'string' && product.images.trim().length > 0) {
+    mainImage = product.images.split(' ')[0];
+  } else if (product.image) {
+    mainImage = product.image;
+  }
 
   const handleWishlistClick = (e) => {
     e.preventDefault();
@@ -66,7 +77,7 @@ export const ProductCard = ({ product }) => {
             -{discountPercent}%
           </span>
         )}
-        {product.isNew && (
+        {(product.isNew || product.is_new) && (
           <span className="bg-emerald-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-md backdrop-blur-sm flex items-center gap-1">
             <Sparkles className="w-2.5 h-2.5" />
             <span>NEW</span>
@@ -88,7 +99,7 @@ export const ProductCard = ({ product }) => {
       {/* Product Image Wrapper - Compact Height & Uncropped Full Visibility */}
       <div className="relative h-36 sm:h-44 w-full p-2 bg-surface-2/40 flex items-center justify-center overflow-hidden">
         <img
-          src={product.images[0]}
+          src={mainImage}
           alt={getLocalized(product.name, locale)}
           className="w-full h-full object-contain group-hover:scale-108 transition-transform duration-500 ease-out"
           loading="lazy"
@@ -100,7 +111,7 @@ export const ProductCard = ({ product }) => {
       <div className="p-3.5 flex-1 flex flex-col justify-between text-left rtl:text-right">
         <div>
           <span className="text-[9px] text-brass uppercase tracking-widest font-extrabold block">
-            {product.brand}
+            {typeof product.brand === 'object' ? product.brand.name : (product.brand || 'Nuvara')}
           </span>
           
           <h3 className="text-xs sm:text-sm font-bold text-text-primary mt-0.5 line-clamp-1 group-hover:text-accent transition-colors">
@@ -108,7 +119,7 @@ export const ProductCard = ({ product }) => {
           </h3>
 
           <div className="mt-1 flex items-center">
-            <RatingStars value={product.rating} count={product.reviewCount} size="xs" />
+            <RatingStars value={product.rating || product.avg_rating || 5} count={product.reviewCount || product.review_count || 0} size="xs" />
           </div>
         </div>
 

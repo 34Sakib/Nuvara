@@ -11,6 +11,10 @@ use App\Models\ProductImage;
 use App\Models\Review;
 use App\Models\Address;
 use App\Models\Coupon;
+use App\Models\Banner;
+use App\Models\TrustFeature;
+use App\Models\FlashSale;
+use App\Models\Testimonial;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -119,7 +123,7 @@ class DatabaseSeeder extends Seeder
             $categories[$catItem['slug']] = Category::create($catItem);
         }
 
-        // 4. Seed Products, Images, Variants, Reviews
+        // 4. Seed Products
         $productsData = [
             [
                 'sku' => 'EL-HP-01',
@@ -133,10 +137,10 @@ class DatabaseSeeder extends Seeder
                     'bn' => 'অ্যারোসাউন্ড প্রো ওয়্যারলেস হেডফোন'
                 ],
                 'description' => [
-                    'en' => 'Experience ultimate sound quality with active noise cancellation, 40-hour battery life, and high-fidelity drivers designed to bring your music to life.',
-                    'es' => 'Disfruta de la mejor calidad de sonido con cancelación activa de ruido, 40 horas de batería y transductores de alta fidelidad diseñados para dar vida a tu música.',
-                    'ar' => 'استمتع بجودة صوت فائقة مع تقنية إلغاء الضوضاء النشطة، وعمر بطارية يصل إلى 40 ساعة، ومكبرات صوت عالية الدقة مصممة لإحياء الموسيقى الخاصة بك.',
-                    'bn' => 'অ্যাক্টিভ নয়েজ ক্যান্সেলেশন, ৪০ ঘণ্টার ব্যাটারি লাইফ এবং হাই-ফিডেলিটি ড্রাইভার সহ উপভোগ করুন সেরা সাউন্ড কোয়ালিটি।'
+                    'en' => 'Experience ultimate sound quality with active noise cancellation, 40-hour battery life, and high-fidelity drivers.',
+                    'es' => 'Disfruta de la mejor calidad de sonido con cancelación activa de ruido, 40 horas de batería y transductores de alta fidelidad.',
+                    'ar' => 'استمتع بجودة صوت فائقة مع تقنية إلغاء الضوضاء النشطة، وعمر بطارية يصل إلى 40 ساعة.',
+                    'bn' => 'অ্যাক্টিভ নয়েজ ক্যান্সেলেশন, ৪০ ঘণ্টার ব্যাটারি লাইফ এবং হাই-ফিডেলিটি ড্রাইভার সহ সেরা অভিজ্ঞতা।'
                 ],
                 'price' => 199.99,
                 'compare_price' => 249.99,
@@ -145,65 +149,10 @@ class DatabaseSeeder extends Seeder
                 'review_count' => 128,
                 'is_best_seller' => true,
                 'is_new' => false,
+                'is_flash_deal' => true,
                 'images' => [
                     'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
-                    'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&auto=format&fit=crop&q=80',
-                    'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&auto=format&fit=crop&q=80'
-                ],
-                'variants' => [
-                    'colors' => [
-                        ['name' => 'Carbon Black', 'value' => '#1A1A1A'],
-                        ['name' => 'Indigo Blue', 'value' => '#4338CA'],
-                        ['name' => 'Platinum Silver', 'value' => '#E5E7EB']
-                    ]
-                ],
-                'specs' => [
-                    'en' => [
-                        ['key' => 'Driver Size', 'value' => '40mm High Fidelity'],
-                        ['key' => 'ANC Depth', 'value' => 'Up to 38dB'],
-                        ['key' => 'Bluetooth Version', 'value' => '5.2 with aptX HD'],
-                        ['key' => 'Charging Time', 'value' => '1.5 Hours']
-                    ],
-                    'es' => [
-                        ['key' => 'Tamaño del Driver', 'value' => '40mm Alta Fidelidad'],
-                        ['key' => 'Profundidad ANC', 'value' => 'Hasta 38dB'],
-                        ['key' => 'Versión Bluetooth', 'value' => '5.2 con aptX HD'],
-                        ['key' => 'Tiempo de Carga', 'value' => '1.5 Horas']
-                    ],
-                    'ar' => [
-                        ['key' => 'حجم المكبر', 'value' => '40 مم عالي الدقة'],
-                        ['key' => 'عمق إلغاء الضوضاء', 'value' => 'يصل إلى 38 ديسيبل'],
-                        ['key' => 'إصدار البلوتوث', 'value' => '5.2 مع aptX HD'],
-                        ['key' => 'وقت الشحن', 'value' => 'ساعة ونصف']
-                    ],
-                    'bn' => [
-                        ['key' => 'ড্রাইভার সাইজ', 'value' => '৪০ মিমি হাই ফিডেলিটি'],
-                        ['key' => 'নয়েজ ক্যান্সেলেশন', 'value' => '৩৮ ডেসিবেল পর্যন্ত'],
-                        ['key' => 'ব্লুটুথ সংস্করণ', 'value' => '৫.২ aptX HD সহ'],
-                        ['key' => 'চার্জিং সময়', 'value' => '১.৫ ঘণ্টা']
-                    ]
-                ],
-                'reviews' => [
-                    [
-                        'name' => 'Sophia Carter',
-                        'rating' => 5,
-                        'comment' => [
-                            'en' => 'Absolute bliss! The active noise canceling is incredibly good, blocking all my office chatter.',
-                            'es' => '¡Una maravilla absoluta! La cancelación de ruido es increíble, bloquea todo el ruido de la oficina.',
-                            'ar' => 'متعة مطلقة! ميزة إلغاء الضوضاء النشطة ممتازة للغاية، تحجب كل الضوضاء في المكتب.',
-                            'bn' => 'অসাধারণ অনুভূতি! নয়েজ ক্যান্সেলেশন খুবই ভালো কাজ করে, অফিসের কোনো শব্দই শোনা যায় না।'
-                        ]
-                    ],
-                    [
-                        'name' => 'Ahmed Al-Farsi',
-                        'rating' => 5,
-                        'comment' => [
-                            'en' => 'Very comfortable to wear for hours. Soundstage is deep, battery easily lasts all week.',
-                            'es' => 'Muy cómodos para usar por horas. El sonido es profundo, la batería dura toda la semana.',
-                            'ar' => 'مريحة جداً للارتداء لساعات طويلة. الصوت عميق والبطارية تدوم بسهولة طوال الأسبوع.',
-                            'bn' => 'কয়েক ঘণ্টা ধরে পরলেও অনেক আরামদায়ক লাগে। ব্যাটারি সহজেই এক সপ্তাহ চলে যায়।'
-                        ]
-                    ]
+                    'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&auto=format&fit=crop&q=80'
                 ]
             ],
             [
@@ -218,10 +167,10 @@ class DatabaseSeeder extends Seeder
                     'bn' => 'ক্রোনো অ্যাক্টিভ স্মার্টওয়াচ সংস্করণ ৩'
                 ],
                 'description' => [
-                    'en' => 'Track your health, monitor athletic performance, and stay connected with a stunning AMOLED screen and up to 14 days of standby battery life.',
-                    'es' => 'Monitorea tu salud, tu rendimiento deportivo y mantente conectado con una pantalla AMOLED espectacular y hasta 14 días de batería en espera.',
-                    'ar' => 'تتبع صحتك، وراقب أدائك الرياضي، وابقَ على اتصال مع شاشة AMOLED مذهلة وبطارية تدوم حتى 14 يوماً في وضع الاستعداد.',
-                    'bn' => 'অ্যামোলেড স্ক্রিন এবং ১৪ দিনের স্ট্যান্ডবাই ব্যাটারি লাইফ সহ আপনার স্বাস্থ্য এবং অ্যাথলেটিক পারফরম্যান্স ট্র্যাক করুন।'
+                    'en' => 'Track your health, monitor athletic performance, and stay connected with a stunning AMOLED screen.',
+                    'es' => 'Monitorea tu salud y tu rendimiento deportivo con una pantalla AMOLED espectacular.',
+                    'ar' => 'تتبع صحتك وراقب أدائك الرياضي مع شاشة AMOLED مذهلة.',
+                    'bn' => 'অ্যামোলেড স্ক্রিন সহ আপনার স্বাস্থ্য এবং অ্যাথলেটিক পারফরম্যান্স ট্র্যাক করুন।'
                 ],
                 'price' => 129.99,
                 'compare_price' => 159.99,
@@ -230,53 +179,9 @@ class DatabaseSeeder extends Seeder
                 'review_count' => 94,
                 'is_best_seller' => false,
                 'is_new' => true,
+                'is_flash_deal' => true,
                 'images' => [
-                    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80',
-                    'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=800&auto=format&fit=crop&q=80'
-                ],
-                'variants' => [
-                    'colors' => [
-                        ['name' => 'Obsidian Black', 'value' => '#1A1A1A'],
-                        ['name' => 'Space Silver', 'value' => '#9CA3AF']
-                    ]
-                ],
-                'specs' => [
-                    'en' => [
-                        ['key' => 'Display', 'value' => '1.43" AMOLED Display'],
-                        ['key' => 'Waterproof', 'value' => '5ATM Grade'],
-                        ['key' => 'Battery Standby', 'value' => 'Up to 14 Days'],
-                        ['key' => 'Sensors', 'value' => 'Heart Rate, SpO2, Sleep Tracker']
-                    ],
-                    'es' => [
-                        ['key' => 'Pantalla', 'value' => 'Pantalla AMOLED de 1.43"'],
-                        ['key' => 'Impermeabilidad', 'value' => 'Grado 5ATM'],
-                        ['key' => 'Batería en Espera', 'value' => 'Hasta 14 Días'],
-                        ['key' => 'Sensores', 'value' => 'Ritmo cardíaco, SpO2, Monitor de Sueño']
-                    ],
-                    'ar' => [
-                        ['key' => 'الشاشة', 'value' => 'شاشة AMOLED مقاس 1.43 بوصة'],
-                        ['key' => 'مقاومة الماء', 'value' => 'تصنيف 5ATM'],
-                        ['key' => 'استعداد البطارية', 'value' => 'يصل إلى 14 يومًا'],
-                        ['key' => 'المستشعرات', 'value' => 'نبضات القلوب، الأكسجين SpO2، تتبع النوم']
-                    ],
-                    'bn' => [
-                        ['key' => 'ডিসপ্লে', 'value' => '১.৪৩" অ্যামোলেড ডিসপ্লে'],
-                        ['key' => 'ওয়াটারপ্রুফ', 'value' => '5ATM গ্রেড'],
-                        ['key' => 'ব্যাটারি স্ট্যান্ডবাই', 'value' => '১৪ দিন পর্যন্ত'],
-                        ['key' => 'সেন্সর', 'value' => 'হার্ট রেট, SpO2, স্লিপ ট্র্যাকার']
-                    ]
-                ],
-                'reviews' => [
-                    [
-                        'name' => 'Mark Henderson',
-                        'rating' => 4,
-                        'comment' => [
-                            'en' => 'Excellent AMOLED display, very bright outdoors. Step counts are quite accurate.',
-                            'es' => 'Excelente pantalla AMOLED, muy brillante en exteriores. El conteo de pasos es preciso.',
-                            'ar' => 'شاشة AMOLED ممتازة وواضحة جداً في الخارج. حساب الخطوات دقيق للغاية.',
-                            'bn' => 'চমৎকার অ্যামোলেড ডিসপ্লে, বাইরেও খুব উজ্জ্বল থাকে। স্টেপ কাউন্টার বেশ নির্ভুল।'
-                        ]
-                    ]
+                    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80'
                 ]
             ],
             [
@@ -291,10 +196,10 @@ class DatabaseSeeder extends Seeder
                     'bn' => 'ভ্যানগার্ড অল-ওয়েদার উইন্ডব্রেকার জ্যাকেট'
                 ],
                 'description' => [
-                    'en' => 'A water-resistant, ultra-lightweight windbreaker designed for optimal movement and outdoor protection. Features double-stitch seams and breathable mesh pockets.',
-                    'es' => 'Un chubasquero resistente al agua y ultraligero diseñado para un movimiento óptimo y protección al aire libre. Costuras dobles y bolsillos transpirables.',
-                    'ar' => 'سترة خفيفة الوزن للغاية ومقاومة للماء مصممة لتوفير حركة مثالية وحماية في الهواء الطلق.',
-                    'bn' => 'জল-প্রতিরোধী এবং অত্যন্ত হালকা উইন্ডব্রেকার জ্যাকেট যা চলাচলের সুবিধা এবং বাইরের আবহাওয়া থেকে সুরক্ষা দেয়।'
+                    'en' => 'A water-resistant, ultra-lightweight windbreaker designed for optimal movement.',
+                    'es' => 'Un chubasquero resistente al agua y ultraligero.',
+                    'ar' => 'سترة خفيفة الوزن للغاية ومقاومة للماء.',
+                    'bn' => 'জল-প্রতিরোধী এবং অত্যন্ত হালকা উইন্ডব্রেকার জ্যাকেট।'
                 ],
                 'price' => 79.99,
                 'compare_price' => 99.99,
@@ -303,41 +208,10 @@ class DatabaseSeeder extends Seeder
                 'review_count' => 215,
                 'is_best_seller' => true,
                 'is_new' => false,
+                'is_flash_deal' => true,
                 'images' => [
-                    'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=800&auto=format&fit=crop&q=80',
-                    'https://images.unsplash.com/photo-1548883354-7622d03aca27?w=800&auto=format&fit=crop&q=80'
-                ],
-                'variants' => [
-                    'colors' => [
-                        ['name' => 'Olive Green', 'value' => '#3F4E4F'],
-                        ['name' => 'Navy Blue', 'value' => '#1A2F4C'],
-                        ['name' => 'Sunset Orange', 'value' => '#D97706']
-                    ],
-                    'sizes' => ['S', 'M', 'L', 'XL']
-                ],
-                'specs' => [
-                    'en' => [
-                        ['key' => 'Material', 'value' => '100% Recycled Polyester'],
-                        ['key' => 'Fit', 'value' => 'Regular Athletic Fit'],
-                        ['key' => 'Pocket Styles', 'value' => 'Double zipper with mesh lining']
-                    ],
-                    'es' => [
-                        ['key' => 'Material', 'value' => '100% Poliéster Reciclado'],
-                        ['key' => 'Ajuste', 'value' => 'Ajuste Deportivo Regular'],
-                        ['key' => 'Bolsillos', 'value' => 'Cremallera doble con forro de malla']
-                    ],
-                    'ar' => [
-                        ['key' => 'المادة', 'value' => '100% بوليستر معاد تدويره'],
-                        ['key' => 'الملائمة', 'value' => 'قصة رياضية عادية'],
-                        ['key' => 'الجيوب', 'value' => 'سحاب مزدوج ببطانة شبكية']
-                    ],
-                    'bn' => [
-                        ['key' => 'উপাদান', 'value' => '১০০% রিসাইকেলড পলিয়েস্টার'],
-                        ['key' => 'ফিট', 'value' => 'রেগুলার অ্যাথলেটিক ফিট'],
-                        ['key' => 'পকেট স্টাইল', 'value' => 'ডবল জিপার মেশ লাইনিং সহ']
-                    ]
-                ],
-                'reviews' => []
+                    'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=800&auto=format&fit=crop&q=80'
+                ]
             ],
             [
                 'sku' => 'FA-SN-02',
@@ -351,52 +225,22 @@ class DatabaseSeeder extends Seeder
                     'bn' => 'স্ট্রাইড আরবান রানার স্নিকার্স'
                 ],
                 'description' => [
-                    'en' => 'Crafted with premium breathable knit mesh and a highly cushioned responsive foam midsole. Perfect for daily commutes or long runs.',
-                    'es' => 'Fabricado con malla tejida transpirable premium y una entresuela de espuma amortiguadora y receptiva. Perfecto para el día a día.',
-                    'ar' => 'مصنوع من نسيج شبكي ممتاز يسمح بمرور الهواء ونعل أوسط رغوي مبطن ومستجيب بشكل كبير.',
-                    'bn' => 'প্রিমিয়াম শ্বাসযোগ্য নিট মেশ এবং কুশনযুক্ত ফোম মিডসোল দিয়ে তৈরি। প্রতিদিন যাতায়াত বা দৌড়ানোর জন্য আদর্শ।'
+                    'en' => 'Crafted with premium breathable knit mesh and a highly cushioned responsive foam midsole.',
+                    'es' => 'Fabricado con malla tejida transpirable premium y entresuela de espuma amortiguadora.',
+                    'ar' => 'مصنوع من نسيج شبكي ممتاز ونعل أوسط رغوي مبطن.',
+                    'bn' => 'প্রিমিয়াম নিট মেশ এবং কুশনযুক্ত ফোম মিডসোল দিয়ে তৈরি।'
                 ],
                 'price' => 89.99,
                 'compare_price' => 119.99,
-                'stock' => 0,
+                'stock' => 10,
                 'avg_rating' => 4.5,
                 'review_count' => 42,
                 'is_best_seller' => false,
-                'is_new' => false,
+                'is_new' => true,
+                'is_flash_deal' => true,
                 'images' => [
-                    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
-                    'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80'
-                ],
-                'variants' => [
-                    'colors' => [
-                        ['name' => 'Ruby Red', 'value' => '#DC2626'],
-                        ['name' => 'Minimal Gray', 'value' => '#6B7280']
-                    ],
-                    'sizes' => ['8', '9', '10', '11']
-                ],
-                'specs' => [
-                    'en' => [
-                        ['key' => 'Midsole Technology', 'value' => 'CloudFoam cushioning'],
-                        ['key' => 'Weight', 'value' => '240g per shoe'],
-                        ['key' => 'Upper Material', 'value' => 'Stretch-knit breathable fabric']
-                    ],
-                    'es' => [
-                        ['key' => 'Tecnología de Entresuela', 'value' => 'Amortiguación CloudFoam'],
-                        ['key' => 'Peso', 'value' => '240g por zapato'],
-                        ['key' => 'Parte Superior', 'value' => 'Tejido elástico transpirable'],
-                    ],
-                    'ar' => [
-                        ['key' => 'تقنية النعل الأوسط', 'value' => 'تبطين CloudFoam'],
-                        ['key' => 'الوزن', 'value' => '240 جرام للحذاء الواحد'],
-                        ['key' => 'المادة العلوية', 'value' => 'نسيج مرن يسمح بالتهوية']
-                    ],
-                    'bn' => [
-                        ['key' => 'মিডসোল প্রযুক্তি', 'value' => 'ক্লাউডফোম কুশনিং'],
-                        ['key' => 'ওজন', 'value' => 'প্রতি জুতো ২৪০ গ্রাম'],
-                        ['key' => 'উপরিভাগের উপাদান', 'value' => 'স্ট্রেচ-নিট ফ্যাব্রিক']
-                    ]
-                ],
-                'reviews' => []
+                    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80'
+                ]
             ],
             [
                 'sku' => 'HL-LP-01',
@@ -410,10 +254,10 @@ class DatabaseSeeder extends Seeder
                     'bn' => 'লুমিনায়ার মিনিমালিস্ট ফ্লোর ল্যাম্প'
                 ],
                 'description' => [
-                    'en' => 'Incorporate modern design into your living space with this sleek arc floor lamp. Featuring custom dimmable LED bulb and brushed brass metal base.',
-                    'es' => 'Incorpora el diseño moderno en tu sala con esta elegante lámpara de arco. Cuenta con bombilla LED regulable y base de latón cepillado.',
-                    'ar' => 'أضف لمسة عصرية إلى مساحة المعيشة الخاصة بك مع هذا المصباح الأرضي المقوس والأنيق. يتميز بمصباح LED قابل للتعتيم وقاعدة من النحاس المصقول.',
-                    'bn' => 'আপনার বসার ঘরে আধুনিক ডিজাইন যোগ করুন এই ব্রাশড ব্রাস মেটাল বেসের ফ্লোর ল্যাম্পের সাথে।'
+                    'en' => 'Incorporate modern design into your living space with this sleek arc floor lamp.',
+                    'es' => 'Incorpora el diseño moderno en tu sala con esta elegante lámpara.',
+                    'ar' => 'أضف لمسة عصرية إلى مساحة المعيشة الخاصة بك مع هذا المصباح الأرضي المقوس.',
+                    'bn' => 'আপনার বসার ঘরে আধুনিক ডিজাইন যোগ করুন এই ফ্লোর ল্যাম্পের সাথে।'
                 ],
                 'price' => 149.99,
                 'compare_price' => 179.99,
@@ -422,92 +266,14 @@ class DatabaseSeeder extends Seeder
                 'review_count' => 38,
                 'is_best_seller' => true,
                 'is_new' => true,
+                'is_flash_deal' => false,
                 'images' => [
                     'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=800&auto=format&fit=crop&q=80'
-                ],
-                'variants' => [
-                    'colors' => [
-                        ['name' => 'Brushed Brass', 'value' => '#D97706'],
-                        ['name' => 'Matte Black', 'value' => '#1A1A1A']
-                    ]
-                ],
-                'specs' => [
-                    'en' => [
-                        ['key' => 'Height', 'value' => '185cm'],
-                        ['key' => 'Light Temperature', 'value' => '2700K - 5000K Adjustable'],
-                        ['key' => 'Base Diameter', 'value' => '30cm Solid Metal']
-                    ],
-                    'es' => [
-                        ['key' => 'Altura', 'value' => '185cm'],
-                        ['key' => 'Temperatura de Luz', 'value' => '2700K - 5000K Ajustable'],
-                        ['key' => 'Diámetro de Base', 'value' => '30cm Metal Sólido']
-                    ],
-                    'ar' => [
-                        ['key' => 'الارتفاع', 'value' => '185 سم'],
-                        ['key' => 'درجة حرارة الضوء', 'value' => '2700 كلفن - 5000 كلفن قابلة للتعديل'],
-                        ['key' => 'قطر القاعدة', 'value' => '30 سم معدن صلب']
-                    ],
-                    'bn' => [
-                        ['key' => 'উচ্চতা', 'value' => '১৮৫ সেমি'],
-                        ['key' => 'আলোর তাপমাত্রা', 'value' => '২৭০০K - ৫০০০K অ্যাডজাস্টেবল'],
-                        ['key' => 'বেস ব্যাস', 'value' => '৩০ সেমি সলিড মেটাল']
-                    ]
-                ],
-                'reviews' => []
-            ],
-            [
-                'sku' => 'FO-DB-01',
-                'category_slug' => 'fitness-outdoors',
-                'brand_name' => 'IronCore',
-                'slug' => 'adjustable-workout-dumbbells',
-                'name' => [
-                    'en' => 'IronCore Adjustable Dumbbell Set',
-                    'es' => 'Juego de Mancuernas Ajustables IronCore',
-                    'ar' => 'مجموعة أثقال دامبل الحديدية القابلة للتعديل',
-                    'bn' => 'আয়রনকোর অ্যাডজাস্টেবল ডাম্বেল সেট'
-                ],
-                'description' => [
-                    'en' => 'All-in-one dumbbell solution allowing adjustments from 5 lbs up to 52.5 lbs. Features durable mold plate construction and ergonomic grip handle.',
-                    'es' => 'Solución todo en uno de mancuernas que permite ajustes de 5 a 52.5 libras. Placas moldeadas duraderas y mango de agarre ergonómico.',
-                    'ar' => 'حل متكامل للأثقال يتيح لك التعديل من 5 أرطال إلى 52.5 رطلاً مع مقبض مريح.',
-                    'bn' => '৫ পাউন্ড থেকে ৫২.৫ পাউন্ড পর্যন্ত ওজন পরিবর্তনের সুবিধা সহ অল-ইন-ওয়ান ডাম্বেল সমাধান।'
-                ],
-                'price' => 299.99,
-                'compare_price' => 349.99,
-                'stock' => 8,
-                'avg_rating' => 4.8,
-                'review_count' => 75,
-                'is_best_seller' => true,
-                'is_new' => false,
-                'images' => [
-                    'https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?w=800&auto=format&fit=crop&q=80',
-                    'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80'
-                ],
-                'variants' => [
-                    'sizes' => ['Single (52.5 lbs)', 'Pair (105 lbs)']
-                ],
-                'specs' => [
-                    'en' => [
-                        ['key' => 'Weight Increment', 'value' => '5, 7.5, 10, 12.5, 15, 17.5, 20... lbs'],
-                        ['key' => 'Core Grip Material', 'value' => 'Textured Chrome Alloy']
-                    ],
-                    'es' => [
-                        ['key' => 'Incremento de Peso', 'value' => '5, 7.5, 10, 12.5, 15, 17.5, 20... libras'],
-                        ['key' => 'Material de Agarre', 'value' => 'Aleación de cromo texturizado']
-                    ],
-                    'ar' => [
-                        ['key' => 'زيادات الوزن', 'value' => '5، 7.5، 10، 12.5، 15، 17.5، 20... رطل'],
-                        ['key' => 'مادة المقبض الرئيسية', 'value' => 'سبائك كروم منسوجة']
-                    ],
-                    'bn' => [
-                        ['key' => 'ওজন ইনক্রিমেন্ট', 'value' => '৫, ৭.৫, ১০, ১২.৫, ১৫, ১৭.৫, ২০... পাউন্ড'],
-                        ['key' => 'গ্রিপের উপাদান', 'value' => 'টেক্সচার্ড ক্রোম অ্যালয়']
-                    ]
-                ],
-                'reviews' => []
+                ]
             ]
         ];
 
+        $createdProducts = [];
         foreach ($productsData as $prodData) {
             $brand = $brands[$prodData['brand_name']];
             $category = $categories[$prodData['category_slug']];
@@ -524,12 +290,13 @@ class DatabaseSeeder extends Seeder
                 'stock' => $prodData['stock'],
                 'avg_rating' => $prodData['avg_rating'],
                 'review_count' => $prodData['review_count'],
-                'specs' => $prodData['specs'],
                 'is_best_seller' => $prodData['is_best_seller'],
-                'is_new' => $prodData['is_new']
+                'is_new' => $prodData['is_new'],
+                'is_flash_deal' => $prodData['is_flash_deal']
             ]);
 
-            // Seed images
+            $createdProducts[] = $product;
+
             foreach ($prodData['images'] as $idx => $imgPath) {
                 ProductImage::create([
                     'product_id' => $product->id,
@@ -538,191 +305,323 @@ class DatabaseSeeder extends Seeder
                     'is_primary' => $idx === 0
                 ]);
             }
-
-            // Seed variants
-            $variants = $prodData['variants'];
-            if (isset($variants['colors']) && count($variants['colors']) > 0 && isset($variants['sizes']) && count($variants['sizes']) > 0) {
-                foreach ($variants['colors'] as $color) {
-                    foreach ($variants['sizes'] as $size) {
-                        ProductVariant::create([
-                            'product_id' => $product->id,
-                            'sku' => $product->sku . '-' . strtoupper(str_replace(' ', '', $color['name'])) . '-' . $size,
-                            'attribute_set' => ['color' => $color['name'], 'color_val' => $color['value'], 'size' => $size],
-                            'stock' => 5
-                        ]);
-                    }
-                }
-            } elseif (isset($variants['colors']) && count($variants['colors']) > 0) {
-                foreach ($variants['colors'] as $color) {
-                    ProductVariant::create([
-                        'product_id' => $product->id,
-                        'sku' => $product->sku . '-' . strtoupper(str_replace(' ', '', $color['name'])),
-                        'attribute_set' => ['color' => $color['name'], 'color_val' => $color['value']],
-                        'stock' => 5
-                    ]);
-                }
-            } elseif (isset($variants['sizes']) && count($variants['sizes']) > 0) {
-                foreach ($variants['sizes'] as $size) {
-                    ProductVariant::create([
-                        'product_id' => $product->id,
-                        'sku' => $product->sku . '-' . strtoupper(str_replace(' ', '', $size)),
-                        'attribute_set' => ['size' => $size],
-                        'stock' => 5
-                    ]);
-                }
-            }
-
-            // Seed reviews
-            foreach ($prodData['reviews'] as $revData) {
-                Review::create([
-                    'product_id' => $product->id,
-                    'user_id' => null, // guest review
-                    'rating' => $revData['rating'],
-                    'comment' => $revData['comment'],
-                    'images' => [],
-                    'is_approved' => true
-                ]);
-            }
         }
 
-        // 5. Seed Coupons
-        Coupon::create([
-            'code' => 'NUVARA20',
-            'type' => 'percent',
-            'value' => 20.00,
-            'min_order' => 0.00,
-        ]);
-        Coupon::create([
-            'code' => 'FREESHIP',
-            'type' => 'free_shipping',
-            'value' => 0.00,
-            'min_order' => 150.00,
-        ]);
-        Coupon::create([
-            'code' => 'WELCOME10',
-            'type' => 'flat',
-            'value' => 10.00,
-            'min_order' => 50.00,
+        // 5. Seed Banners (Hero Sliders & Promotional Banner)
+        Banner::create([
+            'type' => 'hero_slider',
+            'title' => ['en' => 'Exclusive Sale', 'es' => 'Venta Exclusiva', 'ar' => 'بيع حصري', 'bn' => 'এক্সক্লুসিভ সেল'],
+            'badge' => 'EXCLUSIVE',
+            'badge_text' => 'Sale',
+            'headline' => ['en' => 'Happening Now!', 'es' => '¡Sucediendo Ahora!', 'ar' => 'يحدث الآن!', 'bn' => 'এখনই চলছে!'],
+            'sub' => [
+                'en' => 'Discover amazing deals and discounts on our eCommerce website! Shop now for the best offers!',
+                'es' => '¡Descubra increíbles ofertas y descuentos en nuestro sitio web!',
+                'ar' => 'اكتشف عروضًا وخصومات مذهلة على موقعنا الإلكتروني!',
+                'bn' => 'আমাদের ওয়েবসাইটে সেরা অফার ও ডিসকাউন্ট উপভোগ করুন! এখনই কেনাকাটা করুন!'
+            ],
+            'button_text' => ['en' => 'SHOP NOW', 'es' => 'COMPRAR AHORA', 'ar' => 'تسوق الآن', 'bn' => 'এখনই কিনুন'],
+            'link' => '/category/electronics',
+            'bg_gradient' => 'from-[#FDE047] via-[#FACC15] to-[#EAB308]',
+            'text_color' => 'text-gray-950',
+            'badge_bg' => 'bg-white text-black font-black uppercase tracking-wider px-3.5 py-1.5 rounded-md shadow-md text-xs sm:text-sm inline-block',
+            'btn_style' => 'bg-black text-white hover:bg-gray-800 shadow-2xl border-none font-black uppercase tracking-wider px-8 py-3.5 rounded-xl text-sm',
+            'image' => 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
+            'product_id' => $createdProducts[0]->id ?? null,
+            'sort_order' => 1,
+            'status' => true
         ]);
 
-        // 6. Seed Demo Orders for Analytics Graphs
-        $user = User::where('role', 'user')->first();
-        if ($user) {
-            $products = Product::all();
-            
-            // Seed daily orders (for last 7 days)
-            $dayAmounts = [180.00, 310.00, 240.00, 420.00, 290.00, 580.00, 610.00];
-            for ($i = 0; $i < 7; $i++) {
-                $orderDate = now()->subDays(6 - $i);
-                $total = $dayAmounts[$i];
-                $order = \App\Models\Order::create([
-                    'user_id' => $user->id,
-                    'order_number' => 'NVR-' . strtoupper(uniqid()),
-                    'status' => 'delivered',
-                    'subtotal' => $total - 15.00,
-                    'discount' => 0.00,
-                    'shipping_fee' => 15.00,
-                    'total' => $total,
-                    'currency' => 'USD',
-                    'locale' => 'en',
-                    'shipping_name' => $user->name,
-                    'shipping_address' => '128 Pinecrest Ave',
-                    'shipping_city' => 'San Francisco',
-                    'shipping_state' => 'CA',
-                    'shipping_zip' => '94110',
-                    'shipping_country' => 'USA',
-                    'created_at' => $orderDate,
-                    'updated_at' => $orderDate
-                ]);
-                
-                $product = $products->random();
-                \App\Models\OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $product->id,
-                    'quantity' => 1,
-                    'unit_price' => $total - 15.00,
-                    'total' => $total - 15.00,
-                    'variant_id' => null,
-                    'created_at' => $orderDate,
-                    'updated_at' => $orderDate
-                ]);
-            }
+        Banner::create([
+            'type' => 'hero_slider',
+            'title' => ['en' => 'New Arrival Audio Pro', 'es' => 'Audio Pro', 'ar' => 'أوديو برو', 'bn' => 'অডিও প্রো'],
+            'badge' => 'NEW ARRIVAL',
+            'badge_text' => 'Audio Pro',
+            'headline' => ['en' => 'Next-Gen Wireless Sound', 'es' => 'Sonido Inalámbrico de Última Generación', 'ar' => 'صوت لاسلكي من الجيل التالي', 'bn' => 'নেক্সট-জেন ওয়্যারলেস সাউন্ড'],
+            'sub' => [
+                'en' => 'Immerse yourself in crystal clear studio audio with ultra active noise cancellation.',
+                'es' => 'Sumérgete en audio de estudio cristalino con cancelación activa de ruido.',
+                'ar' => 'انغمس في صوت الاستوديو الكريستالي النقي مع إلغاء الضوضاء النشط.',
+                'bn' => 'অ্যাক্টিভ নয়েজ ক্যান্সেলেশন সহ ক্রিস্টাল ক্লিয়ার স্টুডিও সাউন্ডের অনুভূতি পান।'
+            ],
+            'button_text' => ['en' => 'EXPLORE DEAL', 'es' => 'EXPLORAR OFERTA', 'ar' => 'استكشف العرض', 'bn' => 'অফার দেখুন'],
+            'link' => '/product/wireless-noise-canceling-headphones',
+            'bg_gradient' => 'from-[#10B981] via-[#059669] to-[#047857]',
+            'text_color' => 'text-white',
+            'badge_bg' => 'bg-emerald-300 text-emerald-950 font-black uppercase tracking-wider px-3.5 py-1.5 rounded-md shadow-md text-xs sm:text-sm inline-block',
+            'btn_style' => 'bg-white text-emerald-950 hover:bg-emerald-50 shadow-2xl border-none font-black uppercase tracking-wider px-8 py-3.5 rounded-xl text-sm',
+            'image' => 'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&auto=format&fit=crop&q=80',
+            'product_id' => $createdProducts[0]->id ?? null,
+            'sort_order' => 2,
+            'status' => true
+        ]);
 
-            // Seed historical monthly orders (for last 6 months)
-            $monthAmounts = [2400.00, 3100.00, 1800.00, 4500.00, 3800.00, 5800.00];
-            for ($i = 0; $i < 6; $i++) {
-                $orderDate = now()->subMonths(5 - $i);
-                $total = $monthAmounts[$i];
-                $order = \App\Models\Order::create([
-                    'user_id' => $user->id,
-                    'order_number' => 'NVR-M-' . strtoupper(uniqid()),
-                    'status' => 'delivered',
-                    'subtotal' => $total - 10.00,
-                    'discount' => 0.00,
-                    'shipping_fee' => 10.00,
-                    'total' => $total,
-                    'currency' => 'USD',
-                    'locale' => 'en',
-                    'shipping_name' => $user->name,
-                    'shipping_address' => '128 Pinecrest Ave',
-                    'shipping_city' => 'San Francisco',
-                    'shipping_state' => 'CA',
-                    'shipping_zip' => '94110',
-                    'shipping_country' => 'USA',
-                    'created_at' => $orderDate,
-                    'updated_at' => $orderDate
-                ]);
-                
-                $product = $products->random();
-                \App\Models\OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $product->id,
-                    'quantity' => 1,
-                    'unit_price' => $total - 10.00,
-                    'total' => $total - 10.00,
-                    'variant_id' => null,
-                    'created_at' => $orderDate,
-                    'updated_at' => $orderDate
-                ]);
-            }
+        Banner::create([
+            'type' => 'hero_slider',
+            'title' => ['en' => 'Hot Deal Style', 'es' => 'Estilo', 'ar' => 'أناقة', 'bn' => 'স্টাইল'],
+            'badge' => 'HOT DEAL',
+            'badge_text' => 'Style',
+            'headline' => ['en' => 'Urban Lifestyle Fashion', 'es' => 'Moda de Estilo de Vida Urbano', 'ar' => 'أزياء نمط الحياة الحضري', 'bn' => 'আরবান লাইফস্টাইল ফ্যাশন'],
+            'sub' => [
+                'en' => 'Step out in confidence with our premium crafted street footwear & boutique fashion trends.',
+                'es' => 'Camina con confianza con nuestro calzado urbano de primera calidad y moda boutique.',
+                'ar' => 'انطلق بثقة مع أحذيتنا الأنيقة المصنوعة بجودة عالية واتجاهات الموضة الراقية.',
+                'bn' => 'প্রিমিয়াম স্ট্রিট ফুটওয়্যার এবং বুটিক ফ্যাশন ট্রেন্ডের সাথে আত্মবিশ্বাসের সাথে পথ চলুন।'
+            ],
+            'button_text' => ['en' => 'SHOP FASHION', 'es' => 'COMPRAR MODA', 'ar' => 'تسوق الأزياء', 'bn' => 'ফ্যাশন শপ'],
+            'link' => '/category/fashion',
+            'bg_gradient' => 'from-[#F43F5E] via-[#E11D48] to-[#BE123C]',
+            'text_color' => 'text-white',
+            'badge_bg' => 'bg-white text-rose-950 font-black uppercase tracking-wider px-3.5 py-1.5 rounded-md shadow-md text-xs sm:text-sm inline-block',
+            'btn_style' => 'bg-gray-950 text-white hover:bg-gray-900 shadow-2xl border-none font-black uppercase tracking-wider px-8 py-3.5 rounded-xl text-sm',
+            'image' => 'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=800&auto=format&fit=crop&q=80',
+            'product_id' => $createdProducts[2]->id ?? null,
+            'sort_order' => 3,
+            'status' => true
+        ]);
 
-            // Seed historical yearly orders (for last 3 years)
-            $yearAmounts = [24000.00, 38000.00, 54000.00];
-            for ($i = 0; $i < 3; $i++) {
-                $orderDate = now()->subYears(2 - $i);
-                $total = $yearAmounts[$i];
-                $order = \App\Models\Order::create([
-                    'user_id' => $user->id,
-                    'order_number' => 'NVR-Y-' . strtoupper(uniqid()),
-                    'status' => 'delivered',
-                    'subtotal' => $total - 10.00,
-                    'discount' => 0.00,
-                    'shipping_fee' => 10.00,
-                    'total' => $total,
-                    'currency' => 'USD',
-                    'locale' => 'en',
-                    'shipping_name' => $user->name,
-                    'shipping_address' => '128 Pinecrest Ave',
-                    'shipping_city' => 'San Francisco',
-                    'shipping_state' => 'CA',
-                    'shipping_zip' => '94110',
-                    'shipping_country' => 'USA',
-                    'created_at' => $orderDate,
-                    'updated_at' => $orderDate
-                ]);
-                
-                $product = $products->random();
-                \App\Models\OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $product->id,
-                    'quantity' => 1,
-                    'unit_price' => $total - 10.00,
-                    'total' => $total - 10.00,
-                    'variant_id' => null,
-                    'created_at' => $orderDate,
-                    'updated_at' => $orderDate
-                ]);
-            }
+        Banner::create([
+            'type' => 'promo_banner',
+            'title' => ['en' => 'Limited Edition Decor', 'es' => 'Decoración de Edición Limitada', 'ar' => 'ديكور طبعة محدودة', 'bn' => 'লিমিতেড এডিশন ডেকোর'],
+            'badge' => 'LIMITED EDITION',
+            'badge_text' => 'Decor',
+            'headline' => ['en' => 'Modern Living & Home Collection', 'es' => 'Colección de Hogar y Vida Moderna', 'ar' => 'تشكيلة المنزل والمعيشة العصرية', 'bn' => 'মডার্ন লিভিং ও হোম কালেকশন'],
+            'sub' => [
+                'en' => 'Redefine your living space with minimal aesthetic lighting and smart home accessories.',
+                'es' => 'Redefina su espacio vital con iluminación estética mínima y accesorios para el hogar inteligente.',
+                'ar' => 'أعد تعريف مساحة معيشتك مع إضاءة جمالية بسيطة وإكسسوارات منزلية ذكية.',
+                'bn' => 'ন্যূনতম নান্দনিক লাইটিং এবং স্মার্ট হোম এক্সেসরিজ সহ আপনার থাকার জায়গাটি পুনর্নির্মাণ করুন।'
+            ],
+            'button_text' => ['en' => 'EXPLORE COLLECTION', 'es' => 'EXPLORAR COLECCIÓN', 'ar' => 'استكشف التشكيلة', 'bn' => 'কালেকশন দেখুন'],
+            'link' => '/category/home-living',
+            'image' => 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1200&auto=format&fit=crop&q=80',
+            'sort_order' => 1,
+            'status' => true
+        ]);
+
+        // 6. Seed Trust Features
+        TrustFeature::create([
+            'feature_key' => 'free_shipping',
+            'title' => ['en' => 'Free Shipping', 'es' => 'Envío Gratis', 'ar' => 'شحن مجاني', 'bn' => 'ফ্রি শিপিং'],
+            'sub' => ['en' => 'Free shipping on orders over $150', 'es' => 'Envío gratis en pedidos superiores a $150', 'ar' => 'شحن مجاني للطلبات فوق 150 دولار', 'bn' => '১৫০ ডলারের উপরে অর্ডারে ফ্রি শিপিং'],
+            'icon' => 'Truck',
+            'icon_color' => 'text-emerald-500 dark:text-emerald-400',
+            'bg_color' => 'bg-emerald-500/10 dark:bg-emerald-500/15',
+            'sort_order' => 1,
+            'status' => true
+        ]);
+
+        TrustFeature::create([
+            'feature_key' => 'secure_payment',
+            'title' => ['en' => '100% Secure Payment', 'es' => 'Pago 100% Seguro', 'ar' => 'دفع آمن 100%', 'bn' => '১০০% নিরাপদ পেমেন্ট'],
+            'sub' => ['en' => 'Protected by 256-bit encryption', 'es' => 'Protegido por cifrado de 256 bits', 'ar' => 'محمي بتشفير 256 بت', 'bn' => '২৫৬-বিট এনক্রিপশন দ্বারা সুরক্ষিত'],
+            'icon' => 'ShieldCheck',
+            'icon_color' => 'text-amber-500 dark:text-amber-400',
+            'bg_color' => 'bg-amber-500/10 dark:bg-amber-500/15',
+            'sort_order' => 2,
+            'status' => true
+        ]);
+
+        TrustFeature::create([
+            'feature_key' => 'easy_returns',
+            'title' => ['en' => 'Easy 30-Day Returns', 'es' => 'Devolución Fácil 30 Días', 'ar' => 'إرجاع سهل خلال 30 يومًا', 'bn' => 'সহজ ৩০ দিনের রিটার্ন'],
+            'sub' => ['en' => 'Hassle-free return policy', 'es' => 'Política de devolución sin complicaciones', 'ar' => 'سياسة إرجاع خالية من المتاعب', 'bn' => 'ঝামেলামুক্ত রিটার্ন পলিসি'],
+            'icon' => 'RefreshCw',
+            'icon_color' => 'text-blue-500 dark:text-blue-400',
+            'bg_color' => 'bg-blue-500/10 dark:bg-blue-500/15',
+            'sort_order' => 3,
+            'status' => true
+        ]);
+
+        TrustFeature::create([
+            'feature_key' => 'support',
+            'title' => ['en' => '24/7 Support', 'es' => 'Soporte 24/7', 'ar' => 'دعم على مدار الساعة 24/7', 'bn' => '২৪/৭ সার্বক্ষণিক সহায়তা'],
+            'sub' => ['en' => 'Dedicated customer helpdesk', 'es' => 'Mesa de ayuda al cliente dedicada', 'ar' => 'مكتب مساعدة عملاء مخصص', 'bn' => 'ডেডিকেটেড কাস্টমার হেল্পডেস্ক'],
+            'icon' => 'Headphones',
+            'icon_color' => 'text-purple-500 dark:text-purple-400',
+            'bg_color' => 'bg-purple-500/10 dark:bg-purple-500/15',
+            'sort_order' => 4,
+            'status' => true
+        ]);
+
+        // 7. Seed Flash Sales Campaign
+        FlashSale::create([
+            'title' => ['en' => 'Flash Deals of the Week', 'es' => 'Ofertas Flash de la Semana', 'ar' => 'عروض ترويجية للأسبوع', 'bn' => 'সপ্তাহের ফ্লাশ ডিল'],
+            'ends_at' => now()->addHours(4)->addMinutes(34)->addSeconds(12),
+            'discount_label' => 'Up to 30% OFF',
+            'status' => true
+        ]);
+
+        // 8. Seed Customer Testimonials
+        Testimonial::create([
+            'name' => 'Israt Jahan',
+            'rating' => 5,
+            'quote' => [
+                'en' => 'Nuvara completely changed my online shopping experience. Shipping was fast and the quality was top-notch.',
+                'es' => 'Nuvara cambió por completo mi experiencia de compra. El envío fue rápido y la calidad de primera.',
+                'ar' => 'غيّرت نوفارا تجربتي في التسوق عبر الإنترنت تمامًا. الشحن كان سريعًا والجودة كانت ممتازة.',
+                'bn' => 'নোভারা আমার অনলাইন শপিংয়ের অভিজ্ঞতা পুরোপুরি বদলে দিয়েছে। খুব দ্রুত শিপিং পেয়েছি এবং কোয়ালিটি ছিল দারুণ।'
+            ],
+            'is_featured' => true,
+            'sort_order' => 1,
+            'status' => true
+        ]);
+
+        Testimonial::create([
+            'name' => 'Diego R.',
+            'rating' => 5,
+            'quote' => [
+                'en' => 'The customer service team is incredibly helpful, and the Arabic font support made checkout so natural.',
+                'es' => 'El servicio al cliente es excelente y la facilidad de pago fue impresionante.',
+                'ar' => 'فريق خدمة العملاء متعاون للغاية، ودعم اللغة العربية جعل تجربة الدفع طبيعية وسهلة.',
+                'bn' => 'গ্রাহক সেবা দল অত্যন্ত সাহায্যকারী এবং ড্যাশবোর্ডটি ব্যবহার করা খুবই সহজ ছিল।'
+            ],
+            'is_featured' => true,
+            'sort_order' => 2,
+            'status' => true
+        ]);
+
+        // 9. Seed Coupons
+        Coupon::create(['code' => 'NUVARA20', 'type' => 'percent', 'value' => 20.00, 'min_order' => 0.00]);
+        Coupon::create(['code' => 'FREESHIP', 'type' => 'free_shipping', 'value' => 0.00, 'min_order' => 150.00]);
+        Coupon::create(['code' => 'WELCOME10', 'type' => 'flat', 'value' => 10.00, 'min_order' => 50.00]);
+
+        // 10. Seed About Us Dynamic Content
+        \App\Models\PageContent::updateOrCreate(
+            ['page_key' => 'about'],
+            [
+                'content' => [
+                    'hero_badge' => ['en' => 'Established 2026 • Global Commerce', 'bn' => 'প্রতিষ্ঠিত ২০২৬ • গ্লোবাল কমার্স'],
+                    'hero_title' => ['en' => 'Redefining Localized E-Commerce Worldwide', 'bn' => 'বিশ্বজুড়ে রিডিফাইনিং লোকালাইজড ই-কমার্স'],
+                    'hero_subtitle' => [
+                        'en' => 'At Nuvara, we bridge cultural boundaries through intelligent multi-language support, seamless right-to-left document flow, and curated high-fidelity product offerings.',
+                        'bn' => 'নোভারাতে, আমরা বুদ্ধিমান বহুধাবিধ ভাষা সহায়তা, মসৃণ রাইট-টু-লেফ্ট পেজ এবং মানসম্পন্ন প্রোডাক্টের মাধ্যমে সাংস্কৃতিক দূরত্ব দূর করি।'
+                    ],
+                    'stats' => [
+                        ['label' => ['en' => 'Global Customers', 'bn' => 'বিশ্বব্যাপী গ্রাহক'], 'value' => '150,000+', 'icon' => 'Users', 'color' => 'text-amber-500 bg-amber-500/10'],
+                        ['label' => ['en' => 'Satisfaction Rate', 'bn' => 'সন্তুষ্টির হার'], 'value' => '99.8%', 'icon' => 'Award', 'color' => 'text-emerald-500 bg-emerald-500/10'],
+                        ['label' => ['en' => 'Supported Languages', 'bn' => 'সমর্থিত ভাষা'], 'value' => '4 Native', 'icon' => 'Globe', 'color' => 'text-indigo-500 bg-indigo-500/10'],
+                        ['label' => ['en' => 'Quality Guarantee', 'bn' => 'গুণমানের গ্যারান্টি'], 'value' => '30-Day', 'icon' => 'ShieldCheck', 'color' => 'text-rose-500 bg-rose-500/10']
+                    ],
+                    'story_title' => ['en' => 'Borderlessly Connecting Buyers & Premium Brands', 'bn' => 'সীমানাহীনভাবে যুক্ত করছে ক্রেতা ও প্রিমিয়াম ব্র্যান্ড'],
+                    'story_body' => [
+                        'en' => 'Founded with the vision that online shopping should never feel foreign or clunky, Nuvara was engineered from the ground up to support instant multi-locale switching, right-to-left layout perfection, and transparent localized pricing.',
+                        'bn' => 'অনলাইন কেনাকাটা যাতে কখনও অপরিচিত মনে না হয় সেই লক্ষ্য নিয়ে গঠিত, নোভারা শুরু থেকেই তাৎক্ষণিক বহু-ভাষা এবং বিশ্বস্ত কেনাকাটার সুবিধা দিচ্ছে।'
+                    ],
+                    'team' => [
+                        [
+                            'name' => 'Elena Vance',
+                            'role' => ['en' => 'Founder & CEO', 'bn' => 'প্রতিষ্ঠাতা ও সিইও'],
+                            'image' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+                            'bio' => ['en' => 'Pioneering global digital commerce with a focus on native user experiences.', 'bn' => 'ইউজার এক্সপেরিয়েন্সের সাথে আন্তর্জাতিক ডিজিটাল বাণিজ্য পরিচালনা।']
+                        ],
+                        [
+                            'name' => 'Marcus Chen',
+                            'role' => ['en' => 'Head of Product Design', 'bn' => 'প্রধান প্রোডাক্ট ডিজাইন'],
+                            'image' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+                            'bio' => ['en' => 'Crafting minimalist, intuitive interfaces tailored for diverse worldwide cultures.', 'bn' => 'বিশ্বব্যাপী সংস্কৃতির জন্য মিনিমালিস্ট ইন্টারফেস তৈরি করছেন।']
+                        ],
+                        [
+                            'name' => 'Aisha Al-Mansoor',
+                            'role' => ['en' => 'Chief Technology Officer', 'bn' => 'প্রধান প্রযুক্তি কর্মকর্তা'],
+                            'image' => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80',
+                            'bio' => ['en' => 'Building ultra-resilient, lightning-fast architecture for international scale.', 'bn' => 'আন্তর্জাতিক স্কেলের জন্য অত্যন্ত দ্রুত আর্কিটেকচার তৈরি করছেন।']
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        // 11. Seed Contact Dynamic Content
+        \App\Models\PageContent::updateOrCreate(
+            ['page_key' => 'contact'],
+            [
+                'content' => [
+                    'hero_badge' => ['en' => '24/7 Multilingual Support Hub', 'bn' => '২৪/৭ বহুমুখী সাহায্য কেন্দ্র'],
+                    'hero_title' => ['en' => 'Get In Touch With Us', 'bn' => 'আমাদের সাথে যোগাযোগ করুন'],
+                    'hero_subtitle' => [
+                        'en' => 'Have a question about an order, localized payments, or custom boutique recommendations? Our global team is here to help anytime.',
+                        'bn' => 'অর্ডার বা পেমেন্ট সংক্রান্ত প্রশ্ন আছে? আমাদের সাপোর্ট টিম আপনাকে সাহায্য করতে প্রস্তুত।'
+                    ],
+                    'cards' => [
+                        [
+                            'title' => ['en' => 'Customer Support', 'bn' => 'কাস্টমার সাপোর্ট'],
+                            'value' => 'support@nuvara.com',
+                            'sub' => ['en' => 'Response within 2 hours', 'bn' => '২ ঘণ্টার মধ্যে উত্তর'],
+                            'icon' => 'Mail',
+                            'color' => 'text-blue-500 bg-blue-500/10'
+                        ],
+                        [
+                            'title' => ['en' => 'Direct Hotline', 'bn' => 'হটলাইন নম্বর'],
+                            'value' => '+1 (800) 555-NUVARA',
+                            'sub' => ['en' => 'Mon - Sun, 24/7 Hotline', 'bn' => 'সোম - রবি, ২৪/৭ হটলাইন'],
+                            'icon' => 'Phone',
+                            'color' => 'text-emerald-500 bg-emerald-500/10'
+                        ],
+                        [
+                            'title' => ['en' => 'Headquarters', 'bn' => 'প্রধান কার্যালয়'],
+                            'value' => 'San Francisco, CA',
+                            'sub' => ['en' => '100 Embassy Row, Suite 400', 'bn' => '১০০ এম্বাসি রো, স্যুট ৪০০'],
+                            'icon' => 'MapPin',
+                            'color' => 'text-indigo-500 bg-indigo-500/10'
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        // 12. Seed Dynamic FAQs
+        $faqsData = [
+            [
+                'category' => 'shipping',
+                'question' => ['en' => 'What countries does Nuvara ship to?', 'bn' => 'নোভারা কোন কোন দেশে শিপিং করে?'],
+                'answer' => [
+                    'en' => 'Nuvara delivers worldwide to over 140 countries with express tracked shipping partners including DHL, FedEx, and localized regional postal networks.',
+                    'bn' => 'নোভারা ডিএইচএল এবং ফেডেক্স সহ বিশ্বস্ত আন্তর্জাতিক শিপিং পার্টনারদের মাধ্যমে ১৪০টিরও বেশি দেশে ডেলিভারি প্রদান করে।'
+                ],
+                'sort_order' => 1
+            ],
+            [
+                'category' => 'shipping',
+                'question' => ['en' => 'How can I track my live order dispatch status?', 'bn' => 'আমি কীভাবে আমার অর্ডারের লাইভ ট্র্যাকিং চেক করব?'],
+                'answer' => [
+                    'en' => 'Once your package leaves our fulfillment hubs, you will receive an automated email and SMS notification containing a unique live tracking URL link.',
+                    'bn' => 'প্যাকেজটি শিপমেন্ট সেন্টারের থেকে বের হওয়া মাত্রই একটি ট্র্যাকিং লিংকসহ ইমেইল পাবেন।'
+                ],
+                'sort_order' => 2
+            ],
+            [
+                'category' => 'returns',
+                'question' => ['en' => 'What is your hassle-free 30-day return policy?', 'bn' => '৩০ দিনের রিটার্ন পলিসি কীভাবে কাজ করে?'],
+                'answer' => [
+                    'en' => 'If you are not 100% satisfied with your item, you can initiate a zero-cost return request within 30 days of package receipt in your account dashboard.',
+                    'bn' => 'আপনি যদি প্রোডাক্ট নিয়ে সন্তুষ্ট না হন, তবে প্যাকেজ গ্রহণের ৩০ দিনের মধ্যে সম্পূর্ণ বিনামূল্যে রিটার্ন রিকুয়েস্ট দিতে পারেন।'
+                ],
+                'sort_order' => 3
+            ],
+            [
+                'category' => 'payment',
+                'question' => ['en' => 'What localized payment methods do you support?', 'bn' => 'আপনারা কোন কোন পেমেন্ট পদ্ধতি সমর্থন করেন?'],
+                'answer' => [
+                    'en' => 'We accept all major global credit cards (Visa, Mastercard, Amex), Apple Pay, Google Pay, bKash, and local cash on delivery (COD).',
+                    'bn' => 'আমরা ভিসা, মাস্টারকার্ড, বিকাশ, অ্যাপল পে এবং ক্যাশ অন ডেলিভারি সাপোর্ট করি।'
+                ],
+                'sort_order' => 4
+            ],
+            [
+                'category' => 'general',
+                'question' => ['en' => 'How does Right-to-Left (RTL) mode work on Nuvara?', 'bn' => 'রাইট-টু-লেফ্ট (RTL) মোড কীভাবে কাজ করে?'],
+                'answer' => [
+                    'en' => 'Selecting Arabic (العربية) from the header language dropdown automatically mirrors the entire layout, icons, and menus natively for seamless reading.',
+                    'bn' => 'হেডারের ভাষা থেকে আরবি নির্বাচন করলে সম্পূর্ণ ওয়েবসাইটটি স্বয়ংক্রিয়ভাবে ডান-থেকে-বামে রূপান্তরিত হয়।'
+                ],
+                'sort_order' => 5
+            ]
+        ];
+
+        foreach ($faqsData as $faq) {
+            \App\Models\Faq::create($faq);
         }
     }
 }
+

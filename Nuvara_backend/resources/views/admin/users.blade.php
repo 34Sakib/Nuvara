@@ -18,12 +18,12 @@
             @csrf
             <div>
                 <label class="block text-[10px] font-bold text-brass uppercase tracking-wider mb-2">Full Name</label>
-                <input type="text" name="name" required placeholder="John Doe" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
+                <input type="text" name="name" required placeholder="Your Name" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
             </div>
             
             <div>
                 <label class="block text-[10px] font-bold text-brass uppercase tracking-wider mb-2">Email Address</label>
-                <input type="email" name="email" required placeholder="john.doe@example.com" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
+                <input type="email" name="email" required placeholder="Your Email" class="w-full px-4 py-2.5 rounded-lg border border-border bg-black/40 text-sm focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass text-gray-200">
             </div>
 
             <div>
