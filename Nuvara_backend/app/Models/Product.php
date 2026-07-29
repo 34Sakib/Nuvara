@@ -9,7 +9,7 @@ class Product extends Model
     protected $fillable = [
         'sku', 'category_id', 'brand_id', 'slug', 'name', 'description', 
         'price', 'compare_price', 'stock', 'status', 'avg_rating', 'review_count', 
-        'specs', 'is_best_seller', 'is_new'
+        'specs', 'is_best_seller', 'is_new', 'is_flash_deal'
     ];
 
     protected $casts = [
@@ -18,6 +18,7 @@ class Product extends Model
         'specs' => 'array',
         'is_best_seller' => 'boolean',
         'is_new' => 'boolean',
+        'is_flash_deal' => 'boolean',
         'price' => 'float',
         'compare_price' => 'float',
         'avg_rating' => 'float',

@@ -9,10 +9,19 @@ use App\Http\Controllers\Api\V1\ReviewController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\NewsletterController;
 use App\Http\Controllers\Api\V1\CouponController;
-
 use App\Http\Controllers\Api\V1\AddressController;
+use App\Http\Controllers\Api\V1\HomeController;
+use App\Http\Controllers\Api\V1\PageController;
 
 Route::prefix('v1')->group(function () {
+    // Dynamic Homepage aggregate endpoint
+    Route::get('/home', [HomeController::class, 'index']);
+
+    // Dynamic Pages
+    Route::get('/pages/about', [PageController::class, 'about']);
+    Route::get('/pages/contact', [PageController::class, 'contact']);
+    Route::get('/pages/faq', [PageController::class, 'faq']);
+
     // Categories
     Route::get('/categories', [CategoryController::class, 'index']);
 

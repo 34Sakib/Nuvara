@@ -125,16 +125,28 @@
 <script>
     // Injected datasets from Laravel controller context
     const datasetDay = {
-        labels: {!! json_encode($dayLabels) !!},
-        values: {!! json_encode($dayValues) !!}
+        labels: {
+            !!json_encode($dayLabels) !!
+        },
+        values: {
+            !!json_encode($dayValues) !!
+        }
     };
     const datasetMonth = {
-        labels: {!! json_encode($monthLabels) !!},
-        values: {!! json_encode($monthValues) !!}
+        labels: {
+            !!json_encode($monthLabels) !!
+        },
+        values: {
+            !!json_encode($monthValues) !!
+        }
     };
     const datasetYear = {
-        labels: {!! json_encode($yearLabels) !!},
-        values: {!! json_encode($yearValues) !!}
+        labels: {
+            !!json_encode($yearLabels) !!
+        },
+        values: {
+            !!json_encode($yearValues) !!
+        }
     };
 
     let activeChart = null;

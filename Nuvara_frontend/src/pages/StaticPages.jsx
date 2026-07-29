@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
@@ -7,46 +7,55 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { SectionDivider } from '../components/ui/SectionDivider';
 import { useToastStore } from '../store/toastStore';
+import { useLocaleStore } from '../store/localeStore';
+
+const API_BASE_URL = 'http://127.0.0.1:8000/api/v1';
+
+const ICON_MAP = {
+  Users: Users,
+  Award: Award,
+  Globe: Globe,
+  ShieldCheck: ShieldCheck,
+  Zap: Zap,
+  HeartHandshake: HeartHandshake,
+  Mail: Mail,
+  Phone: Phone,
+  MapPin: MapPin,
+  Sparkles: Sparkles
+};
 
 // 1. ABOUT US PAGE
 export const About = () => {
   const { t } = useTranslation();
+  const { locale } = useLocaleStore();
 
-  const stats = [
-    { label: 'Global Customers', value: '150,000+', icon: Users, color: 'text-amber-500 bg-amber-500/10' },
-    { label: 'Satisfaction Rate', value: '99.8%', icon: Award, color: 'text-emerald-500 bg-emerald-500/10' },
-    { label: 'Supported Languages', value: '4 Native', icon: Globe, color: 'text-indigo-500 bg-indigo-500/10' },
-    { label: 'Quality Guarantee', value: '30-Day', icon: ShieldCheck, color: 'text-rose-500 bg-rose-500/10' }
+  const [aboutData, setAboutData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/pages/about`, {
+      headers: {
+        'Accept-Language': locale || 'en'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) {
+          setAboutData(data);
+        }
+      })
+      .catch(err => console.error('Failed to load dynamic About Us data:', err))
+      .finally(() => setLoading(false));
+  }, [locale]);
+
+  const defaultStats = [
+    { label: 'Global Customers', value: '150,000+', icon: 'Users', color: 'text-amber-500 bg-amber-500/10' },
+    { label: 'Satisfaction Rate', value: '99.8%', icon: 'Award', color: 'text-emerald-500 bg-emerald-500/10' },
+    { label: 'Supported Languages', value: '4 Native', icon: 'Globe', color: 'text-indigo-500 bg-indigo-500/10' },
+    { label: 'Quality Guarantee', value: '30-Day', icon: 'ShieldCheck', color: 'text-rose-500 bg-rose-500/10' }
   ];
 
-  const values = [
-    {
-      title: 'Native Localization',
-      description: 'We eliminate language & currency friction with seamless LTR/RTL layouts and multi-lingual support.',
-      icon: Globe,
-      color: 'text-blue-500 bg-blue-500/10'
-    },
-    {
-      title: 'Uncompromised Quality',
-      description: 'Every product catalog item undergoes strict quality inspections and comes with verified specification sheets.',
-      icon: ShieldCheck,
-      color: 'text-emerald-500 bg-emerald-500/10'
-    },
-    {
-      title: 'Lightning Performance',
-      description: 'Powered by ultra-responsive APIs and modern frontend architectures for zero-wait shopping.',
-      icon: Zap,
-      color: 'text-amber-500 bg-amber-500/10'
-    },
-    {
-      title: 'Customer-First Heart',
-      description: '24/7 dedicated support teams ready to assist you in your native language wherever you are.',
-      icon: HeartHandshake,
-      color: 'text-rose-500 bg-rose-500/10'
-    }
-  ];
-
-  const team = [
+  const defaultTeam = [
     {
       name: 'Elena Vance',
       role: 'Founder & CEO',
@@ -67,13 +76,21 @@ export const About = () => {
     }
   ];
 
+  const stats = aboutData?.stats || defaultStats;
+  const team = aboutData?.team || defaultTeam;
+  const heroBadge = aboutData?.hero_badge || 'Established 2026 • Global Commerce';
+  const heroTitle = aboutData?.hero_title || 'Redefining Localized E-Commerce Worldwide';
+  const heroSub = aboutData?.hero_subtitle || 'Nuvara bridges international boutique brands with seamless native shopping experiences—adapting language, culture, and payments automatically.';
+  const storyTitle = aboutData?.story_title || 'Borderlessly Connecting Buyers & Premium Brands';
+  const storyBody = aboutData?.story_body || 'Founded with the vision that online shopping should never feel foreign or clunky, Nuvara was engineered from the ground up to support instant multi-locale switching, right-to-left layout perfection, and transparent localized pricing.';
+
   return (
     <div className="space-y-20 pb-20 animate-fade-in text-left rtl:text-right">
-      
+
       {/* 1. Hero Header Banner */}
       <section className="relative w-full bg-gradient-to-r from-gray-900 via-stone-900 to-amber-950 py-20 md:py-28 text-white overflow-hidden shadow-xl">
         <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]" />
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 25 }}
@@ -82,7 +99,7 @@ export const About = () => {
             className="inline-flex items-center space-x-2 rtl:space-x-reverse bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 text-xs font-bold uppercase tracking-widest text-amber-300 mb-6"
           >
             <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>Established 2026 • Global Commerce</span>
+            <span>{heroBadge}</span>
           </motion.div>
 
           <motion.h1
@@ -91,7 +108,7 @@ export const About = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl sm:text-5xl lg:text-6xl font-black font-serif tracking-tight text-[#F5EFE4] leading-tight max-w-4xl mx-auto uppercase"
           >
-            Redefining Localized E-Commerce Worldwide
+            {heroTitle}
           </motion.h1>
 
           <motion.p
@@ -100,7 +117,7 @@ export const About = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-base sm:text-lg text-white/80 max-w-2xl mx-auto mt-6 leading-relaxed font-sans"
           >
-            Nuvara bridges international boutique brands with seamless native shopping experiences—adapting language, culture, and payments automatically.
+            {heroSub}
           </motion.p>
         </div>
       </section>
@@ -109,7 +126,7 @@ export const About = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-20">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {stats.map((stat, idx) => {
-            const Icon = stat.icon;
+            const Icon = ICON_MAP[stat.icon] || Users;
             return (
               <motion.div
                 key={idx}
@@ -138,7 +155,7 @@ export const About = () => {
       {/* 3. Our Brand Story & Mission */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
+
           {/* Image Showcase Collage */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -177,11 +194,11 @@ export const About = () => {
               Our Vision
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold font-serif text-text-primary tracking-tight leading-tight">
-              Borderlessly Connecting Buyers & Premium Brands
+              {storyTitle}
             </h2>
-            
+
             <p className="text-sm sm:text-base text-text-secondary leading-relaxed font-sans">
-              Founded with the vision that online shopping should never feel foreign or clunky, Nuvara was engineered from the ground up to support instant multi-locale switching, right-to-left layout perfection, and transparent localized pricing.
+              {storyBody}
             </p>
 
             <div className="space-y-3 pt-2">
@@ -201,56 +218,14 @@ export const About = () => {
         </div>
       </section>
 
-      {/* 4. Core Values Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <span className="text-xs font-bold text-brass uppercase tracking-widest bg-brass/10 border border-brass/20 px-3.5 py-1.5 rounded-full inline-block mb-3">
-            Why Choose Us
-          </span>
-          <h2 className="text-3xl font-bold font-serif text-text-primary uppercase tracking-wide">
-            Our Core Principles
-          </h2>
-          <SectionDivider />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {values.map((val, idx) => {
-            const Icon = val.icon;
-            return (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.1 }}
-                whileHover={{ y: -6, scale: 1.02 }}
-                className="bg-surface border border-border/80 rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-accent/40"
-              >
-                <div>
-                  <div className={`w-12 h-12 rounded-xl ${val.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-lg font-bold text-text-primary mb-2 group-hover:text-accent transition-colors">
-                    {val.title}
-                  </h3>
-                  <p className="text-xs text-text-secondary leading-relaxed">
-                    {val.description}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 5. Team Leadership Showcase */}
+      {/* 4. Team Leadership Showcase */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <span className="text-xs font-bold text-brass uppercase tracking-widest bg-brass/10 border border-brass/20 px-3.5 py-1.5 rounded-full inline-block mb-3">
             Behind The Brand
           </span>
           <h2 className="text-3xl font-bold font-serif text-text-primary uppercase tracking-wide">
-            Meet Our Leadership
+            Leadership Team
           </h2>
           <SectionDivider />
         </div>
@@ -264,21 +239,21 @@ export const About = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: idx * 0.1 }}
               whileHover={{ y: -6 }}
-              className="bg-surface border border-border/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 text-left rtl:text-right group"
+              className="bg-surface border border-border/80 rounded-2xl overflow-hidden shadow-lg group"
             >
-              <div className="h-64 overflow-hidden relative bg-surface-2">
+              <div className="h-64 overflow-hidden relative">
                 <img
                   src={member.image}
                   alt={member.name}
-                  className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                <div className="absolute bottom-3 left-4 right-4 text-white">
-                  <h3 className="text-lg font-bold text-[#F5EFE4]">{member.name}</h3>
-                  <p className="text-xs text-amber-300 font-semibold">{member.role}</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <h3 className="text-xl font-bold text-[#F5EFE4]">{member.name}</h3>
+                  <p className="text-xs font-bold text-brass uppercase tracking-wider mt-0.5">{member.role}</p>
                 </div>
               </div>
-              <div className="p-5">
+              <div className="p-6">
                 <p className="text-xs text-text-secondary leading-relaxed italic">
                   "{member.bio}"
                 </p>
@@ -288,82 +263,83 @@ export const About = () => {
         </div>
       </section>
 
-      {/* 6. Call To Action Banner */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 p-8 sm:p-12 text-gray-950 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-left rtl:text-right max-w-xl">
-            <h2 className="text-3xl sm:text-4xl font-black font-serif uppercase tracking-tight leading-tight mb-2">
-              Ready to Experience Nuvara?
-            </h2>
-            <p className="text-sm font-medium text-gray-900/90">
-              Discover thousands of premium curated products with fast global shipping and 30-day returns.
-            </p>
-          </div>
-          <RouterLink to="/category/electronics">
-            <Button
-              className="bg-black text-white hover:bg-gray-900 px-8 py-3.5 rounded-xl font-bold uppercase text-xs tracking-wider shadow-xl flex items-center gap-2 flex-shrink-0"
-            >
-              <span>Explore Collection</span>
-              <ArrowRight className="w-4 h-4 rtl-flip" />
-            </Button>
-          </RouterLink>
-        </div>
-      </section>
     </div>
   );
 };
 
-// 2. CONTACT US PAGE
+// 2. CONTACT PAGE
 export const Contact = () => {
+  const { t } = useTranslation();
+  const { locale } = useLocaleStore();
   const { addToast } = useToastStore();
-  const [formData, setFormData] = useState({ name: '', email: '', subject: 'general', message: '' });
-  const [loading, setLoading] = useState(false);
+
+  const [contactData, setContactData] = useState(null);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/pages/contact`, {
+      headers: {
+        'Accept-Language': locale || 'en'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) {
+          setContactData(data);
+        }
+      })
+      .catch(err => console.error('Failed to load dynamic Contact data:', err));
+  }, [locale]);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) {
-      addToast('Please fill out all required fields', 'danger');
-      return;
-    }
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      addToast('Thank you! Your message has been sent successfully.', 'success');
-      setFormData({ name: '', email: '', subject: 'general', message: '' });
-    }, 1200);
+    setSubmitted(true);
+    addToast(t('contact.form_success') || 'Thank you! Your message has been received.', 'success');
   };
 
-  const contactCards = [
+  const defaultCards = [
     {
-      title: 'Customer Email',
+      title: 'Customer Support',
       value: 'support@nuvara.com',
-      sub: 'Average response: < 2 hours',
-      icon: Mail,
-      color: 'text-amber-500 bg-amber-500/10'
+      sub: 'Response within 2 hours',
+      icon: 'Mail',
+      color: 'text-blue-500 bg-blue-500/10'
     },
     {
-      title: 'Phone Support',
-      value: '+1 (800) NUVARA',
-      sub: 'Toll-free 24/7 dedicated line',
-      icon: Phone,
+      title: 'Direct Hotline',
+      value: '+1 (800) 555-NUVARA',
+      sub: 'Mon - Sun, 24/7 Hotline',
+      icon: 'Phone',
       color: 'text-emerald-500 bg-emerald-500/10'
     },
     {
       title: 'Headquarters',
       value: 'San Francisco, CA',
       sub: '100 Embassy Row, Suite 400',
-      icon: MapPin,
+      icon: 'MapPin',
       color: 'text-indigo-500 bg-indigo-500/10'
     }
   ];
 
+  const cards = contactData?.cards || defaultCards;
+  const heroBadge = contactData?.hero_badge || '24/7 Multilingual Support Hub';
+  const heroTitle = contactData?.hero_title || 'Get In Touch With Us';
+  const heroSub = contactData?.hero_subtitle || 'Have a question about an order, localized payments, or custom boutique recommendations? Our global team is here to help anytime.';
+
   return (
     <div className="space-y-16 pb-20 animate-fade-in text-left rtl:text-right">
-      
+
       {/* Hero Header */}
       <section className="relative w-full bg-gradient-to-r from-gray-900 via-stone-900 to-amber-950 py-16 md:py-24 text-white overflow-hidden shadow-xl">
         <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]" />
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -372,7 +348,7 @@ export const Contact = () => {
             className="inline-flex items-center space-x-2 rtl:space-x-reverse bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 text-xs font-bold uppercase tracking-widest text-amber-300 mb-4"
           >
             <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>24/7 Multilingual Support Hub</span>
+            <span>{heroBadge}</span>
           </motion.div>
 
           <motion.h1
@@ -381,7 +357,7 @@ export const Contact = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-4xl sm:text-5xl font-black font-serif tracking-tight text-[#F5EFE4] uppercase"
           >
-            Get In Touch With Us
+            {heroTitle}
           </motion.h1>
 
           <motion.p
@@ -390,7 +366,7 @@ export const Contact = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-sm sm:text-base text-white/80 max-w-xl mx-auto mt-4 font-sans leading-relaxed"
           >
-            Have a question about an order, localized payments, or custom boutique recommendations? Our global team is here to help anytime.
+            {heroSub}
           </motion.p>
         </div>
       </section>
@@ -398,8 +374,8 @@ export const Contact = () => {
       {/* Info Cards Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {contactCards.map((card, idx) => {
-            const Icon = card.icon;
+          {cards.map((card, idx) => {
+            const Icon = ICON_MAP[card.icon] || Mail;
             return (
               <motion.div
                 key={idx}
@@ -420,7 +396,7 @@ export const Contact = () => {
                   <p className="text-base font-bold text-text-primary mt-0.5">
                     {card.value}
                   </p>
-                  <p className="text-[11px] text-text-secondary mt-0.5 font-medium">
+                  <p className="text-[11px] text-text-secondary mt-0.5">
                     {card.sub}
                   </p>
                 </div>
@@ -430,161 +406,150 @@ export const Contact = () => {
         </div>
       </section>
 
-      {/* Form Section */}
+      {/* Interactive Form Section */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="bg-surface border border-border/80 rounded-3xl p-8 sm:p-12 shadow-xl relative overflow-hidden"
-        >
+        <div className="bg-surface border border-border/80 rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden">
           <div className="text-center mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold font-serif text-text-primary uppercase">
+            <h2 className="text-2xl sm:text-3xl font-bold font-serif text-text-primary uppercase tracking-tight">
               Send Us A Message
             </h2>
-            <SectionDivider />
+            <p className="text-xs sm:text-sm text-text-secondary mt-2">
+              Fill out the form below and our multilingual support hub will get back to you promptly.
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {submitted ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-12 space-y-4"
+            >
+              <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-text-primary">
+                Message Sent Successfully!
+              </h3>
+              <p className="text-xs sm:text-sm text-text-secondary max-w-md mx-auto">
+                Thank you for contacting Nuvara. An automated confirmation email has been dispatched to your address.
+              </p>
+              <Button onClick={() => setSubmitted(false)} variant="outline" className="mt-4">
+                Send Another Message
+              </Button>
+            </motion.div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Your Name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface-2/60 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="Your Email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-surface-2/60 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                  />
+                </div>
+              </div>
+
               <div>
                 <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
-                  Your Full Name *
+                  Subject
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="John Doe"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Order inquiry, shipping request, etc..."
+                  value={formData.subject}
+                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-border bg-surface-2/60 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
-                  Email Address *
+                  Your Message
                 </label>
-                <input
-                  type="email"
+                <textarea
+                  rows="5"
                   required
-                  placeholder="john@example.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="How can we help you today?"
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-border bg-surface-2/60 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
-                Inquiry Topic
-              </label>
-              <select
-                value={formData.subject}
-                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface-2/60 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
-              >
-                <option value="general">General Inquiry</option>
-                <option value="order">Order & Tracking Issue</option>
-                <option value="returns">Returns & Refunds</option>
-                <option value="technical">Technical & Language Feedback</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
-                Your Message *
-              </label>
-              <textarea
-                rows="5"
-                required
-                placeholder="How can we help you today?"
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl border border-border bg-surface-2/60 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
-              />
-            </div>
-
-            <Button
-              type="submit"
-              variant="primary"
-              loading={loading}
-              icon={Send}
-              className="w-full py-4 rounded-xl font-bold uppercase text-xs tracking-wider shadow-lg flex items-center justify-center gap-2"
-            >
-              Send Message
-            </Button>
-          </form>
-        </motion.div>
+              <div className="flex justify-end">
+                <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto px-8">
+                  <Send className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
+                  <span>Send Message</span>
+                </Button>
+              </div>
+            </form>
+          )}
+        </div>
       </section>
+
     </div>
   );
 };
 
-// 3. FAQ ACCORDION PAGE
-export const FAQ = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+// 3. FAQ PAGE
+export const Faq = () => {
+  const { t } = useTranslation();
+  const { locale } = useLocaleStore();
+
+  const [faqsList, setFaqsList] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const [activeId, setActiveId] = useState(null);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/pages/faq`, {
+      headers: {
+        'Accept-Language': locale || 'en'
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setFaqsList(data);
+        }
+      })
+      .catch(err => console.error('Failed to load dynamic FAQs:', err));
+  }, [locale]);
 
   const categories = [
     { id: 'all', label: 'All Questions' },
-    { id: 'shipping', label: 'Shipping & Delivery' },
+    { id: 'general', label: 'General' },
+    { id: 'shipping', label: 'Orders & Shipping' },
     { id: 'returns', label: 'Returns & Refunds' },
-    { id: 'rtl', label: 'RTL & Language' },
-    { id: 'payments', label: 'Payments' }
-  ];
-
-  const faqItems = [
-    {
-      id: 'faq-1',
-      category: 'shipping',
-      q: 'What shipping options does Nuvara offer worldwide?',
-      a: 'We partner with express global carriers (DHL, FedEx, UPS). Express shipping takes 2-4 business days worldwide and is completely free on all orders over $150.'
-    },
-    {
-      id: 'faq-2',
-      category: 'returns',
-      q: 'How does the 30-day money-back guarantee work?',
-      a: 'If you are not 100% satisfied with your item, you can return it in its original packaging within 30 days of delivery. Refunds are processed back to your original payment method within 3 business days of receiving the item.'
-    },
-    {
-      id: 'faq-3',
-      category: 'rtl',
-      q: 'How do I toggle Right-to-Left (RTL) layout or languages?',
-      a: 'Click the Globe icon in the top header navigation bar and select Arabic (العربية). The layout automatically flips to native RTL orientation, adjusts typography, and mirrors all icons instantly.'
-    },
-    {
-      id: 'faq-4',
-      category: 'payments',
-      q: 'What payment methods are supported?',
-      a: 'We accept major international credit/debit cards (Visa, MasterCard, American Express), Apple Pay, Google Pay, as well as Cash on Delivery for select regions.'
-    },
-    {
-      id: 'faq-5',
-      category: 'shipping',
-      q: 'How can I track my order once shipped?',
-      a: 'As soon as your package is dispatched, you will receive a tracking link via email. You can also view live real-time status in your Account Dashboard under "My Orders".'
-    },
-    {
-      id: 'faq-6',
-      category: 'returns',
-      q: 'Are return shipping labels provided?',
-      a: 'Yes! For defective or incorrect items, we provide prepaid return shipping labels. For general preference returns, standard return shipping rates apply.'
-    }
+    { id: 'payment', label: 'Payments' }
   ];
 
   const handleSearchChange = (e) => {
-    const val = e.target.value;
-    setSearchTerm(val);
-    if (val.trim().length > 0 && activeCategory !== 'all') {
-      setActiveCategory('all');
-    }
+    setSearchTerm(e.target.value);
   };
 
-  const filteredFaqs = faqItems.filter(item => {
+  const filteredFaqs = faqsList.filter(item => {
     const query = searchTerm.toLowerCase().trim();
     if (!query) {
       return activeCategory === 'all' || item.category === activeCategory;
@@ -600,11 +565,11 @@ export const FAQ = () => {
 
   return (
     <div className="space-y-16 pb-20 animate-fade-in text-left rtl:text-right">
-      
+
       {/* Hero Header */}
       <section className="relative w-full bg-gradient-to-r from-gray-900 via-stone-900 to-amber-950 py-16 md:py-24 text-white overflow-hidden shadow-xl">
         <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]" />
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -646,7 +611,7 @@ export const FAQ = () => {
 
       {/* Main Container */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Category Tabs */}
         <div className="flex items-center justify-center space-x-2 rtl:space-x-reverse overflow-x-auto pb-4 mb-8">
           {categories.map(cat => (
@@ -656,11 +621,10 @@ export const FAQ = () => {
                 setActiveCategory(cat.id);
                 setSearchTerm('');
               }}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
-                activeCategory === cat.id && !searchTerm
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap ${activeCategory === cat.id && !searchTerm
                   ? 'bg-accent text-white shadow-md'
                   : 'bg-surface border border-border text-text-secondary hover:text-text-primary'
-              }`}
+                }`}
             >
               {cat.label}
             </button>
@@ -669,75 +633,55 @@ export const FAQ = () => {
 
         {/* Live Search Results Status */}
         {searchTerm.trim().length > 0 && (
-          <div className="mb-4 text-xs font-bold text-text-secondary text-center">
-            Showing results for "<span className="text-accent">{searchTerm}</span>" ({filteredFaqs.length} found)
-          </div>
+          <p className="text-xs font-bold text-text-secondary mb-4">
+            Found {filteredFaqs.length} results matching "{searchTerm}"
+          </p>
         )}
 
-        {/* FAQ Accordion List */}
+        {/* Accordion FAQ List */}
         <div className="space-y-4">
-          {filteredFaqs.length > 0 ? (
-            filteredFaqs.map((item) => {
-              const isSearchActive = searchTerm.trim().length > 0;
-              const isOpen = activeId === item.id || isSearchActive;
+          {filteredFaqs.length === 0 ? (
+            <div className="text-center py-12 bg-surface border border-border rounded-2xl">
+              <HelpCircle className="w-10 h-10 text-text-secondary mx-auto mb-3 opacity-50" />
+              <p className="text-sm font-bold text-text-primary">No FAQ entries found</p>
+              <p className="text-xs text-text-secondary mt-1">Try refining your search keyword or switching category tabs.</p>
+            </div>
+          ) : (
+            filteredFaqs.map(item => {
+              const isOpen = activeId === item.id;
               return (
-                <motion.div
+                <div
                   key={item.id}
-                  layout
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.25 }}
-                  className="bg-surface border border-border/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all"
+                  className="bg-surface border border-border/80 rounded-2xl overflow-hidden shadow-xs hover:border-accent/30 transition-all duration-200"
                 >
                   <button
                     onClick={() => toggleAccordion(item.id)}
-                    className="w-full px-6 py-5 flex justify-between items-center text-sm font-bold text-text-primary focus:outline-none hover:bg-surface-2/60 transition-colors text-left rtl:text-right"
+                    className="w-full px-6 py-4 flex items-center justify-between text-left rtl:text-right font-bold text-sm sm:text-base text-text-primary hover:text-accent transition-colors"
                   >
                     <span className="pr-4 rtl:pl-4">{item.q}</span>
                     <ChevronDown className={`w-5 h-5 text-accent transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
                   </button>
-                  
+
                   {isOpen && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
-                      transition={{ duration: 0.3 }}
-                      className="px-6 pb-5 text-xs sm:text-sm text-text-secondary leading-relaxed border-t border-border/40 pt-4 bg-surface-2/30"
+                      exit={{ opacity: 0, height: 0 }}
+                      className="px-6 pb-5 pt-1 border-t border-border/40 text-xs sm:text-sm text-text-secondary leading-relaxed font-sans"
                     >
                       {item.a}
                     </motion.div>
                   )}
-                </motion.div>
+                </div>
               );
             })
-          ) : (
-            <div className="text-center py-12 bg-surface border border-border rounded-2xl p-8">
-              <p className="text-sm font-bold text-text-primary mb-1">
-                No matching questions found
-              </p>
-              <p className="text-xs text-text-secondary">
-                Try searching for keywords like "shipping", "returns", "RTL", or "payment".
-              </p>
-            </div>
           )}
         </div>
-
-        {/* Still Have Questions CTA */}
-        <div className="mt-16 bg-surface border border-border/80 rounded-3xl p-8 text-center shadow-md">
-          <h3 className="text-xl font-bold text-text-primary mb-2">
-            Still Have Questions?
-          </h3>
-          <p className="text-xs text-text-secondary mb-6 max-w-md mx-auto">
-            Can't find the answer you're looking for? Please reach out to our dedicated support team.
-          </p>
-          <RouterLink to="/contact">
-            <Button variant="primary" className="px-6 py-3 rounded-xl font-bold uppercase text-xs tracking-wider">
-              Contact Support
-            </Button>
-          </RouterLink>
-        </div>
       </section>
+
     </div>
   );
 };
+
+export const FAQ = Faq;
+
