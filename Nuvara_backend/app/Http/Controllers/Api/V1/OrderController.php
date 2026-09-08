@@ -1,156 +1,106 @@
 <?php
-
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\{Order, Product, ProductVariant, Coupon};
+use App\Services\CheckoutQuote;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\Coupon;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
 {
-    public function checkout(Request $request)
+    private function rules(): array
     {
-        $request->validate([
-            'fullName' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'required|string|max:255',
-            'zip' => 'required|string|max:255',
-            'country' => 'required|string|max:255',
-            'cart' => 'required|array|min:1',
-            'cart.*.product.id' => 'required|exists:products,id',
-            'cart.*.quantity' => 'required|integer|min:1',
-            'coupon' => 'nullable|string'
+        return [
+            'cart' => 'required|array|min:1|max:100',
+            'cart.*.product.id' => 'required|integer|min:1',
+            'cart.*.quantity' => 'required|integer|min:1|max:10000',
+            'cart.*.variant' => 'nullable|array:color,size',
+            'cart.*.variant.color' => 'nullable|string|max:100',
+            'cart.*.variant.size' => 'nullable|string|max:100',
+            'coupon' => 'nullable|string|max:100',
+        ];
+    }
+
+    public function quote(Request $request, CheckoutQuote $pricing)
+    {
+        $data = $request->validate($this->rules());
+        return response()->json(DB::transaction(fn () => $pricing->calculate($data), 3));
+    }
+
+    public function checkout(Request $request, CheckoutQuote $pricing)
+    {
+        $data = $request->validate($this->rules() + [
+            'fullName' => 'required|string|max:255', 'email' => 'required|email|max:255',
+            'address' => 'required|string|max:255', 'city' => 'required|string|max:255',
+            'state' => 'nullable|string|max:255', 'zip' => 'required|string|max:255',
+            'country' => 'required|string|max:255', 'checkout_key' => 'required|uuid',
+            'expected_total_minor' => 'required|integer|min:0|max:9999999999',
         ]);
+        $user = $request->user('sanctum');
+        if ($request->bearerToken() && !$user) abort(401);
+        $hash = hash('sha256', json_encode([$user?->id, $data], JSON_THROW_ON_ERROR));
+        $existing = Order::where('checkout_key', $data['checkout_key'])->first();
+        if ($existing) return $this->replay($existing, $hash);
 
-        $userId = $request->user() ? $request->user()->id : null;
-
-        $subtotal = 0;
-        $itemsToCreate = [];
-
-        foreach ($request->cart as $item) {
-            $product = Product::find($item['product']['id']);
-            
-            if ($product->stock < $item['quantity']) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "Insufficient stock for product: " . ($product->name[request()->header('Accept-Language', 'en')] ?? $product->name['en'])
-                ], 422);
-            }
-
-            $variantId = null;
-            if (isset($item['variant']) && count($item['variant']) > 0) {
-                $color = $item['variant']['color'] ?? null;
-                $size = $item['variant']['size'] ?? null;
-                
-                $variant = ProductVariant::where('product_id', $product->id)
-                    ->where(function ($q) use ($color, $size) {
-                        if ($color) {
-                            $q->whereJsonContains('attribute_set->color', $color);
-                        }
-                        if ($size) {
-                            $q->whereJsonContains('attribute_set->size', $size);
-                        }
-                    })->first();
-
-                if ($variant) {
-                    $variantId = $variant->id;
-                    if ($variant->stock < $item['quantity']) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => "Insufficient stock for selected variant of: " . ($product->name[request()->header('Accept-Language', 'en')] ?? $product->name['en'])
-                        ], 422);
-                    }
+        try {
+            $order = DB::transaction(function () use ($data, $user, $hash, $pricing, $request) {
+                $quote = $pricing->calculate($data);
+                if ($quote['total_minor'] !== (int) $data['expected_total_minor']) {
+                    throw ValidationException::withMessages(['total' => 'Prices changed. Review the updated total before confirming.']);
                 }
-            }
-
-            $price = $product->price;
-            $totalPrice = $price * $item['quantity'];
-            $subtotal += $totalPrice;
-
-            $itemsToCreate[] = [
-                'product_id' => $product->id,
-                'variant_id' => $variantId,
-                'quantity' => $item['quantity'],
-                'unit_price' => $price,
-                'total' => $totalPrice,
-                'product_model' => $product,
-                'variant_model' => $variant ?? null
-            ];
-        }
-
-        $discount = 0.00;
-        $coupon = null;
-        if ($request->filled('coupon')) {
-            $coupon = Coupon::where('code', $request->coupon)->first();
-            if ($coupon) {
-                if ($coupon->type === 'percent') {
-                    $discount = $subtotal * ($coupon->value / 100);
-                } elseif ($coupon->type === 'flat') {
-                    $discount = min($coupon->value, $subtotal);
-                }
-            }
-        }
-
-        $shipping = $subtotal > 150 ? 0.00 : 15.00;
-        if ($coupon && $coupon->type === 'free_shipping') {
-            $shipping = 0.00;
-        }
-
-        $total = max(0.00, $subtotal - $discount + $shipping);
-
-        $order = DB::transaction(function () use ($userId, $subtotal, $discount, $shipping, $total, $request, $itemsToCreate) {
-            $orderNumber = 'NVR-' . strtoupper(Str::random(6)) . rand(100, 999);
-            
-            $order = Order::create([
-                'user_id' => $userId,
-                'order_number' => $orderNumber,
-                'status' => 'delivered',
-                'subtotal' => $subtotal,
-                'discount' => $discount,
-                'shipping_fee' => $shipping,
-                'total' => $total,
-                'currency' => 'USD',
-                'locale' => request()->header('Accept-Language', 'en'),
-                'shipping_name' => $request->fullName,
-                'shipping_address' => $request->address,
-                'shipping_city' => $request->city,
-                'shipping_state' => $request->state,
-                'shipping_zip' => $request->zip,
-                'shipping_country' => $request->country
-            ]);
-
-            foreach ($itemsToCreate as $itemData) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $itemData['product_id'],
-                    'variant_id' => $itemData['variant_id'],
-                    'quantity' => $itemData['quantity'],
-                    'unit_price' => $itemData['unit_price'],
-                    'total' => $itemData['total']
+                $order = Order::create([
+                    'user_id' => $user?->id, 'order_number' => 'NVR-'.strtoupper((string) Str::ulid()),
+                    'status' => 'pending', 'payment_status' => 'unpaid',
+                    'subtotal' => $quote['subtotal'], 'discount' => $quote['discount'],
+                    'shipping_fee' => $quote['shipping'], 'total' => $quote['total'],
+                    'currency' => $quote['currency'], 'coupon_code' => $quote['coupon_code'],
+                    'locale' => substr($request->header('Accept-Language', 'en'), 0, 10),
+                    'shipping_name' => $data['fullName'], 'customer_email' => $data['email'],
+                    'shipping_address' => $data['address'], 'shipping_city' => $data['city'],
+                    'shipping_state' => $data['state'] ?? '', 'shipping_zip' => $data['zip'],
+                    'shipping_country' => $data['country'], 'checkout_key' => $data['checkout_key'],
+                    'checkout_hash' => $hash, 'checkout_receipt' => $quote,
                 ]);
-
-                $itemData['product_model']->decrement('stock', $itemData['quantity']);
-                if ($itemData['variant_model']) {
-                    $itemData['variant_model']->decrement('stock', $itemData['quantity']);
+                foreach ($quote['lines'] as $line) {
+                    $updated = Product::whereKey($line['product_id'])->where('stock', '>=', $line['quantity'])
+                        ->decrement('stock', $line['quantity']);
+                    if (!$updated) throw ValidationException::withMessages(['cart' => 'Product stock changed. Please review your cart.']);
+                    if ($line['variant_id']) {
+                        $updated = ProductVariant::whereKey($line['variant_id'])->where('stock', '>=', $line['quantity'])
+                            ->decrement('stock', $line['quantity']);
+                        if (!$updated) throw ValidationException::withMessages(['cart' => 'Variant stock changed. Please review your cart.']);
+                    }
+                    $order->items()->create(array_intersect_key($line, array_flip(['product_id', 'variant_id', 'quantity', 'unit_price', 'total'])));
                 }
-            }
+                if ($quote['coupon_code']) {
+                    $used = Coupon::where('code', $quote['coupon_code'])
+                        ->where(fn ($q) => $q->whereNull('usage_limit')->orWhereColumn('times_used', '<', 'usage_limit'))
+                        ->increment('times_used');
+                    if (!$used) throw ValidationException::withMessages(['coupon' => 'This coupon has reached its usage limit.']);
+                }
+                return $order;
+            }, 3);
+        } catch (QueryException|ValidationException $error) {
+            // Concurrent retries may have committed while this transaction was waiting.
+            $existing = Order::where('checkout_key', $data['checkout_key'])->first();
+            if ($existing) return $this->replay($existing, $hash);
+            throw $error;
+        }
+        return $this->replay($order, $hash);
+    }
 
-            return $order;
-        });
-
+    private function replay(Order $order, string $hash)
+    {
+        abort_unless(hash_equals($order->checkout_hash, $hash), 409, 'This checkout key belongs to a different request.');
         return response()->json([
-            'success' => true,
-            'order_id' => $order->order_number,
-            'total' => $order->total,
-            'message' => 'Order processed successfully'
+            'success' => true, 'order_id' => $order->order_number,
+            'status' => $order->status, 'payment_status' => $order->payment_status,
+            'total' => $order->checkout_receipt['total'], 'receipt' => $order->checkout_receipt,
+            'message' => 'Order received. Payment has not been collected.',
         ]);
     }
 }

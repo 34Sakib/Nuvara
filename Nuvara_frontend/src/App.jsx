@@ -17,6 +17,7 @@ import { OrderSuccess } from './pages/OrderSuccess';
 import { Dashboard } from './pages/Dashboard';
 import { Auth } from './pages/Auth';
 import { About, Contact, FAQ } from './pages/StaticPages';
+import { POS } from './pages/POS';
 
 // Scroll to top on page navigation
 function ScrollToTop() {
@@ -65,12 +66,18 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <div className="flex flex-col min-h-screen transition-colors duration-200">
-        <Header />
-        
-        {/* Main Content Area */}
+      <AppRoutes />
+    </Router>
+  );
+}
+
+function AppRoutes() {
+  const isPOS = useLocation().pathname.startsWith('/pos');
+  return <div className="flex flex-col min-h-screen transition-colors duration-200">
+        {!isPOS && <Header />}
         <main className="flex-grow">
           <Routes>
+            <Route path="/pos/*" element={<POS />} />
             <Route path="/" element={<Home />} />
             <Route path="/category/:slug" element={<Category />} />
             <Route path="/product/:slug" element={<ProductDetail />} />
@@ -87,14 +94,9 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
-        
-        <Footer />
-        
-        {/* Toast Notifications */}
+        {!isPOS && <Footer />}
         <ToastContainer />
-      </div>
-    </Router>
-  );
+      </div>;
 }
 
 export default App;

@@ -38,7 +38,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/coupons/validate', [CouponController::class, 'validateCoupon']);
 
     // Checkout (supports guest checkouts and authenticated checkouts)
-    Route::post('/checkout', [OrderController::class, 'checkout']);
+    Route::post('/checkout/quote', [OrderController::class, 'quote'])->middleware('throttle:60,1');
+    Route::post('/checkout', [OrderController::class, 'checkout'])->middleware('throttle:30,1');
 
     // Authentication
     Route::post('/auth/register', [AuthController::class, 'register']);
