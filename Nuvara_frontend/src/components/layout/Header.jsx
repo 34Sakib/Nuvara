@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
   Search, Heart, User, ShoppingBag, Menu, X, 
@@ -16,6 +16,7 @@ import { mockProducts, getLocalized, mockCategories } from '../../utils/mockData
 export const Header = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const { locale } = useLocaleStore();
   const { addToast } = useToastStore();
   const { getCartTotals, wishlist } = useCartStore();
@@ -201,7 +202,7 @@ export const Header = () => {
               {/* Wishlist Link */}
               <Link 
                 to="/wishlist" 
-                className="relative p-2 text-text-primary hover:text-accent rounded-full hover:bg-bg-primary transition-colors hidden sm:block"
+                className="relative p-2 text-text-primary hover:text-accent rounded-full hover:bg-bg-primary transition-colors hidden lg:block"
                 aria-label="View wishlist"
               >
                 <Heart className="w-5 h-5" />
@@ -215,7 +216,7 @@ export const Header = () => {
               {/* Account & Logout Link */}
               <Link 
                 to={isAuthenticated ? "/dashboard" : "/auth"} 
-                className="p-2 text-text-primary hover:text-accent rounded-full hover:bg-bg-primary transition-colors"
+                className="p-2 text-text-primary hover:text-accent rounded-full hover:bg-bg-primary transition-colors hidden lg:block"
                 aria-label="View account"
                 title="Dashboard"
               >
@@ -224,7 +225,7 @@ export const Header = () => {
               {isAuthenticated && (
                 <button
                   onClick={handleHeaderLogout}
-                  className="p-2 text-text-secondary hover:text-red-500 rounded-full hover:bg-bg-primary transition-colors"
+                  className="p-2 text-text-secondary hover:text-red-500 rounded-full hover:bg-bg-primary transition-colors hidden lg:block"
                   aria-label="Log out"
                   title={t('nav.logout') || 'Log Out'}
                 >
@@ -235,7 +236,7 @@ export const Header = () => {
               {/* Cart Link */}
               <Link 
                 to="/cart" 
-                className="relative p-2 text-text-primary hover:text-accent rounded-full hover:bg-bg-primary transition-colors"
+                className="relative p-2 text-text-primary hover:text-accent rounded-full hover:bg-bg-primary transition-colors hidden lg:block"
                 aria-label="View cart"
               >
                 <ShoppingBag className="w-5 h-5" />
@@ -251,21 +252,21 @@ export const Header = () => {
 
         {/* Row 3: Mega Menu Horizontal Nav (Desktop) */}
         <div className="hidden lg:block border-t border-border mt-3 pt-3">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <nav className="flex space-x-8 rtl:space-x-reverse text-sm font-semibold text-text-primary">
-              <Link to="/" className="hover:text-accent transition-colors">{t('nav.home')}</Link>
-              {mockCategories.map((cat) => (
-                <Link 
-                  key={cat.id} 
-                  to={`/category/${cat.slug}`} 
-                  className="hover:text-accent transition-colors"
-                >
-                  {getLocalized(cat.name, locale)}
-                </Link>
-              ))}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
+            <nav className="flex items-center justify-center space-x-8 rtl:space-x-reverse text-sm font-semibold text-text-primary">
+              <Link to="/" className={`${location.pathname === '/' ? 'text-accent' : ''} hover:text-accent transition-colors`}>{t('nav.home')}</Link>
+              <div className="relative group">
+                <Link to="/category/all" className="inline-flex items-center gap-1 hover:text-accent transition-colors">Shop <ChevronDown className="w-3.5 h-3.5" /></Link>
+                <div className="absolute left-0 top-full pt-3 hidden group-hover:block z-50">
+                  <div className="w-56 rounded-xl border border-border bg-surface p-2 shadow-xl">
+                    {mockCategories.map((cat) => <Link key={cat.id} to={`/category/${cat.slug}`} className="block rounded-lg px-3 py-2 hover:bg-bg-primary hover:text-accent">{getLocalized(cat.name, locale)}</Link>)}
+                  </div>
+                </div>
+              </div>
+              <Link to="/category/all?sort=new" className="hover:text-accent transition-colors">New Arrivals</Link>
+              <Link to="/category/all?deals=1" className="hover:text-accent transition-colors">Deals</Link>
               <Link to="/about" className="hover:text-accent transition-colors">{t('nav.about')}</Link>
-              <Link to="/contact" className="hover:text-accent transition-colors">{t('nav.contact')}</Link>
-              <Link to="/faq" className="hover:text-accent transition-colors">{t('nav.faq')}</Link>
+              <Link to="/faq" className="hover:text-accent transition-colors">Help</Link>
             </nav>
           </div>
         </div>
@@ -317,6 +318,7 @@ export const Header = () => {
               >
                 {t('nav.home')}
               </Link>
+              <span className="text-accent uppercase text-[10px] tracking-widest pt-2">Shop categories</span>
               {mockCategories.map((cat) => (
                 <Link 
                   key={cat.id} 
@@ -327,6 +329,8 @@ export const Header = () => {
                   {getLocalized(cat.name, locale)}
                 </Link>
               ))}
+              <Link to="/category/all?sort=new" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-accent transition-colors py-1.5 border-b border-border">New Arrivals</Link>
+              <Link to="/category/all?deals=1" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-accent transition-colors py-1.5 border-b border-border">Deals</Link>
               <Link 
                 to="/about" 
                 onClick={() => setIsMobileMenuOpen(false)} 
@@ -335,23 +339,23 @@ export const Header = () => {
                 {t('nav.about')}
               </Link>
               <Link 
-                to="/contact" 
-                onClick={() => setIsMobileMenuOpen(false)} 
-                className="hover:text-accent transition-colors py-1.5 border-b border-border"
-              >
-                {t('nav.contact')}
-              </Link>
-              <Link 
                 to="/faq" 
                 onClick={() => setIsMobileMenuOpen(false)} 
                 className="hover:text-accent transition-colors py-1.5 border-b border-border"
               >
-                {t('nav.faq')}
+                Help & FAQ
               </Link>
             </nav>
           </div>
         </div>
       )}
+      <nav className="mobile-bottom-nav lg:hidden" aria-label="Mobile navigation">
+        <Link to="/" className={location.pathname === '/' ? 'active' : ''} aria-current={location.pathname === '/' ? 'page' : undefined}><span>⌂</span><small>Home</small></Link>
+        <Link to="/category/all" className={location.pathname.startsWith('/category') ? 'active' : ''} aria-current={location.pathname.startsWith('/category') ? 'page' : undefined}><span>▦</span><small>Shop</small></Link>
+        <Link to="/category/all?deals=1" className={location.search.includes('deals') ? 'active' : ''}><span>✦</span><small>Deals</small></Link>
+        <Link to="/cart" className={location.pathname === '/cart' ? 'active' : ''} aria-current={location.pathname === '/cart' ? 'page' : undefined}><span className="relative">🛍{cartCount > 0 && <b>{cartCount}</b>}</span><small>Cart</small></Link>
+        <button onClick={() => setIsMobileMenuOpen(true)}><span>☰</span><small>More</small></button>
+      </nav>
     </header>
   );
 };

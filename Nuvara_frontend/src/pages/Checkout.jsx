@@ -25,7 +25,7 @@ const errorText = error => Object.values(error.response?.data?.errors || {}).fla
 export const Checkout = () => {
   const navigate = useNavigate();
   const { locale } = useLocaleStore();
-  const { cart, activeCoupon, clearCart } = useCartStore();
+  const { cart, activeCoupon, clearCart, setCart } = useCartStore();
   const [attempt, setAttempt] = useState(readAttempt);
   const [form, setForm] = useState(() => readAttempt() || Object.fromEntries(fields.map(([name]) => [name, ''])));
   const [quote, setQuote] = useState(null);
@@ -43,6 +43,19 @@ export const Checkout = () => {
   async function review(event) {
     event.preventDefault();
     if (pending.current) return;
+    if (cart.some(item => !Number.isInteger(Number(item.product.id)))) {
+      setBusy(true); setError('Syncing older cart items with the live catalog…');
+      try {
+        const synced = await Promise.all(cart.map(async item => {
+          if (Number.isInteger(Number(item.product.id))) return item;
+          const { data } = await api.get(`/products/${item.product.slug}`);
+          return { ...item, product: data };
+        }));
+        setCart(synced); setError('');
+      } catch { setError('A product in this cart is no longer available. Remove it and add the live product again.'); setQuote(null); }
+      finally { setBusy(false); }
+      return;
+    }
     pending.current = true; setBusy(true); setError('');
     try {
       const response = await api.post('/checkout/quote', cartPayload);

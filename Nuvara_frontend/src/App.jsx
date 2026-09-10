@@ -18,6 +18,8 @@ import { Dashboard } from './pages/Dashboard';
 import { Auth } from './pages/Auth';
 import { About, Contact, FAQ } from './pages/StaticPages';
 import { POS } from './pages/POS';
+import { Management } from './pages/Management';
+import { TrackOrder } from './pages/TrackOrder';
 
 // Scroll to top on page navigation
 function ScrollToTop() {
@@ -66,9 +68,18 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <AppRoutes />
+      <ErrorBoundary><AppRoutes /></ErrorBoundary>
     </Router>
   );
+}
+
+class ErrorBoundary extends React.Component {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  render() {
+    if (this.state.failed) return <div className="min-h-screen grid place-items-center bg-bg-primary px-6 text-center"><div><h1 className="font-display text-3xl mb-3">Nuvara needs a refresh</h1><p className="text-text-secondary mb-6">Something interrupted this page. Your cart is still saved.</p><button className="px-5 py-3 rounded-lg bg-green text-white font-bold" onClick={() => window.location.reload()}>Refresh page</button></div></div>;
+    return this.props.children;
+  }
 }
 
 function AppRoutes() {
@@ -78,6 +89,8 @@ function AppRoutes() {
         <main className="flex-grow">
           <Routes>
             <Route path="/pos/*" element={<POS />} />
+            <Route path="/manage/*" element={<Management />} />
+            <Route path="/track-order" element={<TrackOrder />} />
             <Route path="/" element={<Home />} />
             <Route path="/category/:slug" element={<Category />} />
             <Route path="/product/:slug" element={<ProductDetail />} />

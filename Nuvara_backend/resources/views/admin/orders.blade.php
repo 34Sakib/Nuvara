@@ -58,8 +58,11 @@
                                 <form action="{{ route('admin.orders.status', $ord->id) }}" method="POST" class="inline-flex items-center">
                                     @csrf
                                     <select name="status" onchange="this.form.submit()" class="bg-surface text-gray-400 border border-border rounded-lg text-xs font-bold px-2.5 py-1.5 focus:outline-none focus:border-brass/65 focus:ring-1 focus:ring-brass/65">
+                                        <option value="pending" {{ $ord->status === 'pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="processing" {{ $ord->status === 'processing' ? 'selected' : '' }}>Processing</option>
                                         <option value="shipped" {{ $ord->status === 'shipped' ? 'selected' : '' }}>Shipped</option>
+                                        <option value="in_transit" {{ $ord->status === 'in_transit' ? 'selected' : '' }}>In transit</option>
+                                        <option value="out_for_delivery" {{ $ord->status === 'out_for_delivery' ? 'selected' : '' }}>Out for delivery</option>
                                         <option value="delivered" {{ $ord->status === 'delivered' ? 'selected' : '' }}>Delivered</option>
                                     </select>
                                 </form>

@@ -146,6 +146,9 @@
             background: #c5a880;
         }
     </style>
+    <style>
+      :root{--admin-green:#173d31;--admin-brass:#c5a880;--admin-ivory:#f7f5f0} body{letter-spacing:-.01em}.glass-card{border-radius:18px!important;overflow:hidden}.glass-card h1,.glass-card h2,.glass-card h3{font-family:Fraunces,serif;letter-spacing:-.02em}main{scroll-behavior:smooth}main>div{animation:adminRise .35s ease-out both}input,select,textarea{min-height:42px;border-radius:10px!important;transition:border-color .2s,box-shadow .2s}input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(197,168,128,.14)!important}.glass-card button,.glass-card a{transition:transform .2s,box-shadow .2s,background .2s}.glass-card button:hover,.glass-card a:hover{transform:translateY(-1px)}table thead th{font-size:10px!important;letter-spacing:.12em!important;padding-top:15px!important;padding-bottom:15px!important}table tbody td{vertical-align:middle}.dark table tbody tr:hover{background:rgba(197,168,128,.045)}aside nav a{min-height:43px;border-radius:11px!important;letter-spacing:.08em!important}aside nav a.bg-brass{box-shadow:0 8px 20px rgba(197,168,128,.18)}@keyframes adminRise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@media(max-width:767px){body{display:block!important}aside{position:sticky;top:0;width:100%!important;z-index:40;border-right:0;border-bottom:1px solid #1a1a1a}aside>div:first-child{padding:14px 18px!important}aside nav{display:flex;gap:6px;overflow-x:auto;padding:10px!important;white-space:nowrap}aside nav a{flex:0 0 auto;padding:10px 13px!important;font-size:10px!important}aside nav a span:first-child{font-size:14px}main{padding:18px!important}table{min-width:760px}.glass-card{border-radius:14px!important}}
+    </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col md:flex-row relative overflow-x-hidden">
     <!-- Background glowing accents -->
@@ -371,8 +374,8 @@
         <!-- Page View Body -->
         <main class="flex-grow p-6 md:p-8 overflow-y-auto max-w-7xl w-full mx-auto">
             @if(session('success'))
-                <div class="mb-6 p-4 rounded-xl bg-green-950/40 border border-green-900/50 text-green-400 text-xs font-semibold animate-pulse">
-                    {{ session('success') }}
+                <div id="admin-success-toast" class="fixed top-6 right-6 z-[100] flex items-center gap-3 max-w-sm rounded-2xl bg-emerald-950/95 border border-emerald-400/30 px-5 py-4 text-emerald-200 text-sm font-semibold shadow-2xl backdrop-blur animate-[slideIn_.3s_ease-out]">
+                    <span class="grid h-7 w-7 place-items-center rounded-full bg-emerald-400 text-emerald-950">✓</span><span>{{ session('success') }}</span><button onclick="document.getElementById('admin-success-toast').remove()" class="ml-auto text-emerald-300 hover:text-white">×</button>
                 </div>
             @endif
 
@@ -385,6 +388,7 @@
             @yield('content')
         </main>
     </div>
+    <style>@keyframes slideIn{from{transform:translateY(-12px);opacity:0}to{transform:translateY(0);opacity:1}}</style><script>setTimeout(()=>document.getElementById('admin-success-toast')?.remove(),4500)</script>
 
     <!-- Custom Compact Delete Modal (Matches reference image) -->
     <div id="nuvara-delete-modal-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">

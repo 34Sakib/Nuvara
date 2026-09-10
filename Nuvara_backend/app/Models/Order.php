@@ -10,7 +10,7 @@ class Order extends Model
         'user_id', 'order_number', 'status', 'subtotal', 'discount', 'shipping_fee', 'total', 
         'currency', 'locale', 'shipping_name', 'shipping_address', 'shipping_city', 
         'shipping_state', 'shipping_zip', 'shipping_country', 'payment_status', 'customer_email',
-        'checkout_key', 'checkout_hash', 'checkout_receipt', 'coupon_code'
+        'checkout_key', 'checkout_hash', 'checkout_receipt', 'coupon_code', 'channel', 'payment_method', 'cashier_name'
     ];
 
     protected $casts = [

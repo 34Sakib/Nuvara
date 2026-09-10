@@ -70,8 +70,8 @@ export const Cart = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
-      <h1 className="text-2xl font-black text-text-primary uppercase tracking-wide mb-8 text-left rtl:text-right border-b border-border pb-3">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in overflow-hidden">
+      <h1 className="text-xl sm:text-2xl font-black text-text-primary uppercase tracking-wide mb-8 text-left rtl:text-right border-b border-border pb-3 break-words">
         {t('cart.title')}
       </h1>
 
@@ -92,16 +92,16 @@ export const Cart = () => {
               const hasVariant = Object.keys(item.variant).length > 0;
               
               return (
-                <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center pt-4 first:pt-0 px-2 md:px-4">
+                <div key={item.id} className="cart-line grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 items-center pt-4 first:pt-0 px-1 sm:px-2 md:px-4 min-w-0">
                   {/* Info block */}
-                  <div className="col-span-12 md:col-span-6 flex items-center space-x-4 rtl:space-x-reverse text-left rtl:text-right">
+                  <div className="col-span-12 md:col-span-6 flex items-center space-x-3 sm:space-x-4 rtl:space-x-reverse text-left rtl:text-right min-w-0">
                     <img 
                       src={p.images[0]} 
                       alt={getLocalized(p.name, locale)} 
                       className="w-16 h-16 rounded-xl object-cover border border-border bg-bg-primary flex-shrink-0"
                     />
-                    <div>
-                      <Link to={`/product/${p.slug}`} className="font-bold text-sm text-text-primary hover:text-accent transition-colors">
+                    <div className="min-w-0">
+                      <Link to={`/product/${p.slug}`} className="font-bold text-sm text-text-primary hover:text-accent transition-colors line-clamp-2">
                         {getLocalized(p.name, locale)}
                       </Link>
                       {hasVariant && (
@@ -122,13 +122,13 @@ export const Cart = () => {
                   </div>
 
                   {/* Unit price */}
-                  <div className="col-span-4 md:col-span-2 text-center font-bold text-sm text-text-primary md:block flex justify-between items-center bg-bg-primary md:bg-transparent p-2 md:p-0 rounded">
+                  <div className="col-span-12 md:col-span-2 text-left md:text-center font-bold text-sm text-text-primary flex justify-between md:block items-center bg-bg-primary md:bg-transparent p-2 md:p-0 rounded">
                     <span className="md:hidden text-xs text-text-secondary font-medium">Unit Price</span>
                     <span>${p.price}</span>
                   </div>
 
                   {/* Quantity Stepper */}
-                  <div className="col-span-4 md:col-span-2 flex justify-center items-center md:block flex justify-between bg-bg-primary md:bg-transparent p-2 md:p-0 rounded">
+                  <div className="col-span-12 md:col-span-2 flex justify-between items-center md:block bg-bg-primary md:bg-transparent p-2 md:p-0 rounded">
                     <span className="md:hidden text-xs text-text-secondary font-medium">Quantity</span>
                     <QuantityStepper
                       value={item.quantity}
@@ -139,7 +139,7 @@ export const Cart = () => {
                   </div>
 
                   {/* Item total price & action */}
-                  <div className="col-span-4 md:col-span-2 flex justify-between md:justify-end items-center bg-bg-primary md:bg-transparent p-2 md:p-0 rounded">
+                  <div className="col-span-12 md:col-span-2 flex justify-between md:justify-end items-center bg-bg-primary md:bg-transparent p-2 md:p-0 rounded">
                     <span className="md:hidden text-xs text-text-secondary font-medium">Total</span>
                     <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
                       <span className="font-extrabold text-sm text-accent">

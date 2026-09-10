@@ -93,6 +93,49 @@ class OrderController extends Controller
         return $this->replay($order, $hash);
     }
 
+    public function posSale(Request $request, CheckoutQuote $pricing)
+    {
+        $data = $request->validate($this->rules() + [
+            'payment_method' => 'required|in:cash,card',
+            'cash_received' => 'nullable|numeric|min:0|max:99999999.99',
+            'checkout_key' => 'required|uuid',
+            'cashier_name' => 'nullable|string|max:120',
+        ]);
+        if ($data['payment_method'] === 'card') {
+            throw ValidationException::withMessages(['payment_method' => 'Card payments are not configured yet. Use cash or configure a provider.']);
+        }
+        $hash = hash('sha256', json_encode($data, JSON_THROW_ON_ERROR));
+        $existing = Order::where('checkout_key', $data['checkout_key'])->first();
+        if ($existing) return $this->replay($existing, $hash);
+        $order = DB::transaction(function () use ($data, $pricing, $hash) {
+            $quote = $pricing->calculate($data);
+            if ($data['payment_method'] === 'cash' && (float) ($data['cash_received'] ?? 0) < (float) $quote['total']) {
+                throw ValidationException::withMessages(['cash_received' => 'Cash received is less than the amount due.']);
+            }
+            $order = Order::create([
+                'order_number' => 'POS-'.strtoupper((string) Str::ulid()), 'status' => 'completed',
+                'payment_status' => 'paid', 'channel' => 'pos', 'payment_method' => $data['payment_method'],
+                'cashier_name' => $data['cashier_name'] ?? 'Cashier', 'subtotal' => $quote['subtotal'],
+                'discount' => $quote['discount'], 'shipping_fee' => '0.00', 'total' => $quote['total'],
+                'currency' => $quote['currency'], 'shipping_name' => 'Walk-in customer',
+                'customer_email' => null, 'shipping_address' => 'In-store purchase', 'shipping_city' => '',
+                'shipping_state' => '', 'shipping_zip' => '', 'shipping_country' => '',
+                'checkout_key' => $data['checkout_key'], 'checkout_hash' => $hash, 'checkout_receipt' => $quote,
+            ]);
+            foreach ($quote['lines'] as $line) {
+                $updated = Product::whereKey($line['product_id'])->where('stock', '>=', $line['quantity'])->decrement('stock', $line['quantity']);
+                if (!$updated) throw ValidationException::withMessages(['cart' => 'Stock changed. Refresh the sale and try again.']);
+                if ($line['variant_id']) {
+                    $updated = ProductVariant::whereKey($line['variant_id'])->where('stock', '>=', $line['quantity'])->decrement('stock', $line['quantity']);
+                    if (!$updated) throw ValidationException::withMessages(['cart' => 'Variant stock changed. Refresh the sale and try again.']);
+                }
+                $order->items()->create(array_intersect_key($line, array_flip(['product_id', 'variant_id', 'quantity', 'unit_price', 'total'])));
+            }
+            return $order;
+        }, 3);
+        return $this->replay($order, $hash);
+    }
+
     private function replay(Order $order, string $hash)
     {
         abort_unless(hash_equals($order->checkout_hash, $hash), 409, 'This checkout key belongs to a different request.');

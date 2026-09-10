@@ -322,7 +322,7 @@ export const ProductDetail = () => {
 
       {/* Sticky Mobile Bar (pinned to bottom while scrolling) */}
       {product.stock > 0 && isStickyBarVisible && (
-        <div className="fixed bottom-0 left-0 right-0 z-30 lg:hidden bg-bg-secondary/95 backdrop-blur border-t border-border p-4 flex items-center justify-between shadow-2xl animate-slide-up">
+        <div className="fixed bottom-[74px] left-0 right-0 z-30 lg:hidden bg-bg-secondary/95 backdrop-blur border-t border-border p-4 flex items-center justify-between shadow-2xl animate-slide-up">
           <div className="text-left rtl:text-right">
             <div className="text-xs text-text-secondary font-semibold line-clamp-1">{getLocalized(product.name, locale)}</div>
             <div className="text-base font-bold font-display text-green-soft dark:text-brass-bright">${product.price}</div>

@@ -70,6 +70,8 @@ export const Category = () => {
         setTotalCount(res.data.total || 0);
       } catch (err) {
         console.error("Failed querying products from API", err);
+        setProducts([]);
+        setTotalCount(0);
       } finally {
         setLoading(false);
       }

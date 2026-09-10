@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Mail, ShieldCheck } from 'lucide-react';
 import { useToastStore } from '../../store/toastStore';
@@ -101,7 +102,7 @@ export const Footer = () => {
               <li><a href="#" className="hover:text-accent transition-colors">{t('footer.faq')}</a></li>
               <li><a href="#" className="hover:text-accent transition-colors">{t('footer.returns')}</a></li>
               <li><a href="#" className="hover:text-accent transition-colors">Shipping Info</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">Order Tracking</a></li>
+              <li><Link to="/track-order" className="hover:text-accent transition-colors">Order Tracking</Link></li>
             </ul>
           </div>
 

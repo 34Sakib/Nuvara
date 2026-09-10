@@ -68,7 +68,7 @@ export const ProductCard = ({ product }) => {
       whileTap={{ scale: 0.985 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
       onClick={handleCardClick}
-      className="group relative flex flex-col bg-surface border border-border/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-accent/40"
+      className="group relative flex min-w-0 w-full flex-col bg-surface border border-border/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-accent/40"
     >
       {/* Top Floating Badges */}
       <div className="absolute top-2.5 left-2.5 rtl:right-2.5 rtl:left-auto z-10 flex flex-col space-y-1">
@@ -97,7 +97,7 @@ export const ProductCard = ({ product }) => {
       </button>
 
       {/* Product Image Wrapper - Compact Height & Uncropped Full Visibility */}
-      <div className="relative h-36 sm:h-44 w-full p-2 bg-surface-2/40 flex items-center justify-center overflow-hidden">
+      <div className="relative h-32 xs:h-36 sm:h-44 w-full p-2 bg-surface-2/40 flex items-center justify-center overflow-hidden">
         <img
           src={mainImage}
           alt={getLocalized(product.name, locale)}
@@ -125,13 +125,13 @@ export const ProductCard = ({ product }) => {
 
         {/* Pricing Block & Add To Cart Button */}
         <div className="mt-3 space-y-2.5">
-          <div className="flex items-baseline justify-between space-x-1 rtl:space-x-reverse">
-            <div className="flex items-baseline space-x-1.5 rtl:space-x-reverse">
-              <span className="text-sm sm:text-base font-extrabold font-display text-green-soft dark:text-brass-bright">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-1 gap-y-1">
+            <div className="flex min-w-0 items-baseline space-x-1.5 rtl:space-x-reverse">
+              <span className="text-xs sm:text-base font-extrabold font-display text-green-soft dark:text-brass-bright whitespace-nowrap">
                 ${product.price}
               </span>
               {product.compare_price && (
-                <span className="text-[11px] text-text-secondary line-through font-sans">
+                <span className="text-[10px] sm:text-[11px] text-text-secondary line-through font-sans whitespace-nowrap">
                   ${product.compare_price}
                 </span>
               )}

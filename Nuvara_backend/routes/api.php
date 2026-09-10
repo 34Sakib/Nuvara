@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\V1\CouponController;
 use App\Http\Controllers\Api\V1\AddressController;
 use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\PageController;
+use App\Http\Controllers\Api\V1\OperationsController;
+use App\Http\Controllers\Api\V1\TrackingController;
 
 Route::prefix('v1')->group(function () {
     // Dynamic Homepage aggregate endpoint
@@ -40,6 +42,13 @@ Route::prefix('v1')->group(function () {
     // Checkout (supports guest checkouts and authenticated checkouts)
     Route::post('/checkout/quote', [OrderController::class, 'quote'])->middleware('throttle:60,1');
     Route::post('/checkout', [OrderController::class, 'checkout'])->middleware('throttle:30,1');
+    Route::post('/pos/sale', [OrderController::class, 'posSale'])->middleware('throttle:60,1');
+    Route::post('/orders/track', [TrackingController::class, 'track'])->middleware('throttle:20,1');
+    Route::post('/pos/registers/open', [OperationsController::class, 'openRegister']);
+    Route::post('/pos/registers/{session}/close', [OperationsController::class, 'closeRegister']);
+    Route::get('/pos/inventory/movements', [OperationsController::class, 'movements']);
+    Route::post('/pos/inventory/adjust', [OperationsController::class, 'adjustStock']);
+    Route::post('/pos/orders/{order}/refund', [OperationsController::class, 'refund']);
 
     // Authentication
     Route::post('/auth/register', [AuthController::class, 'register']);
