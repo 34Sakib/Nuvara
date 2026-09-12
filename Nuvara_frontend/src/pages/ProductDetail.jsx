@@ -185,10 +185,10 @@ export const ProductDetail = () => {
           {/* Pricing Block */}
           <div className="p-5 rounded-2xl bg-bg-secondary border border-border transition-colors">
             <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
-              <span className="text-3xl font-bold font-display text-green-soft dark:text-brass-bright">${product.price}</span>
+              <span className="text-3xl font-bold font-display text-green-soft dark:text-brass-bright">৳{product.price}</span>
               {product.compare_price && (
                 <>
-                  <span className="text-sm text-text-secondary line-through">${product.compare_price}</span>
+                  <span className="text-sm text-text-secondary line-through">৳{product.compare_price}</span>
                   <span className="text-xs font-bold text-white bg-wine px-2 py-0.5 rounded-md">
                     Save {discountPercent}%
                   </span>
@@ -325,7 +325,7 @@ export const ProductDetail = () => {
         <div className="fixed bottom-[74px] left-0 right-0 z-30 lg:hidden bg-bg-secondary/95 backdrop-blur border-t border-border p-4 flex items-center justify-between shadow-2xl animate-slide-up">
           <div className="text-left rtl:text-right">
             <div className="text-xs text-text-secondary font-semibold line-clamp-1">{getLocalized(product.name, locale)}</div>
-            <div className="text-base font-bold font-display text-green-soft dark:text-brass-bright">${product.price}</div>
+            <div className="text-base font-bold font-display text-green-soft dark:text-brass-bright">৳{product.price}</div>
           </div>
           <Button
             variant="primary"

@@ -147,8 +147,46 @@
         }
     </style>
     <style>
-      :root{--admin-green:#173d31;--admin-brass:#c5a880;--admin-ivory:#f7f5f0} body{letter-spacing:-.01em}.glass-card{border-radius:18px!important;overflow:hidden}.glass-card h1,.glass-card h2,.glass-card h3{font-family:Fraunces,serif;letter-spacing:-.02em}main{scroll-behavior:smooth}main>div{animation:adminRise .35s ease-out both}input,select,textarea{min-height:42px;border-radius:10px!important;transition:border-color .2s,box-shadow .2s}input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(197,168,128,.14)!important}.glass-card button,.glass-card a{transition:transform .2s,box-shadow .2s,background .2s}.glass-card button:hover,.glass-card a:hover{transform:translateY(-1px)}table thead th{font-size:10px!important;letter-spacing:.12em!important;padding-top:15px!important;padding-bottom:15px!important}table tbody td{vertical-align:middle}.dark table tbody tr:hover{background:rgba(197,168,128,.045)}aside nav a{min-height:43px;border-radius:11px!important;letter-spacing:.08em!important}aside nav a.bg-brass{box-shadow:0 8px 20px rgba(197,168,128,.18)}@keyframes adminRise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@media(max-width:767px){body{display:block!important}aside{position:sticky;top:0;width:100%!important;z-index:40;border-right:0;border-bottom:1px solid #1a1a1a}aside>div:first-child{padding:14px 18px!important}aside nav{display:flex;gap:6px;overflow-x:auto;padding:10px!important;white-space:nowrap}aside nav a{flex:0 0 auto;padding:10px 13px!important;font-size:10px!important}aside nav a span:first-child{font-size:14px}main{padding:18px!important}table{min-width:760px}.glass-card{border-radius:14px!important}}
+      :root{--admin-green:#173d31;--admin-brass:#c5a880;--admin-ivory:#f7f5f0} body{letter-spacing:-.01em;background:linear-gradient(135deg,#102d25 0%,#173d31 42%,#244e40 100%)!important}.glass-card{border-radius:18px!important;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.045))!important;border:1px solid rgba(255,255,255,.14)!important;backdrop-filter:blur(18px);box-shadow:0 18px 50px rgba(4,20,15,.22)!important}.glass-card h1,.glass-card h2,.glass-card h3{font-family:Fraunces,serif;letter-spacing:-.02em;color:#fff}main{scroll-behavior:smooth}main>div{animation:adminRise .35s ease-out both}input,select,textarea{min-height:42px;border-radius:10px!important;transition:border-color .2s,box-shadow .2s;background:rgba(8,25,20,.38)!important;color:#fff!important;border-color:rgba(255,255,255,.16)!important}input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(197,168,128,.18)!important;border-color:#c5a880!important}.glass-card button,.glass-card a{transition:transform .2s,box-shadow .2s,background .2s}.glass-card button:hover,.glass-card a:hover{transform:translateY(-1px)}table thead th{font-size:10px!important;letter-spacing:.12em!important;padding-top:15px!important;padding-bottom:15px!important;background:rgba(197,168,128,.10)!important;color:#eadcc5!important}table tbody td{vertical-align:middle;color:#e8eee9}.dark table tbody tr:hover{background:rgba(197,168,128,.09)}aside{background:rgba(7,27,21,.72)!important;border-color:rgba(255,255,255,.12)!important;backdrop-filter:blur(22px)}aside nav a{min-height:43px;border-radius:11px!important;letter-spacing:.08em!important}aside nav a.bg-brass{box-shadow:0 8px 20px rgba(197,168,128,.25)}aside nav a span:first-child{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:rgba(197,168,128,.16);font-size:13px;line-height:1}aside nav a.bg-brass span:first-child{background:rgba(0,0,0,.12)}@keyframes adminRise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@media(max-width:767px){body{display:block!important}aside{position:sticky;top:0;width:100%!important;z-index:40;border-right:0;border-bottom:1px solid rgba(255,255,255,.12)}aside>div:first-child{padding:14px 18px!important}aside nav{display:flex;gap:6px;overflow-x:auto;padding:10px!important;white-space:nowrap}aside nav a{flex:0 0 auto;padding:10px 13px!important;font-size:10px!important}aside nav a span:first-child{font-size:14px}main{padding:18px!important}table{min-width:760px}.glass-card{border-radius:14px!important}}
+      .dashboard-hero{background:linear-gradient(120deg,#244f41,#173d31)!important;border:1px solid rgba(197,168,128,.32)!important}.dashboard-hero h2{font-size:clamp(1.6rem,3vw,2.5rem)!important;text-transform:none!important}.dashboard-metric{background:linear-gradient(145deg,rgba(255,255,255,.15),rgba(255,255,255,.06))!important}.dashboard-metric h3{font-size:clamp(1.5rem,2.3vw,2rem)!important}.dashboard-chart{background:rgba(7,27,21,.55)!important}
     </style>
+<style>
+body{background:#eee8dc!important;color:#26352e!important}.glass-card{background:#fffdf9!important;border-color:#ded5c7!important;box-shadow:0 12px 32px rgba(90,73,47,.10)!important}.glass-card h1,.glass-card h2,.glass-card h3{color:#24372e!important}input,select,textarea{background:#fff!important;color:#26352e!important;border-color:#d8cdbd!important}aside{background:#f8f4ec!important;border-color:#ded5c7!important}aside nav a:not(.bg-brass){color:#59645d!important}table thead th{background:#f2ece2!important;color:#6b5a43!important}table tbody td{color:#34443a!important}.dashboard-hero{background:linear-gradient(135deg,#fffaf1,#f0e5d3)!important}.dash-chart{background:#fffdf9!important}
+</style>
+<style>aside{background:#364347!important;border-color:#465257!important}aside>div:first-child{background:#364347!important;border-color:#465257!important}aside>div:first-child span:last-child{color:#fff7ea!important}aside nav a:not(.bg-brass){color:#e3e9e7!important}header{background:#364347!important;border-color:#465257!important;color:#f5f1e8!important}header .text-gray-400,header .text-stone-600,header .text-gray-500,header button,.admin-user-name,.admin-user-arrow{color:#fff!important}header svg{color:#f5f1e8!important}header .bg-brass{color:#172126!important}</style>
+<style>
+/* Opaque badge palettes remain readable on the ivory admin surfaces in either theme. */
+html main table span[class*="bg-"] {
+    --badge-bg:#edf0f3; --badge-ink:#425466; --badge-border:#d4dde5;
+    background:var(--badge-bg)!important; color:var(--badge-ink)!important;
+    border:1px solid var(--badge-border)!important;
+    display:inline-flex; align-items:center; padding:5px 10px;
+    border-radius:8px; font-size:11px!important; font-weight:700;
+    line-height:1.4; letter-spacing:.025em; white-space:nowrap;
+}
+html main table span[class*="bg-green"],html main table span[class*="bg-emerald"] { --badge-bg:#e7f4ed; --badge-ink:#17603b; --badge-border:#bddfc9; }
+html main table span[class*="bg-yellow"],html main table span[class*="bg-amber"] { --badge-bg:#fff3d6; --badge-ink:#805000; --badge-border:#ecd5a0; }
+html main table span[class*="bg-red"] { --badge-bg:#fcebea; --badge-ink:#a32e35; --badge-border:#efc6c9; }
+html main table span[class*="bg-indigo"],html main table span[class*="bg-blue"] { --badge-bg:#eaf0ff; --badge-ink:#304f9b; --badge-border:#c9d6f4; }
+html main table span[class*="bg-purple"] { --badge-bg:#f1ebfb; --badge-ink:#654299; --badge-border:#ded0ef; }
+html main table button[class*="text-red"] { background:#fff1f0!important; color:#a32e35!important; border-color:#edc3c5!important; }
+html main table button[class*="text-red"]:hover { background:#fce1e0!important; }
+html main table :is(a,button)[class*="text-brass"] { color:#725027!important; background:#faf2e5!important; border-color:#dbc8a9!important; }
+html main table td.text-amber-400 { color:#805000!important; }
+html main .glass-card label.text-brass { color:#725027!important; }
+html main table :is(button,a):focus-visible { outline:3px solid #7395ce; outline-offset:3px; }
+</style>
+<style>
+#userDropdownMenu { width:260px; max-width:calc(100vw - 32px); background:#fffdf9!important; border:1px solid #ddd2c1!important; border-radius:16px; padding:8px; box-shadow:0 18px 48px rgba(25,35,38,.24); z-index:100; }
+#userDropdownMenu a,#userDropdownMenu button { color:#364347!important; border-radius:9px; padding:12px; font-size:13px; letter-spacing:0; text-transform:none; }
+#userDropdownMenu a:hover,#userDropdownMenu a:focus-visible { background:#f0e9de!important; }
+#userDropdownMenu button { color:#b33440!important; }
+#userDropdownMenu button:hover,#userDropdownMenu button:focus-visible { background:#fcebed!important; }
+#userDropdownMenu .account-heading { padding:10px 12px 14px; border-bottom:1px solid #e9e1d6; margin-bottom:6px; }
+#userDropdownMenu .account-heading strong { display:block; color:#26373d!important; font-size:14px; overflow-wrap:anywhere; }
+#userDropdownMenu .account-heading small { display:block; color:#69777b!important; font-size:11px; margin-top:4px; }
+#userDropdownMenu :focus-visible { outline:2px solid #967343; outline-offset:-2px; }
+</style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col md:flex-row relative overflow-x-hidden">
     <!-- Background glowing accents -->
@@ -297,12 +335,12 @@
         </nav>
 
         <!-- Sidebar Footer / Logout -->
-        <div class="p-4 border-t border-stone-200 dark:border-border bg-stone-100 dark:bg-black/25 transition-colors duration-300">
+        <div class="p-4 border-t border-white/10 bg-[#364347] dark:bg-[#364347] transition-colors duration-300">
             <form action="{{ route('admin.logout') }}" method="POST">
                 @csrf
                 <button 
                     type="submit" 
-                    class="w-full py-3 border border-red-900/40 text-red-400 hover:bg-red-950/20 text-xs font-bold uppercase tracking-widest rounded-lg transition-all duration-300 transform active:scale-[0.98]"
+                    class="w-full py-3 bg-[#364347] dark:bg-[#364347] border border-white/15 text-red-400 hover:bg-[#46565a] hover:border-red-300 hover:text-red-300 text-xs font-bold uppercase tracking-widest rounded-lg transition-all duration-300 transform active:scale-[0.98]"
                 >
                     Log Out
                 </button>
@@ -338,14 +376,15 @@
                         id="userDropdownBtn"
                     >
                         <span class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
-                        <span class="text-xs text-stone-700 dark:text-gray-300 font-bold font-sans">{{ Auth::user()->name }}</span>
-                        <span class="text-[10px] text-stone-500 dark:text-gray-500">▼</span>
+                        <span style="color:#ffffff!important" class="admin-user-name text-xs font-bold font-sans">{{ Auth::user()->name }}</span>
+                        <span style="color:#ffffff!important" class="admin-user-arrow text-[10px]">▼</span>
                     </button>
                     
                     <div 
                         id="userDropdownMenu" 
-                        class="hidden absolute right-0 mt-2 w-48 rounded-xl glass-card py-2 z-50 text-left border border-brass/25"
+                        class="hidden absolute right-0 mt-2 text-left"
                     >
+                        <div class="account-heading"><strong>{{ Auth::user()->name }}</strong><small>Manage your admin account</small></div>
                         <a 
                             href="{{ route('admin.profile') }}" 
                             class="flex items-center space-x-2.5 px-4 py-2.5 text-xs text-stone-600 dark:text-gray-300 hover:text-brass hover:bg-brass/5 transition-colors font-bold uppercase tracking-wider"

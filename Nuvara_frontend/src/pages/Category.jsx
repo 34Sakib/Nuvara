@@ -22,6 +22,8 @@ export const Category = () => {
   const [products, setProducts] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [retry, setRetry] = useState(0);
 
   const maxCategoryPrice = 500;
 
@@ -53,8 +55,10 @@ export const Category = () => {
   }, [slug, searchQuery]);
 
   useEffect(() => {
+    let active = true;
     const fetchFilteredProducts = async () => {
       setLoading(true);
+      setError(false);
       try {
         const params = {
           category: slug,
@@ -66,18 +70,22 @@ export const Category = () => {
           limit: visibleCount
         };
         const res = await api.get('/products', { params });
+        if (!active) return;
         setProducts(res.data.data || []);
         setTotalCount(res.data.total || 0);
       } catch (err) {
+        if (!active) return;
+        setError(true);
         console.error("Failed querying products from API", err);
         setProducts([]);
         setTotalCount(0);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
     fetchFilteredProducts();
-  }, [slug, filters, sortBy, visibleCount]);
+    return () => { active = false; };
+  }, [slug, filters, sortBy, visibleCount, retry]);
 
   const activeCategory = categories.find((c) => c.slug === slug);
   const isAll = slug === 'all' || !activeCategory;
@@ -124,11 +132,11 @@ export const Category = () => {
         </aside>
 
         {/* Right Product Listings */}
-        <main className="lg:col-span-3">
+        <main className="lg:col-span-3 min-w-0" aria-busy={loading}>
           {/* Toolbar */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-bg-secondary border border-border p-4 rounded-2xl mb-6 gap-4 shadow-sm transition-colors">
-            <div className="text-sm font-bold text-text-secondary">
-              {t('category.results_count', { count: filteredProducts.length })}
+            <div className="text-sm font-bold text-text-secondary" role="status" aria-live="polite">
+              {loading ? 'Loading products…' : error ? 'Products unavailable' : t('category.results_count', { count: filteredProducts.length })}
             </div>
 
             <div className="flex items-center space-x-3 rtl:space-x-reverse w-full sm:w-auto justify-between sm:justify-end">
@@ -165,7 +173,25 @@ export const Category = () => {
           </div>
 
           {/* Product Grid */}
-          {paginatedProducts.length > 0 ? (
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6" aria-hidden="true">
+              {Array.from({ length: 6 }, (_, index) => (
+                <div key={index} className="rounded-2xl border border-border bg-bg-secondary p-3 sm:p-4 motion-safe:animate-pulse">
+                  <div className="aspect-square rounded-xl bg-border/50 mb-5" />
+                  <div className="h-3 w-1/3 rounded bg-border/50 mb-3" />
+                  <div className="h-4 w-full rounded bg-border/50 mb-2" />
+                  <div className="h-4 w-2/3 rounded bg-border/50 mb-5" />
+                  <div className="h-10 rounded-xl bg-border/50" />
+                </div>
+              ))}
+            </div>
+          ) : error ? (
+            <div role="alert" className="text-center py-16 px-6 rounded-2xl border border-border bg-bg-secondary">
+              <h3 className="font-bold text-text-primary">We couldn’t load the products</h3>
+              <p className="text-sm text-text-secondary mt-2 mb-5">Please try again in a moment.</p>
+              <Button variant="secondary" onClick={() => setRetry(value => value + 1)}>Try again</Button>
+            </div>
+          ) : paginatedProducts.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {paginatedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
@@ -187,7 +213,7 @@ export const Category = () => {
           )}
 
           {/* Load More Button */}
-          {visibleCount < filteredProducts.length && (
+          {!loading && !error && visibleCount < filteredProducts.length && (
             <div className="flex justify-center mt-12">
               <Button
                 variant="secondary"

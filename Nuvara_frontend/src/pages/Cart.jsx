@@ -124,7 +124,7 @@ export const Cart = () => {
                   {/* Unit price */}
                   <div className="col-span-12 md:col-span-2 text-left md:text-center font-bold text-sm text-text-primary flex justify-between md:block items-center bg-bg-primary md:bg-transparent p-2 md:p-0 rounded">
                     <span className="md:hidden text-xs text-text-secondary font-medium">Unit Price</span>
-                    <span>${p.price}</span>
+                      <span>৳{p.price}</span>
                   </div>
 
                   {/* Quantity Stepper */}
@@ -143,7 +143,7 @@ export const Cart = () => {
                     <span className="md:hidden text-xs text-text-secondary font-medium">Total</span>
                     <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
                       <span className="font-extrabold text-sm text-accent">
-                        ${(p.price * item.quantity).toFixed(2)}
+                        ৳{(p.price * item.quantity).toFixed(2)}
                       </span>
                       <button
                         onClick={() => removeFromCart(item.id)}
@@ -171,26 +171,26 @@ export const Cart = () => {
             <div className="space-y-3.5 text-sm font-semibold text-text-secondary">
               <div className="flex justify-between">
                 <span>{t('cart.subtotal')}</span>
-                <span className="text-text-primary">${totals.subtotal.toFixed(2)}</span>
+                <span className="text-text-primary">৳{totals.subtotal.toFixed(2)}</span>
               </div>
               
               {totals.discount > 0 && (
                 <div className="flex justify-between text-green-600 dark:text-green-400">
                   <span>{t('cart.discount')}</span>
-                  <span>-${totals.discount.toFixed(2)}</span>
+                  <span>-৳{totals.discount.toFixed(2)}</span>
                 </div>
               )}
               
               <div className="flex justify-between">
                 <span>{t('cart.shipping')}</span>
                 <span className="text-text-primary">
-                  {totals.shipping === 0 ? t('cart.free') : `$${totals.shipping.toFixed(2)}`}
+                  {totals.shipping === 0 ? t('cart.free') : `৳${totals.shipping.toFixed(2)}`}
                 </span>
               </div>
               
               <div className="flex justify-between text-base font-black text-text-primary border-t border-border pt-4">
                 <span>{t('cart.total')}</span>
-                <span className="text-accent">${totals.total.toFixed(2)}</span>
+                <span className="text-accent">৳{totals.total.toFixed(2)}</span>
               </div>
             </div>
 
