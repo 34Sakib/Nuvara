@@ -1,104 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { CheckCircle2, ArrowRight, Package } from 'lucide-react';
-import { getLocalized } from '../utils/mockData';
+import React from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { ArrowRight, Check, Clock3, Copy, FileDown, PackageCheck, ReceiptText, ShoppingBag } from 'lucide-react';
 import { useLocaleStore } from '../store/localeStore';
-import { Button } from '../components/ui/Button';
+import { getLocalized } from '../utils/mockData';
 
 export const OrderSuccess = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { locale } = useLocaleStore();
-  const [order, setOrder] = useState(null);
-
-  useEffect(() => {
-    // Read from session storage
-    const storedOrder = sessionStorage.getItem('last_order');
-    if (storedOrder) {
-      setOrder(JSON.parse(storedOrder));
-    }
-  }, []);
-
-  const handleTrackOrder = () => {
-    navigate('/dashboard?tab=orders');
-  };
-
-  const name = order?.name || 'Customer';
-  const orderId = order?.id || 'NVR-847291';
-  const items = order?.items || [];
-  const totals = order?.totals || { total: 199.99, subtotal: 199.99, shipping: 0, discount: 0 };
-
-  return (
-    <div className="max-w-2xl mx-auto px-4 py-16 text-center animate-fade-in">
-      {/* Success Animation Ring */}
-      <div className="w-24 h-24 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce text-green-500">
-        <CheckCircle2 className="w-12 h-12" />
-      </div>
-
-      <h1 className="text-3xl font-black text-text-primary uppercase tracking-wide mb-3">
-        {t('success.title')}
-      </h1>
-      
-      <p className="text-base text-text-secondary max-w-md mx-auto mb-6">
-        {t('success.thank_you', { name })}
-      </p>
-
-      {/* Order Card Info */}
-      <div className="bg-bg-secondary border border-border rounded-2xl p-6 mb-8 text-left rtl:text-right shadow-sm transition-colors">
-        <div className="flex justify-between items-center border-b border-border pb-4 mb-4">
-          <div>
-            <div className="text-[10px] uppercase font-bold text-text-secondary">Order ID</div>
-            <div className="text-sm font-black text-text-primary mt-0.5">#{orderId}</div>
-          </div>
-          <div className="text-right rtl:text-left">
-            <div className="text-[10px] uppercase font-bold text-text-secondary">Estimated Delivery</div>
-            <div className="text-sm font-black text-accent mt-0.5">2-4 Business Days</div>
-          </div>
-        </div>
-
-        {/* Short list of items */}
-        {items.length > 0 && (
-          <div className="space-y-3.5 mb-6">
-            {items.map((item) => (
-              <div key={item.id} className="flex justify-between items-center text-xs text-text-secondary font-semibold">
-                <span className="line-clamp-1">{getLocalized(item.product.name, locale)} x {item.quantity}</span>
-                <span className="text-text-primary font-bold">${(item.product.price * item.quantity).toFixed(2)}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="border-t border-border pt-4 flex justify-between items-center text-sm font-black text-text-primary">
-          <span>Amount Paid</span>
-          <span className="text-accent">${totals.total.toFixed(2)}</span>
-        </div>
-      </div>
-
-      <p className="text-xs text-text-secondary max-w-sm mx-auto mb-8 leading-relaxed">
-        {t('success.sub')}
-      </p>
-
-      <div className="flex flex-col sm:flex-row justify-center gap-4">
-        <Button
-          variant="secondary"
-          onClick={handleTrackOrder}
-          className="px-6 py-3.5"
-          icon={Package}
-        >
-          {t('success.track_order')}
-        </Button>
-        <Link to="/category/all">
-          <Button
-            variant="primary"
-            className="w-full sm:w-auto px-6 py-3.5"
-            icon={ArrowRight}
-          >
-            {t('success.go_home')}
-          </Button>
-        </Link>
-      </div>
-
-    </div>
-  );
+  const { id } = useParams(); const { locale } = useLocaleStore(); let order = null;
+  try { order = JSON.parse(sessionStorage.getItem('last_order') || 'null'); } catch { order = null; }
+  if (order?.id !== id || !order?.receipt) return <div className="max-w-xl mx-auto px-6 py-24 text-center"><ReceiptText className="w-12 h-12 mx-auto mb-5 text-accent"/><h1 className="font-display text-3xl mb-3">Receipt unavailable</h1><p className="text-text-secondary mb-7">This browser does not have a confirmed receipt for this order.</p><Link to="/dashboard?tab=orders" className="text-accent underline">View account orders</Link></div>;
+  const receipt = order.receipt; const money = value => new Intl.NumberFormat(locale, { style: 'currency', currency: receipt.currency || 'USD' }).format(Number(value)); const trackingUrl = `/track-order?order=${encodeURIComponent(order.id)}`;
+  const downloadInvoice = () => { const w = window.open('', '_blank', 'width=760,height=900'); if (!w) return; const rows = receipt.lines.map(line => `<tr><td>${getLocalized(line.name, locale)}<small>${line.sku || ''}</small></td><td>${line.quantity}</td><td>${money(line.total)}</td></tr>`).join(''); w.document.write(`<!doctype html><html><head><title>Nuvara Invoice ${order.id}</title><style>*{box-sizing:border-box}body{margin:0;background:#eef3ef;color:#173d31;font:14px Arial,sans-serif}.invoice{width:680px;max-width:calc(100% - 32px);margin:28px auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 12px 40px #173d3122}.head{padding:30px 34px;background:linear-gradient(135deg,#173d31,#285c48);color:#fff;display:flex;justify-content:space-between}.brand{font:700 28px Georgia,serif;letter-spacing:3px}.tag{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.75;margin-top:6px}.meta{text-align:right;font-size:12px;line-height:1.7}.body{padding:30px 34px}.eyebrow{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#b98232;font-weight:700}.title{font:700 27px Georgia,serif;margin:7px 0 22px}table{width:100%;border-collapse:collapse}th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#738078;border-bottom:1px solid #dfe7e1;padding:10px 0}td{padding:13px 0;border-bottom:1px solid #edf1ee}td:nth-child(2),th:nth-child(2){text-align:center;width:70px}td:last-child,th:last-child{text-align:right}td small{display:block;color:#84918a;font-size:10px;margin-top:4px}.totals{margin:20px 0 0 auto;max-width:260px}.total{display:flex;justify-content:space-between;padding:7px 0;color:#647269}.grand{border-top:2px solid #173d31;margin-top:7px;padding-top:12px;font-size:18px;font-weight:700;color:#173d31}.foot{padding:20px 34px;background:#f3f8f4;text-align:center;color:#285c48}.foot strong{display:block;font:700 17px Georgia,serif;color:#173d31}.foot small{display:block;margin-top:5px;color:#718078}@media print{body{background:#fff}.invoice{width:100%;max-width:none;margin:0;box-shadow:none;border-radius:0}}
+</style></head><body><section class="invoice"><header class="head"><div><div class="brand">NUVARA</div><div class="tag">Thoughtfully yours</div></div><div class="meta"><b>INVOICE</b><br>${order.id}<br>${new Date().toLocaleDateString()}</div></header><main class="body"><div class="eyebrow">Order receipt</div><h1 class="title">Thank you for your order</h1><table><thead><tr><th>Product</th><th>Qty</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table><div class="totals"><div class="total"><span>Subtotal</span><b>${money(receipt.subtotal)}</b></div><div class="total"><span>Discount</span><b>-${money(receipt.discount)}</b></div><div class="total"><span>Shipping</span><b>${money(receipt.shipping)}</b></div><div class="total grand"><span>Total</span><b>${money(receipt.total)}</b></div></div></main><footer class="foot"><strong>We’re so glad you chose Nuvara ♥</strong><small>Every order is packed with care, just for you.</small></footer></section><script>window.onload=()=>{window.focus();window.print();}</script></body></html>`); w.document.close(); };
+  return <div className="order-success-page min-h-screen bg-bg-primary px-4 py-10 sm:py-16"><div className="max-w-3xl mx-auto"><div className="text-center mb-10"><div className="success-mark"><Check size={30}/></div><p className="text-xs uppercase tracking-[.22em] text-accent font-bold mb-3">Nuvara order desk</p><h1 className="font-display text-4xl sm:text-5xl mb-3">Order received</h1><p className="text-text-secondary max-w-md mx-auto">Thank you, {order.name}. We’ve saved your order and will update you when its status changes.</p></div><div className="order-success-card bg-surface border border-border rounded-3xl overflow-hidden shadow-xl"><div className="p-5 sm:p-8 border-b border-border flex flex-wrap gap-5 justify-between items-start"><div><p className="text-xs uppercase tracking-widest text-text-secondary font-bold mb-2">Order reference</p><div className="flex items-center gap-2"><span className="font-mono text-lg font-bold break-all">{order.id}</span><button onClick={() => navigator.clipboard?.writeText(order.id)} className="copy-reference" aria-label="Copy order reference"><Copy size={15}/></button></div></div><div className="flex gap-2"><span className="status-pill status-pending"><Clock3 size={14}/> Payment pending</span><span className="status-pill"><PackageCheck size={14}/> Processing</span></div></div><div className="p-5 sm:p-8"><div className="order-timeline mb-9"><div className="timeline-step active"><span>1</span><div><strong>Order received</strong><small>Confirmed just now</small></div></div><div className="timeline-line"/><div className="timeline-step"><span>2</span><div><strong>Being prepared</strong><small>We’ll notify you</small></div></div><div className="timeline-line"/><div className="timeline-step"><span>3</span><div><strong>On its way</strong><small>Delivery updates</small></div></div></div><div className="flex items-center gap-3 mb-4"><ShoppingBag size={19} className="text-accent"/><h2 className="font-display text-2xl">Order summary</h2></div><ul className="divide-y divide-border">{receipt.lines.map((line, index) => <li key={index} className="py-4 flex justify-between gap-5 text-sm"><div className="min-w-0"><p className="font-semibold truncate">{getLocalized(line.name, locale)} <span className="text-text-secondary">× {line.quantity}</span></p><p className="text-xs text-text-secondary mt-1">{line.sku}</p></div><span className="font-bold whitespace-nowrap">{money(line.total)}</span></li>)}</ul><dl className="space-y-3 border-t border-border mt-2 pt-5 text-sm"><div className="flex justify-between text-text-secondary"><dt>Subtotal</dt><dd>{money(receipt.subtotal)}</dd></div><div className="flex justify-between text-text-secondary"><dt>Discount</dt><dd>-{money(receipt.discount)}</dd></div><div className="flex justify-between text-text-secondary"><dt>Shipping</dt><dd>{money(receipt.shipping)}</dd></div><div className="flex justify-between text-lg font-black border-t border-border pt-4 mt-4"><dt>Total</dt><dd className="text-accent">{money(receipt.total)}</dd></div></dl><div className="confirmation-note mt-7"><Clock3 size={18}/><p><strong>Payment has not been collected.</strong><br/><span>This order is pending payment confirmation. No card details were stored.</span></p></div><div className="tracking-callout mt-5"><div className="tracking-callout-icon"><PackageCheck size={20}/></div><div><strong>Want to follow your delivery?</strong><p>Use your order reference and email to see live status updates anytime.</p><Link to={trackingUrl}>Open order tracking <ArrowRight size={15}/></Link></div></div></div><div className="p-5 sm:p-8 bg-bg-secondary flex flex-col sm:flex-row gap-3"><button type="button" onClick={downloadInvoice} className="invoice-download-action"><FileDown size={17}/> Download invoice PDF</button><Link to="/category/all" className="order-primary-action">Continue shopping <ArrowRight size={16}/></Link><Link to={trackingUrl} className="order-secondary-action">Track this order</Link><Link to="/dashboard?tab=orders" className="order-secondary-action">View my orders</Link></div><div className="invoice-thankyou">Thank you for choosing Nuvara <span>♥</span><small>Every order is packed with care, just for you.</small></div></div></div></div>;
 };

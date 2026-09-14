@@ -4,10 +4,15 @@
 @section('header_title', 'Dashboard Overview')
 
 @section('content')
-<div class="space-y-8 animate-fade-in text-left">
+<style>
+.dash-shell{max-width:1440px;margin:auto}.dash-kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#c5a880;font-weight:800}.dash-metrics>div{min-height:148px!important}.dash-metrics>div:nth-child(1){background:linear-gradient(135deg,#285c48,#173d31)!important}.dash-metrics>div:nth-child(2){background:linear-gradient(135deg,#293c68,#1c2947)!important}.dash-metrics>div:nth-child(3){background:linear-gradient(135deg,#276052,#164437)!important}.dash-metrics>div:nth-child(4){background:linear-gradient(135deg,#77552c,#493619)!important}.dash-chart{background:rgba(5,24,18,.5)!important}.light .dash-chart{background:#fff!important}.light .dash-metrics>div{color:#173d31!important}
+</style>
+<style>.dash-metrics>div{color:#fff!important}.dash-metrics>div span,.dash-metrics>div h3,.dash-metrics>div p{color:#fff!important}.dash-metrics>div h3{font-size:28px!important;font-weight:800!important;letter-spacing:-.03em}.dash-metrics>div p{opacity:.9}</style>
+<style>.dash-metrics>div{background:linear-gradient(145deg,#2749a9,#2362e8)!important;border:0!important;border-radius:14px!important;color:#fff!important;min-height:154px!important;padding:22px!important;box-shadow:0 12px 24px rgba(35,85,200,.22)!important}.dash-metrics>div *,.light .dash-metrics>div *{color:#fff!important}.dash-metrics>div span{opacity:.86}.dash-metrics>div h3{font-size:28px!important;line-height:1.1!important;margin-top:16px!important}.dash-metrics>div p{font-size:11px!important;margin-top:10px!important}.dash-metrics>div p::first-letter{color:#6dffaf}</style>
+<div class="dash-shell space-y-8 animate-fade-in text-left">
 
     <!-- Welcome Banner Card -->
-    <div class="glass-card rounded-2xl p-6 md:p-8 shadow-lg relative overflow-hidden">
+    <div class="glass-card dashboard-hero rounded-2xl p-6 md:p-8 shadow-lg relative overflow-hidden">
         <div class="absolute w-64 h-64 -top-20 -right-20 bg-brass/10 rounded-full blur-[80px] pointer-events-none"></div>
         <h2 class="text-2xl font-serif text-brass uppercase tracking-wide">
             Welcome back, Administrator
@@ -18,15 +23,15 @@
     </div>
 
     <!-- Metrics Stats Grid (5 Cards Row) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+    <div class="dash-metrics grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
         <!-- Total Revenue -->
-        <div class="glass-card rounded-xl p-6 shadow-md flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:border-brass/30">
+        <div class="glass-card dashboard-metric rounded-xl p-6 shadow-md flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:border-brass/30">
             <div class="flex justify-between items-start">
                 <span class="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Total Revenue</span>
                 <span class="text-sm bg-brass/10 border border-brass/20 w-8 h-8 rounded-lg flex items-center justify-center select-none">💵</span>
             </div>
             <div class="mt-4">
-                <h3 class="text-xl font-serif text-[#F5EFE4] font-bold">${{ number_format($revenueTotal, 2) }}</h3>
+                <h3 class="text-xl font-serif text-[#F5EFE4] font-bold">৳{{ number_format($revenueTotal, 2) }}</h3>
                 <p class="text-[9px] text-green-400 font-bold mt-1">▲ Live earnings</p>
             </div>
         </div>
@@ -81,7 +86,7 @@
     </div>
 
     <!-- Revenue Analytics Chart Card -->
-    <div class="glass-card rounded-xl p-6 shadow-md">
+    <div class="dash-chart glass-card rounded-xl p-6 shadow-md">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-border pb-4 mb-6 gap-4">
             <div>
                 <h4 class="text-xs font-bold text-brass uppercase tracking-wider">
@@ -125,28 +130,16 @@
 <script>
     // Injected datasets from Laravel controller context
     const datasetDay = {
-        labels: {
-            !!json_encode($dayLabels) !!
-        },
-        values: {
-            !!json_encode($dayValues) !!
-        }
+            labels: {!! json_encode($dayLabels) !!},
+            values: {!! json_encode($dayValues) !!}
     };
     const datasetMonth = {
-        labels: {
-            !!json_encode($monthLabels) !!
-        },
-        values: {
-            !!json_encode($monthValues) !!
-        }
+            labels: {!! json_encode($monthLabels) !!},
+            values: {!! json_encode($monthValues) !!}
     };
     const datasetYear = {
-        labels: {
-            !!json_encode($yearLabels) !!
-        },
-        values: {
-            !!json_encode($yearValues) !!
-        }
+            labels: {!! json_encode($yearLabels) !!},
+            values: {!! json_encode($yearValues) !!}
     };
 
     let activeChart = null;
@@ -164,7 +157,7 @@
             data: {
                 labels: datasetDay.labels,
                 datasets: [{
-                    label: 'Revenue ($)',
+                    label: 'Revenue (৳)',
                     data: datasetDay.values,
                     borderColor: '#C5A880',
                     borderWidth: 2.5,
@@ -244,4 +237,7 @@
         activeChart.update();
     }
 </script>
+<style>
+.dash-chart{background:linear-gradient(145deg,#fffdf9,#f2ece2)!important;border:1px solid #d9cfbf!important}.dash-chart .relative{background:linear-gradient(180deg,rgba(197,168,128,.10),rgba(197,168,128,.02));border-radius:14px;padding:18px 14px 10px;box-shadow:inset 0 0 0 1px rgba(197,168,128,.12)}.dark .dash-chart{background:linear-gradient(145deg,#26363a,#1d2a2e)!important;border-color:#46565a!important}.dark .dash-chart .relative{background:linear-gradient(180deg,rgba(197,168,128,.16),rgba(19,36,35,.45))}.dash-chart canvas{filter:drop-shadow(0 8px 12px rgba(82,64,38,.12))}
+</style>
 @endsection

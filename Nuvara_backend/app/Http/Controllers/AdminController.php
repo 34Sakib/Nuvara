@@ -441,6 +441,14 @@ class AdminController extends Controller
         return redirect()->route('admin.banners')->with('success', 'Banner updated successfully.');
     }
 
+    public function editBanner($id)
+    {
+        $this->checkAdmin();
+        $banner = Banner::findOrFail($id);
+        $products = Product::where('status', 'active')->orderBy('id')->get();
+        return view('admin.banner-edit', compact('banner', 'products'));
+    }
+
     public function deleteBanner($id)
     {
         $this->checkAdmin();
@@ -620,7 +628,7 @@ class AdminController extends Controller
     {
         $this->checkAdmin();
         $request->validate([
-            'status' => 'required|in:processing,shipped,delivered'
+            'status' => 'required|in:pending,processing,shipped,in_transit,out_for_delivery,delivered'
         ]);
 
         Order::findOrFail($id)->update([
@@ -960,4 +968,3 @@ class AdminController extends Controller
         return redirect()->route('admin.faqs')->with('success', 'FAQ deleted successfully.');
     }
 }
-

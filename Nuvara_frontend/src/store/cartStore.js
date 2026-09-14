@@ -126,7 +126,8 @@ export const useCartStore = create((set, get) => {
 
     applyCoupon: async (code) => {
       try {
-        const response = await api.post('/coupons/validate', { code });
+        const subtotal = get().cart.reduce((acc, item) => acc + (Number(item.product.price) * item.quantity), 0);
+        const response = await api.post('/coupons/validate', { code, subtotal: subtotal.toFixed(2) });
         const coupon = response.data.coupon;
         set({ activeCoupon: coupon });
         syncStorage('nuvara_coupon', coupon);
@@ -174,6 +175,7 @@ export const useCartStore = create((set, get) => {
         discount,
         shipping,
         total,
+        couponCode: coupon?.code || null,
         count: cart.reduce((acc, item) => acc + item.quantity, 0)
       };
     }

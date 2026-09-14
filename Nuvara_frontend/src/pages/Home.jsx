@@ -63,6 +63,8 @@ export const Home = () => {
         setHomeData(res.data);
       } catch (err) {
         console.error("Failed fetching homepage data from API, using fallbacks", err);
+        // Keep the storefront usable when the API is stopped or unreachable.
+        setHomeData({});
       } finally {
         setLoading(false);
       }
@@ -210,6 +212,7 @@ export const Home = () => {
         onMouseLeave={() => setIsHovered(false)}
         className={`w-full relative overflow-hidden transition-all duration-700 ease-in-out bg-gradient-to-r ${activeSlide.bgGradient || 'from-yellow-400 to-yellow-600'} py-12 md:py-20 flex items-center shadow-lg`}
       >
+        <div className="absolute inset-0 pointer-events-none opacity-25 mix-blend-multiply"><img src={activeSlide.product?.images?.[0] || activeSlide.image} alt="" className="w-full h-full object-cover blur-3xl scale-110" /></div>
         <div className="absolute inset-0 overflow-hidden pointer-events-none select-none text-white/80">
           <Star className="w-5 h-5 absolute top-10 left-12 opacity-80 animate-pulse" />
           <Sparkles className="w-6 h-6 absolute top-16 right-1/3 opacity-70 animate-bounce" />

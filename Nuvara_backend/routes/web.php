@@ -27,6 +27,7 @@ Route::middleware(['web'])->group(function () {
 
     // Banners & Sliders CRUD
     Route::get('/admin/banners', [AdminController::class, 'banners'])->name('admin.banners');
+    Route::get('/admin/banners/{id}/edit', [AdminController::class, 'editBanner'])->name('admin.banners.edit');
     Route::post('/admin/banners/store', [AdminController::class, 'storeBanner'])->name('admin.banners.store');
     Route::post('/admin/banners/{id}/update', [AdminController::class, 'updateBanner'])->name('admin.banners.update');
     Route::post('/admin/banners/{id}/delete', [AdminController::class, 'deleteBanner'])->name('admin.banners.delete');

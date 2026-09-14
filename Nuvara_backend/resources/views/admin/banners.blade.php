@@ -120,13 +120,14 @@
                                     {{ $banner->status ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
-                            <td class="p-5 text-right space-x-2">
+                            <td class="p-5"><div class="flex items-center justify-end gap-2 flex-wrap min-w-[150px]">
+                                <a href="{{ route('admin.banners.edit', $banner->id) }}" class="px-3 py-1.5 border border-brass/35 text-brass hover:bg-brass/10 text-xs font-bold rounded-lg transition-colors">Edit</a>
                                 <form action="{{ route('admin.banners.delete', $banner->id) }}" method="POST" class="inline-block" onsubmit="return confirmDelete(event, '{{ addslashes($banner->getLocalized('title', 'en')) }}');">
                                     @csrf
                                     <button type="submit" class="px-3 py-1.5 bg-red-950/60 hover:bg-red-900 border border-red-800/50 text-red-300 text-xs font-bold rounded-lg transition-colors">
                                         Delete
                                     </button>
-                                </form>
+                                </form></div>
                             </td>
                         </tr>
                     @endforeach
@@ -135,4 +136,14 @@
         </div>
     </div>
 </div>
+<script>
+function editBanner(b){
+ const title=prompt('Banner title', b.title?.en||''); if(title===null)return;
+ const headline=prompt('Headline', b.headline?.en||''); if(headline===null)return;
+ const sub=prompt('Description', b.sub?.en||''); if(sub===null)return;
+ const button=prompt('Button label', b.button_text?.en||''); if(button===null)return;
+ const link=prompt('Link URL', b.link||''); if(link===null)return;
+ const f=document.createElement('form'); f.method='POST'; f.action='/admin/banners/'+b.id+'/update'; f.innerHTML=`<input name="_token" value="{{ csrf_token() }}"><input name="title_en"><input name="headline_en"><input name="sub_en"><input name="button_text_en"><input name="link"><input name="type" value="${b.type||'hero_slider'}"><input name="status" value="1">`; const vals=[title,headline,sub,button,link]; ['title_en','headline_en','sub_en','button_text_en','link'].forEach((n,i)=>f.querySelector('[name='+n+']').value=vals[i]); document.body.appendChild(f); f.submit();
+}
+</script>
 @endsection
