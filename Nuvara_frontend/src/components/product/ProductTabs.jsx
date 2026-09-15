@@ -4,6 +4,7 @@ import { useLocaleStore } from '../../store/localeStore';
 import { getLocalized } from '../../utils/mockData';
 import { RatingStars } from '../ui/RatingStars';
 import { Star, MessageSquare } from 'lucide-react';
+import './ProductTabs.css';
 
 export const ProductTabs = ({ product }) => {
   const { t } = useTranslation();
@@ -30,7 +31,7 @@ export const ProductTabs = ({ product }) => {
   const totalRatings = reviews.length;
 
   return (
-    <div className="w-full bg-bg-secondary border border-border rounded-2xl p-6 md:p-8 transition-colors shadow-sm">
+    <div className="product-tabs-shell w-full">
       {/* Tab Headers */}
       <div className="flex border-b border-border overflow-x-auto pb-1 scroll-thin mb-6 gap-6">
         {tabs.map((tab) => {

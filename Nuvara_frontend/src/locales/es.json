@@ -38,6 +38,7 @@
     "newsletter_success": "¡Gracias! Te has suscrito correctamente."
   },
   "category": {
+    "all_products": "Todos los productos",
     "filters": "Filtros",
     "clear_filters": "Limpiar filtros",
     "price_range": "Rango de precios",
@@ -54,6 +55,9 @@
     "load_more": "Cargar más"
   },
   "product": {
+    "secure_checkout": "Compra segura",
+    "returns_30_days": "Devoluciones en 30 días",
+    "fast_delivery": "Entrega rápida",
     "add_to_cart": "Añadir al carrito",
     "buy_now": "Comprar ahora",
     "in_stock": "En stock",
@@ -149,5 +153,39 @@
     "privacy": "Política de privacidad",
     "terms": "Términos de servicio",
     "rights": "Todos los derechos reservados."
+  },
+  "editorial": {
+    "eyebrow": "EL DÍA A DÍA, CON INTENCIÓN",
+    "hero_start": "Cosas buenas.",
+    "hero_end": "Cada día.",
+    "hero_desc": "Piezas elegidas con cuidado para tu forma de vivir. Encuentra belleza en lo cotidiano.",
+    "curated": "Una colección seleccionada",
+    "our_philosophy": "Nuestra filosofía",
+    "living_well": "El arte de vivir bien",
+    "find_your_everyday": "Encuentra tu día a día",
+    "category_title": "Un mundo por descubrir.",
+    "explore_all": "Explorar todo",
+    "selected_for_you": "Elegido para ti",
+    "featured_title": "Merece otra mirada.",
+    "view_collection": "Ver la colección",
+    "story_eyebrow": "LA SELECCIÓN DEL HOGAR",
+    "story_title": "Haz espacio para la calma.",
+    "story_desc": "Texturas naturales y rincones tranquilos. Piezas que hacen tu espacio más tuyo. Descubre nuestra colección para el hogar.",
+    "story_cta": "Explorar hogar",
+    "less_better": "Menos, pero mejor.",
+    "special_finds": "Hallazgos especiales.",
+    "previous": "Colección anterior",
+    "next": "Colección siguiente",
+    "interior_alt": "Una sala acogedora con texturas naturales",
+    "choose_options": "Elegir opciones",
+    "new": "Nuevo",
+    "brand_statement": "Objetos con personalidad, elegidos para la forma en que realmente vives.",
+    "horizontal_title": "Descubre sin prisa.",
+    "horizontal_note": "Desplázate para explorar",
+    "discovery_title": "Encuentra tu próximo favorito.",
+    "discovery_desc": "Empieza con una sensación. Te llevaremos a las piezas que encajan contigo.",
+    "final_title": "Encuentra lo que se siente como tú.",
+    "final_cta": "Explorar Nuvara",
+    "complete_the_look": "Completa el conjunto"
   }
 }

@@ -38,6 +38,7 @@
     "newsletter_success": "Thank you! You have successfully subscribed."
   },
   "category": {
+    "all_products": "All Products",
     "filters": "Filters",
     "clear_filters": "Clear Filters",
     "price_range": "Price Range",
@@ -54,6 +55,9 @@
     "load_more": "Load More"
   },
   "product": {
+    "secure_checkout": "Secure Checkout",
+    "returns_30_days": "30-Day Returns",
+    "fast_delivery": "Fast Delivery",
     "add_to_cart": "Add to Cart",
     "buy_now": "Buy Now",
     "in_stock": "In Stock",
@@ -149,5 +153,39 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "rights": "All rights reserved."
+  },
+  "editorial": {
+    "eyebrow": "THE CONSIDERED EVERYDAY",
+    "hero_start": "Good things.",
+    "hero_end": "Every day.",
+    "hero_desc": "Thoughtfully chosen pieces for the way you live. Find a little more beauty in the everyday.",
+    "curated": "A considered collection",
+    "our_philosophy": "Our philosophy",
+    "living_well": "The art of living well",
+    "find_your_everyday": "Find your everyday",
+    "category_title": "A world of good finds.",
+    "explore_all": "Explore all",
+    "selected_for_you": "Selected for you",
+    "featured_title": "Worth a closer look.",
+    "view_collection": "View the collection",
+    "story_eyebrow": "THE HOME EDIT",
+    "story_title": "Make room for slower moments.",
+    "story_desc": "Natural textures. Quiet corners. Pieces that make a space feel a little more like you. Discover our home and living collection.",
+    "story_cta": "Explore Home & Living",
+    "less_better": "Less, but better.",
+    "special_finds": "A few special finds.",
+    "previous": "Previous collection",
+    "next": "Next collection",
+    "interior_alt": "A warm living room with natural textures",
+    "choose_options": "Choose options",
+    "new": "New",
+    "brand_statement": "Objects with a point of view, chosen for the way life actually feels.",
+    "horizontal_title": "A slower way to discover.",
+    "horizontal_note": "Scroll to explore",
+    "discovery_title": "Find your next favorite.",
+    "discovery_desc": "Start with a feeling. We will take you to the pieces that fit.",
+    "final_title": "Find what feels like you.",
+    "final_cta": "Explore Nuvara",
+    "complete_the_look": "Complete the look"
   }
 }

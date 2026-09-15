@@ -18,6 +18,7 @@ import { ProductTabs } from '../components/product/ProductTabs';
 import { ProductCard } from '../components/product/ProductCard';
 import { SectionDivider } from '../components/ui/SectionDivider';
 import api from '../services/api';
+import './ProductDetail.css';
 
 export const ProductDetail = () => {
   const { t } = useTranslation();
@@ -36,6 +37,7 @@ export const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [isStickyBarVisible, setIsStickyBarVisible] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -115,8 +117,10 @@ export const ProductDetail = () => {
     if (selectedColor) variant.color = selectedColor;
     if (selectedSize) variant.size = selectedSize;
 
+    setIsAdding(true);
     addToCart(product, variant, quantity);
     addToast(`${getLocalized(product.name, locale)} ${t('product.cart_added')}`, 'success');
+    window.setTimeout(() => setIsAdding(false), 900);
   };
 
   const handleBuyNow = () => {
@@ -137,18 +141,19 @@ export const ProductDetail = () => {
   };
 
   const activeCategory = product.category;
+  const localized = value => typeof value === 'string' ? value : getLocalized(value, locale);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in relative">
+    <div className="product-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
       
       {/* Breadcrumbs */}
-      <nav className="flex items-center space-x-2 rtl:space-x-reverse text-xs font-semibold text-text-secondary mb-8">
-        <Link to="/" className="hover:text-accent">Home</Link>
+      <nav className="product-breadcrumb flex items-center space-x-2 rtl:space-x-reverse text-xs font-semibold text-text-secondary mb-8">
+        <Link to="/" className="hover:text-accent">{t('nav.home')}</Link>
         <ChevronRight className="w-3.5 h-3.5 rtl-flip" />
         {activeCategory && (
           <>
-            <Link to={`/category/${activeCategory.slug}`} className="hover:text-accent">
-              {getLocalized(activeCategory.name, locale)}
+            <Link to={`/category/${activeCategory.slug || 'all'}`} className="hover:text-accent">
+              {localized(activeCategory.name || activeCategory)}
             </Link>
             <ChevronRight className="w-3.5 h-3.5 rtl-flip" />
           </>
@@ -157,39 +162,39 @@ export const ProductDetail = () => {
       </nav>
 
       {/* Main Details Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
+      <div className="product-main grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
         {/* Left Side: Gallery */}
         <div>
           <ImageGallery images={product.images} />
         </div>
 
         {/* Right Side: Product Details */}
-        <div className="space-y-6 text-left rtl:text-right">
+        <div className="product-purchase space-y-6 text-left rtl:text-right">
           <div>
-            <span className="text-xs uppercase font-extrabold tracking-widest text-brass bg-brass/5 border border-brass/15 px-3 py-1.5 rounded-full">
+            <span className="product-brand text-xs uppercase font-extrabold tracking-widest text-brass">
               {product.brand}
             </span>
-            <h1 className="text-2xl md:text-3xl font-serif font-medium text-text-primary mt-4 leading-tight">
-              {getLocalized(product.name, locale)}
+            <h1 className="product-title text-2xl md:text-3xl font-serif font-medium text-text-primary mt-4 leading-tight">
+              {localized(product.name)}
             </h1>
             
             {/* Rating summary */}
             <div className="flex items-center space-x-3 rtl:space-x-reverse mt-3">
-              <RatingStars value={product.rating} size="md" />
+              <RatingStars value={product.rating || product.avg_rating || 0} size="md" />
               <span className="text-xs text-text-secondary font-bold hover:underline cursor-pointer">
-                {product.reviewCount} Ratings
+                {product.reviewCount || product.review_count || 0} Ratings
               </span>
             </div>
           </div>
 
           {/* Pricing Block */}
-          <div className="p-5 rounded-2xl bg-bg-secondary border border-border transition-colors">
+          <div className="product-price-block">
             <div className="flex items-center space-x-3.5 rtl:space-x-reverse">
-              <span className="text-3xl font-bold font-display text-green-soft dark:text-brass-bright">৳{product.price}</span>
+              <span className="product-price text-3xl font-bold font-display text-green-soft dark:text-brass-bright">৳{product.price}</span>
               {product.compare_price && (
                 <>
                   <span className="text-sm text-text-secondary line-through">৳{product.compare_price}</span>
-                  <span className="text-xs font-bold text-white bg-wine px-2 py-0.5 rounded-md">
+                    <span className="product-discount text-xs font-bold text-white bg-wine px-2 py-0.5">
                     Save {discountPercent}%
                   </span>
                 </>
@@ -209,7 +214,7 @@ export const ProductDetail = () => {
 
           {/* Variant Swatches */}
           {product.variants?.colors?.length > 0 && (
-            <div>
+            <div className="product-variant-group">
               <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2.5">
                 Select Color: <span className="text-text-primary font-extrabold">{selectedColor}</span>
               </h4>
@@ -223,7 +228,7 @@ export const ProductDetail = () => {
           )}
 
           {product.variants?.sizes?.length > 0 && (
-            <div>
+            <div className="product-variant-group">
               <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2.5">
                 Select Size: <span className="text-text-primary font-extrabold">{selectedSize}</span>
               </h4>
@@ -238,7 +243,7 @@ export const ProductDetail = () => {
 
           {/* Action Row: Stepper and Add/Buy buttons */}
           {product.stock > 0 && (
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 border-t border-b border-border py-6">
+            <div className="product-actions flex flex-col sm:flex-row items-stretch sm:items-center gap-4 border-t border-b border-border py-6">
               <div>
                 <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2.5 hidden sm:block">QTY</h4>
                 <QuantityStepper
@@ -253,10 +258,11 @@ export const ProductDetail = () => {
                 <Button
                   variant="primary"
                   onClick={handleAddToCart}
+                  loading={isAdding}
                   className="flex-1 py-3 text-sm font-extrabold uppercase tracking-wide"
                   icon={ShoppingCart}
                 >
-                  {t('product.add_to_cart')}
+                  {isAdding ? t('product.cart_added') : t('product.add_to_cart')}
                 </Button>
                 
                 <Button
@@ -280,18 +286,18 @@ export const ProductDetail = () => {
           )}
 
           {/* Trust Badges */}
-          <div className="grid grid-cols-3 gap-4 pt-2 text-center text-xs text-text-secondary font-bold">
+          <div className="product-trust grid grid-cols-3 gap-4 pt-2 text-center text-xs text-text-secondary font-bold">
             <div className="flex flex-col items-center">
               <ShieldCheck className="w-5 h-5 text-brass mb-1.5" />
-              <span>Secure Checkout</span>
+              <span>{t('product.secure_checkout', { defaultValue: 'Secure Checkout' })}</span>
             </div>
             <div className="flex flex-col items-center">
               <RefreshCw className="w-5 h-5 text-brass mb-1.5" />
-              <span>30-Day Returns</span>
+              <span>{t('product.returns_30_days', { defaultValue: '30-Day Returns' })}</span>
             </div>
             <div className="flex flex-col items-center">
               <Truck className="w-5 h-5 text-brass mb-1.5" />
-              <span>Fast Delivery</span>
+              <span>{t('product.fast_delivery', { defaultValue: 'Fast Delivery' })}</span>
             </div>
           </div>
 
@@ -299,7 +305,7 @@ export const ProductDetail = () => {
       </div>
 
       {/* Tabs Section */}
-      <div className="mb-16">
+      <div className="product-information mb-16">
         <ProductTabs product={product} />
       </div>
 
@@ -308,7 +314,7 @@ export const ProductDetail = () => {
         <div>
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold font-display text-text-primary uppercase tracking-wide">
-              {t('product.related_products')}
+              {t('editorial.complete_the_look', { defaultValue: t('product.related_products') })}
             </h2>
             <SectionDivider />
           </div>

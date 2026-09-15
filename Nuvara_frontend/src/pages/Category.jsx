@@ -9,6 +9,7 @@ import { FilterSidebar } from '../components/category/FilterSidebar';
 import { Button } from '../components/ui/Button';
 import { SectionDivider } from '../components/ui/SectionDivider';
 import api from '../services/api';
+import './Category.css';
 
 export const Category = () => {
   const { t } = useTranslation();
@@ -95,23 +96,23 @@ export const Category = () => {
   const filteredProducts = { length: totalCount };
 
   const categoryTitle = isAll 
-    ? (searchQuery ? `Search: "${searchQuery}"` : 'All Products')
+    ? (searchQuery ? `Search: "${searchQuery}"` : t('category.all_products', { defaultValue: 'All Products' }))
     : (activeCategory ? getLocalized(activeCategory.name, locale) : 'Loading...');
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+    <div className="collection-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       
       {/* Breadcrumbs */}
       <nav className="flex items-center space-x-2 rtl:space-x-reverse text-xs font-semibold text-text-secondary mb-6">
-        <Link to="/" className="hover:text-accent">Home</Link>
+        <Link to="/" className="hover:text-accent">{t('nav.home')}</Link>
         <ChevronRight className="w-3.5 h-3.5 rtl-flip" />
-        <Link to="/category/all" className="hover:text-accent">Shop</Link>
+        <Link to="/category/all" className="hover:text-accent">{t('nav.categories')}</Link>
         <ChevronRight className="w-3.5 h-3.5 rtl-flip" />
         <span className="text-text-primary font-bold">{categoryTitle}</span>
       </nav>
 
       {/* Category Header Title with Signature Divider */}
-      <div className="text-center mb-8">
+      <div className="collection-header text-center mb-8">
         <h1 className="text-3xl font-bold font-display text-text-primary uppercase tracking-wide">
           {categoryTitle}
         </h1>
@@ -119,10 +120,10 @@ export const Category = () => {
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="collection-layout grid grid-cols-1 lg:grid-cols-4 gap-8">
         
         {/* Left Filters - Desktop */}
-        <aside className="hidden lg:block lg:col-span-1">
+        <aside className="collection-filters hidden lg:block lg:col-span-1">
           <FilterSidebar
             filters={filters}
             onChange={setFilters}
@@ -132,9 +133,9 @@ export const Category = () => {
         </aside>
 
         {/* Right Product Listings */}
-        <main className="lg:col-span-3 min-w-0" aria-busy={loading}>
+        <main className="collection-results lg:col-span-3 min-w-0" aria-busy={loading}>
           {/* Toolbar */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-bg-secondary border border-border p-4 rounded-2xl mb-6 gap-4 shadow-sm transition-colors">
+          <div className="collection-toolbar flex flex-col sm:flex-row justify-between items-start sm:items-center bg-bg-secondary border border-border p-4 mb-6 gap-4 transition-colors">
             <div className="text-sm font-bold text-text-secondary" role="status" aria-live="polite">
               {loading ? 'Loading products…' : error ? 'Products unavailable' : t('category.results_count', { count: filteredProducts.length })}
             </div>
@@ -192,7 +193,7 @@ export const Category = () => {
               <Button variant="secondary" onClick={() => setRetry(value => value + 1)}>Try again</Button>
             </div>
           ) : paginatedProducts.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="collection-grid grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {paginatedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
