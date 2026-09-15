@@ -44,7 +44,7 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="bg-bg-secondary border-t border-border mt-20 transition-colors">
+    <footer className="storefront-footer bg-bg-secondary border-t border-border transition-colors">
       {/* Newsletter Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-b border-border">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
@@ -60,17 +60,19 @@ export const Footer = () => {
             <form onSubmit={handleSubscribe} className="flex relative">
               <input
                 type="email"
+                required
+                aria-label={t("home.newsletter_placeholder")}
                 placeholder={t('home.newsletter_placeholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={`
-                  w-full px-4 py-3 rounded-lg border bg-bg-primary text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50
+                  w-full ps-4 pe-28 py-3 rounded-none border bg-bg-primary text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50
                   ${status === 'invalid' ? 'border-danger' : 'border-border'}
                 `}
               />
               <button
                 type="submit"
-                className="absolute right-1 top-1 bottom-1 px-4 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-md transition-colors"
+                className="absolute end-1 top-1 bottom-1 px-4 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-md transition-colors"
               >
                 {t('home.newsletter_btn')}
               </button>
@@ -99,7 +101,7 @@ export const Footer = () => {
               {t('footer.customer_service')}
             </h4>
             <ul className="space-y-2.5 text-sm text-text-secondary">
-              <li><a href="#" className="hover:text-accent transition-colors">{t('footer.faq')}</a></li>
+              <li><a href="#/faq" className="hover:text-accent transition-colors">{t('footer.faq')}</a></li>
               <li><a href="#" className="hover:text-accent transition-colors">{t('footer.returns')}</a></li>
               <li><a href="#" className="hover:text-accent transition-colors">Shipping Info</a></li>
               <li><Link to="/track-order" className="hover:text-accent transition-colors">Order Tracking</Link></li>
@@ -111,10 +113,10 @@ export const Footer = () => {
               Company
             </h4>
             <ul className="space-y-2.5 text-sm text-text-secondary">
-              <li><a href="#" className="hover:text-accent transition-colors">{t('footer.about_us')}</a></li>
+              <li><a href="#/about" className="hover:text-accent transition-colors">{t('footer.about_us')}</a></li>
               <li><a href="#" className="hover:text-accent transition-colors">Careers</a></li>
               <li><a href="#" className="hover:text-accent transition-colors">Sustainability</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">{t('footer.contact_us')}</a></li>
+              <li><a href="#/contact" className="hover:text-accent transition-colors">{t('footer.contact_us')}</a></li>
             </ul>
           </div>
 
@@ -139,7 +141,7 @@ export const Footer = () => {
       {/* Bottom Bar */}
       <div className="bg-bg-primary py-6 transition-colors border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-xs text-text-secondary">
-          <p>© {new Date().getFullYear()} Unknown . {t('footer.rights')}</p>
+          <p>© {new Date().getFullYear()} Nuvara. {t('footer.rights')}</p>
           <div className="flex space-x-6 rtl:space-x-reverse mt-4 md:mt-0">
             <a href="#" className="hover:text-accent">{t('footer.privacy')}</a>
             <a href="#" className="hover:text-accent">{t('footer.terms')}</a>

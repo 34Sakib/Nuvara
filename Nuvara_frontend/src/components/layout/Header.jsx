@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
   Search, Heart, User, ShoppingBag, Menu, X, 
-  ChevronDown, HelpCircle, PhoneCall, LogOut 
+  ChevronDown, HelpCircle, PhoneCall, LogOut, House, Grid2X2, Tag
 } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { useLocaleStore } from '../../store/localeStore';
@@ -24,26 +24,32 @@ export const Header = () => {
   const { isAuthenticated, logout } = useAuthStore();
 
   const [showPromo, setShowPromo] = useState(true);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const searchRef = useRef(null);
-
-  // Monitor Scroll to trigger sticky shrinking
+  const menuRef = useRef(null);
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 40) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
+    if (!isMobileMenuOpen) return;
+    const previous = document.activeElement;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const panel = menuRef.current;
+    const focusable = () => [...panel.querySelectorAll('a,button,input')];
+    focusable()[0]?.focus();
+    const onKey = e => {
+      if (e.key === 'Escape') setIsMobileMenuOpen(false);
+      if (e.key === 'Tab') {
+        const items = focusable(); const first = items[0]; const last = items.at(-1);
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
       }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    document.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = overflow; document.removeEventListener('keydown', onKey); previous?.focus(); };
+  }, [isMobileMenuOpen]);
 
   // Suggestions search listener
   useEffect(() => {
@@ -75,6 +81,7 @@ export const Header = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       setShowSuggestions(false);
+      setIsMobileMenuOpen(false);
       navigate(`/category/all?search=${encodeURIComponent(searchQuery)}`);
     }
   };
@@ -96,7 +103,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="w-full z-40 transition-all duration-300">
+    <header className="storefront-header w-full z-40">
       {/* Row 1: Thin Top Bar */}
       {showPromo && (
         <div className="bg-accent text-white px-4 py-2.5 text-xs flex justify-between items-center transition-colors relative">
@@ -125,10 +132,7 @@ export const Header = () => {
       )}
 
       {/* Main Header Area (Sticky) */}
-      <div className={`
-        w-full transition-all duration-300 bg-bg-secondary/95 backdrop-blur-md border-b border-border
-        ${isScrolled ? 'fixed top-0 shadow-md py-2' : 'relative py-4'}
-      `}>
+      <div className="storefront-masthead">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4">
             
@@ -142,7 +146,7 @@ export const Header = () => {
             </button>
 
             {/* Logo */}
-            <Link to="/" className="text-2xl font-black text-accent tracking-wider hover:opacity-90">
+            <Link to="/" className="nuvara-wordmark">
               NUVARA
             </Link>
 
@@ -257,7 +261,7 @@ export const Header = () => {
               <Link to="/" className={`${location.pathname === '/' ? 'text-accent' : ''} hover:text-accent transition-colors`}>{t('nav.home')}</Link>
               <div className="relative group">
                 <Link to="/category/all" className="inline-flex items-center gap-1 hover:text-accent transition-colors">Shop <ChevronDown className="w-3.5 h-3.5" /></Link>
-                <div className="absolute left-0 top-full pt-3 hidden group-hover:block z-50">
+                <div className="absolute left-0 top-full pt-3 hidden group-hover:block group-focus-within:block z-50">
                   <div className="w-56 rounded-xl border border-border bg-surface p-2 shadow-xl">
                     {mockCategories.map((cat) => <Link key={cat.id} to={`/category/${cat.slug}`} className="block rounded-lg px-3 py-2 hover:bg-bg-primary hover:text-accent">{getLocalized(cat.name, locale)}</Link>)}
                   </div>
@@ -273,7 +277,7 @@ export const Header = () => {
       </div>
 
       {/* Adjust scroll padding if fixed header is active */}
-      {isScrolled && <div className="h-[73px]"></div>}
+
 
       {/* Mobile Drawer (Slide-out) */}
       {isMobileMenuOpen && (
@@ -285,7 +289,7 @@ export const Header = () => {
           ></div>
 
           {/* Drawer Panel */}
-          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-bg-secondary border-r rtl:border-l rtl:border-r-0 border-border z-10 p-6 animate-slide-in">
+          <div ref={menuRef} role="dialog" aria-modal="true" aria-label={t("nav.categories")} className="relative flex-1 flex flex-col max-w-xs w-full overflow-y-auto bg-bg-secondary border-r rtl:border-l rtl:border-r-0 border-border z-10 p-6 animate-slide-in">
             <div className="flex justify-between items-center mb-8">
               <span className="text-xl font-bold text-accent">NUVARA</span>
               <button 
@@ -309,6 +313,7 @@ export const Header = () => {
               <Search className="absolute left-3 rtl:right-3 rtl:left-auto top-2.5 w-3.5 h-3.5 text-text-secondary" />
             </form>
 
+            <div className="flex gap-5 mb-6 text-sm"><Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)}>{t('nav.wishlist')}</Link><Link to={isAuthenticated ? '/dashboard' : '/auth'} onClick={() => setIsMobileMenuOpen(false)}>{t('nav.account')}</Link></div>
             {/* Mobile Nav Links */}
             <nav className="flex flex-col space-y-4 font-semibold text-sm text-text-primary">
               <Link 
@@ -350,11 +355,11 @@ export const Header = () => {
         </div>
       )}
       <nav className="mobile-bottom-nav lg:hidden" aria-label="Mobile navigation">
-        <Link to="/" className={location.pathname === '/' ? 'active' : ''} aria-current={location.pathname === '/' ? 'page' : undefined}><span>⌂</span><small>Home</small></Link>
-        <Link to="/category/all" className={location.pathname.startsWith('/category') ? 'active' : ''} aria-current={location.pathname.startsWith('/category') ? 'page' : undefined}><span>▦</span><small>Shop</small></Link>
-        <Link to="/category/all?deals=1" className={location.search.includes('deals') ? 'active' : ''}><span>✦</span><small>Deals</small></Link>
-        <Link to="/cart" className={location.pathname === '/cart' ? 'active' : ''} aria-current={location.pathname === '/cart' ? 'page' : undefined}><span className="relative">🛍{cartCount > 0 && <b>{cartCount}</b>}</span><small>Cart</small></Link>
-        <button onClick={() => setIsMobileMenuOpen(true)}><span>☰</span><small>More</small></button>
+        <Link to="/" className={location.pathname === '/' ? 'active' : ''} aria-current={location.pathname === '/' ? 'page' : undefined}><House size={20}/><small>{t("nav.home")}</small></Link>
+        <Link to="/category/all" className={location.pathname.startsWith('/category') ? 'active' : ''} aria-current={location.pathname.startsWith('/category') ? 'page' : undefined}><Grid2X2 size={20}/><small>{t("nav.categories")}</small></Link>
+        <Link to="/category/all?deals=1" className={location.search.includes('deals') ? 'active' : ''}><Tag size={20}/><small>{t("home.flash_deals")}</small></Link>
+        <Link to="/cart" className={location.pathname === '/cart' ? 'active' : ''} aria-current={location.pathname === '/cart' ? 'page' : undefined}><span className="relative"><ShoppingBag size={20}/>{cartCount > 0 && <b>{cartCount}</b>}</span><small>{t("nav.cart")}</small></Link>
+        <button onClick={() => setIsMobileMenuOpen(true)}><Menu size={20}/><small>{t("nav.account")}</small></button>
       </nav>
     </header>
   );

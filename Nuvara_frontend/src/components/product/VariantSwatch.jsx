@@ -1,4 +1,5 @@
 import React from 'react';
+import './VariantSwatch.css';
 
 export const VariantSwatch = ({
   type = 'color',
@@ -9,7 +10,7 @@ export const VariantSwatch = ({
   if (options.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-2.5">
+    <div className={`variant-options ${type === 'color' ? 'variant-colors' : 'variant-sizes'}`}>
       {type === 'color' ? (
         options.map((opt) => {
           const isSelected = selected === opt.name;
@@ -17,10 +18,7 @@ export const VariantSwatch = ({
             <button
               key={opt.name}
               onClick={() => onChange(opt.name)}
-              className={`
-                w-8 h-8 rounded-full border-2 focus:outline-none transition-all hover:scale-105 active:scale-95 flex items-center justify-center
-                ${isSelected ? 'border-accent scale-110 shadow-md' : 'border-border'}
-              `}
+              className={`variant-color ${isSelected ? 'is-selected' : ''}`}
               title={opt.name}
               style={{ backgroundColor: opt.value }}
               aria-label={`Select color ${opt.name}`}
@@ -43,13 +41,7 @@ export const VariantSwatch = ({
             <button
               key={opt}
               onClick={() => onChange(opt)}
-              className={`
-                px-4 py-2 border rounded-lg text-xs font-bold transition-all focus:outline-none hover:bg-bg-primary
-                ${isSelected 
-                  ? 'border-accent bg-accent/5 text-accent font-extrabold shadow-sm' 
-                  : 'border-border text-text-primary'
-                }
-              `}
+              className={`variant-size ${isSelected ? 'is-selected' : ''}`}
             >
               {opt}
             </button>

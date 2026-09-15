@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { Maximize2, X } from 'lucide-react';
+import './ImageGallery.css';
 
 export const ImageGallery = ({ images = [] }) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   if (images.length === 0) {
     return (
-      <div className="aspect-square w-full rounded-2xl bg-bg-secondary border border-border animate-shimmer flex items-center justify-center">
+      <div className="product-gallery-empty">
         <span className="text-xs text-text-secondary">No images</span>
       </div>
     );
@@ -14,29 +17,31 @@ export const ImageGallery = ({ images = [] }) => {
   const activeImage = images[activeIndex];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="product-gallery">
       {/* Main Image Viewer */}
-      <div className="relative aspect-square w-full rounded-2xl border border-border bg-bg-secondary overflow-hidden group">
+      <div className={`product-gallery-main ${isFullscreen ? 'is-fullscreen' : ''}`}>
         <img
           src={activeImage}
           alt="Product detail main image"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-zoom-in"
+          className="product-gallery-image"
+          onClick={() => setIsFullscreen(true)}
         />
+        <button type="button" className="product-gallery-expand" onClick={() => setIsFullscreen(true)} aria-label="View image fullscreen"><Maximize2 size={17} /></button>
+        {isFullscreen && <div className="product-lightbox" role="dialog" aria-modal="true" aria-label="Product image fullscreen" onClick={() => setIsFullscreen(false)}><button type="button" className="product-lightbox-close" onClick={() => setIsFullscreen(false)} aria-label="Close fullscreen image"><X size={22} /></button><img src={activeImage} alt="Product detail fullscreen" /></div>}
       </div>
 
       {/* Thumbnail Bar */}
       {images.length > 1 && (
-        <div className="flex gap-3 overflow-x-auto pb-1 scroll-thin">
+        <div className="product-gallery-thumbs">
           {images.map((img, idx) => {
             const isActive = idx === activeIndex;
             return (
               <button
                 key={idx}
                 onClick={() => setActiveIndex(idx)}
-                className={`
-                  relative w-20 h-20 rounded-xl overflow-hidden border-2 bg-bg-secondary transition-all flex-shrink-0
-                  ${isActive ? 'border-accent scale-95 shadow-sm' : 'border-border opacity-70 hover:opacity-100'}
-                `}
+                className={`product-gallery-thumb ${isActive ? 'is-active' : ''}`}
+                aria-label={`Select image ${idx + 1}`}
+                aria-pressed={isActive}
               >
                 <img
                   src={img}

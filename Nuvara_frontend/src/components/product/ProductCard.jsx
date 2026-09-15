@@ -1,160 +1,56 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { Heart, ShoppingBag, Sparkles } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Heart, Plus, Check } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { useToastStore } from '../../store/toastStore';
 import { useLocaleStore } from '../../store/localeStore';
-import { RatingStars } from '../ui/RatingStars';
 import { getLocalized } from '../../utils/mockData';
+import './ProductCard.css';
 
+const imageUrl = image => typeof image === 'object' ? image?.path || image?.url : image;
 export const ProductCard = ({ product }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { locale } = useLocaleStore();
+  const reduce = useReducedMotion();
   const { addToCart, toggleWishlist, isInWishlist } = useCartStore();
   const { addToast } = useToastStore();
-
+  const [added, setAdded] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(product.variants?.colors?.[0]?.name || '');
+  const [selectedSize, setSelectedSize] = useState(product.variants?.sizes?.[0] || '');
+  const timer = useRef();
+  useEffect(() => () => clearTimeout(timer.current), []);
   if (!product) return null;
-
-  const isLiked = isInWishlist(product.id);
-  const discountPercent = product.compare_price 
-    ? Math.round(((product.compare_price - product.price) / product.compare_price) * 100)
-    : 0;
-
-  let mainImage = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80';
-  if (Array.isArray(product.images) && product.images.length > 0) {
-    mainImage = typeof product.images[0] === 'object' ? (product.images[0].path || product.images[0].url || mainImage) : product.images[0];
-  } else if (typeof product.images === 'string' && product.images.trim().length > 0) {
-    mainImage = product.images.split(' ')[0];
-  } else if (product.image) {
-    mainImage = product.image;
-  }
-
-  const handleWishlistClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const added = toggleWishlist(product);
-    addToast(
-      added ? t('product.wishlist_added') : t('product.wishlist_removed'),
-      'info'
-    );
+  const liked = isInWishlist(product.id);
+  const name = typeof product.name === 'string' ? product.name : getLocalized(product.name, locale);
+  const images = Array.isArray(product.images) ? product.images.map(imageUrl) : [product.images || product.image];
+  const price = new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(Number(product.price));
+  const discount = product.compare_price > product.price ? Math.round((1 - product.price / product.compare_price) * 100) : 0;
+  const quickAdd = () => {
+    const hasVariants = product.variants?.colors?.length > 0 || product.variants?.sizes?.length > 0;
+    if (hasVariants && !showOptions) { setShowOptions(true); return; }
+    const variant = {};
+    if (selectedColor) variant.color = selectedColor;
+    if (selectedSize) variant.size = selectedSize;
+    addToCart(product, variant, 1);
+    addToast(`${name} — ${t('product.cart_added')}`, 'success');
+    setShowOptions(false); setAdded(true);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setAdded(false), 1800);
   };
-
-  const handleQuickAdd = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const selectedVariant = {};
-    if (product.variants?.colors?.length > 0) {
-      selectedVariant.color = product.variants.colors[0].name;
-    }
-    if (product.variants?.sizes?.length > 0) {
-      selectedVariant.size = product.variants.sizes[0];
-    }
-
-    addToCart(product, selectedVariant, 1);
-    addToast(`${getLocalized(product.name, locale)} ${t('product.cart_added')}`, 'success');
-  };
-
-  const handleCardClick = () => {
-    navigate(`/product/${product.slug}`);
-  };
-
-  return (
-    <motion.div
-      whileHover={{ y: -5, scale: 1.015 }}
-      whileTap={{ scale: 0.985 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
-      onClick={handleCardClick}
-      className="group relative flex min-w-0 w-full flex-col bg-surface border border-border/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-accent/40"
-    >
-      {/* Top Floating Badges */}
-      <div className="absolute top-2.5 left-2.5 rtl:right-2.5 rtl:left-auto z-10 flex flex-col space-y-1">
-        {discountPercent > 0 && (
-          <span className="bg-wine text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-md backdrop-blur-sm">
-            -{discountPercent}%
-          </span>
-        )}
-        {(product.isNew || product.is_new) && (
-          <span className="bg-emerald-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-md backdrop-blur-sm flex items-center gap-1">
-            <Sparkles className="w-2.5 h-2.5" />
-            <span>NEW</span>
-          </span>
-        )}
-      </div>
-
-      {/* Wishlist Button */}
-      <button
-        onClick={handleWishlistClick}
-        className="absolute top-2.5 right-2.5 rtl:left-2.5 rtl:right-auto z-10 p-1.5 rounded-full bg-surface/90 hover:bg-surface border border-border/60 shadow-md hover:scale-110 active:scale-90 transition-all duration-200 text-text-primary"
-        aria-label="Toggle wishlist"
-      >
-        <Heart 
-          className={`w-3.5 h-3.5 transition-colors ${isLiked ? 'fill-wine text-wine' : 'text-text-secondary hover:text-wine'}`} 
-        />
-      </button>
-
-      {/* Product Image Wrapper - Compact Height & Uncropped Full Visibility */}
-      <div className="relative h-32 xs:h-36 sm:h-44 w-full p-2 bg-surface-2/40 flex items-center justify-center overflow-hidden">
-        <img
-          src={mainImage}
-          alt={getLocalized(product.name, locale)}
-          className="w-full h-full object-contain group-hover:scale-108 transition-transform duration-500 ease-out"
-          loading="lazy"
-        />
-        <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-      </div>
-
-      {/* Body Details - Compact spacing */}
-      <div className="p-3.5 flex-1 flex flex-col justify-between text-left rtl:text-right">
-        <div>
-          <span className="text-[9px] text-brass uppercase tracking-widest font-extrabold block">
-            {typeof product.brand === 'object' ? product.brand.name : (product.brand || 'Nuvara')}
-          </span>
-          
-          <h3 className="text-xs sm:text-sm font-bold text-text-primary mt-0.5 line-clamp-1 group-hover:text-accent transition-colors">
-            {getLocalized(product.name, locale)}
-          </h3>
-
-          <div className="mt-1 flex items-center">
-            <RatingStars value={product.rating || product.avg_rating || 5} count={product.reviewCount || product.review_count || 0} size="xs" />
-          </div>
-        </div>
-
-        {/* Pricing Block & Add To Cart Button */}
-        <div className="mt-3 space-y-2.5">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-1 gap-y-1">
-            <div className="flex min-w-0 items-baseline space-x-1.5 rtl:space-x-reverse">
-              <span className="text-xs sm:text-base font-extrabold font-display text-green-soft dark:text-brass-bright whitespace-nowrap">
-                ${product.price}
-              </span>
-              {product.compare_price && (
-                <span className="text-[10px] sm:text-[11px] text-text-secondary line-through font-sans whitespace-nowrap">
-                  ${product.compare_price}
-                </span>
-              )}
-            </div>
-            {product.stock === 0 && (
-              <span className="text-[9px] text-wine font-extrabold uppercase">
-                {t('product.out_of_stock')}
-              </span>
-            )}
-          </div>
-
-          {/* Action Button */}
-          {product.stock > 0 && (
-            <button
-              onClick={handleQuickAdd}
-              className="w-full py-1.5 px-3 border border-border/90 text-text-primary text-xs font-bold rounded-xl bg-surface-2/80 hover:bg-accent hover:border-accent hover:text-white transition-all duration-200 flex items-center justify-center space-x-1.5 rtl:space-x-reverse shadow-2xs group-hover:shadow-sm"
-            >
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span className="text-[11px] uppercase tracking-wider">{t('product.add_to_cart')}</span>
-            </button>
-          )}
-        </div>
-      </div>
-    </motion.div>
-  );
+  return <article className="retail-card">
+    <div className="retail-image">
+      <Link to={`/product/${product.slug}`} aria-label={name} className="retail-image-link">
+        <img src={images[0] || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80'} alt={name} loading="lazy" />
+        {images[1] && <img className="retail-alternate" src={images[1]} alt="" loading="lazy" />}
+      </Link>
+      {(discount > 0 || product.isNew || product.is_new) && <span className="retail-label">{discount > 0 ? `−${discount}%` : t('editorial.new')}</span>}
+      <motion.button whileTap={reduce ? undefined : { scale: .92 }} className="retail-wishlist" aria-label={`${t('nav.wishlist')}: ${name}`} aria-pressed={liked} onClick={() => { const result = toggleWishlist(product); addToast(t(result ? 'product.wishlist_added' : 'product.wishlist_removed'), 'info'); }}><Heart size={17} strokeWidth={1.5} className={liked ? 'liked' : ''} /></motion.button>
+    </div>
+    <div className="retail-details"><span className="retail-brand">{typeof product.brand === 'object' ? product.brand?.name : product.brand || 'Nuvara'}</span><h3><Link to={`/product/${product.slug}`}>{name}</Link></h3><div className="retail-price"><span>{price}</span>{discount > 0 && <del>{new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(Number(product.compare_price))}</del>}<span className="retail-rating">{Number(product.rating || product.avg_rating) > 0 && <>★ {product.rating || product.avg_rating} <small>({product.reviewCount || product.review_count || 0})</small></>}</span></div>
+    {showOptions && <div className="retail-options" onClick={event => event.stopPropagation()}>{product.variants?.colors?.length > 0 && <div><span>{t('product.color', { defaultValue: 'Color' })}</span><div>{product.variants.colors.map(color => <button type="button" key={color.name} aria-label={color.name} aria-pressed={selectedColor === color.name} className={selectedColor === color.name ? 'is-selected' : ''} style={{ backgroundColor: color.value }} onClick={() => setSelectedColor(color.name)} />)}</div></div>}{product.variants?.sizes?.length > 0 && <div><span>{t('product.size', { defaultValue: 'Size' })}</span><div>{product.variants.sizes.map(size => <button type="button" key={size} aria-pressed={selectedSize === size} className={selectedSize === size ? 'is-selected' : ''} onClick={() => setSelectedSize(size)}>{size}</button>)}</div></div>}<button type="button" className="retail-options-add" onClick={quickAdd}>{t('product.add_to_cart')}<Plus size={14}/></button></div>}
+    <button className="retail-add" disabled={!(product.stock > 0)} onClick={quickAdd}>{product.stock > 0 ? added ? t('product.cart_added') : t('product.add_to_cart') : t('product.out_of_stock')}{added ? <Check size={16}/> : <Plus size={16}/>}</button></div>
+  </article>;
 };
