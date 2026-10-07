@@ -6,6 +6,7 @@ import { ArrowUpRight, ArrowRight, Truck, ShieldCheck, RefreshCw, Headphones, Ch
 import { mockCategories, mockProducts, getLocalized } from '../utils/mockData';
 import defaultTestimonials from '../utils/homeTestimonials';
 import { useLocaleStore } from '../store/localeStore';
+import { CustomerTestimonials } from '../components/home/CustomerTestimonials';
 import { ProductCard } from '../components/product/ProductCard';
 import api from '../services/api';
 import './Home.css';
@@ -95,7 +96,7 @@ export const Home = () => {
       <div className="discovery-actions"><Link to="/category/all?sort=new">{t('home.new_arrivals')}<ArrowUpRight size={17} className="rtl-flip" /></Link><Link to="/category/all?deals=1">{t('home.flash_deals')}<ArrowUpRight size={17} className="rtl-flip" /></Link><Link to="/category/home-living">{t('home.shop_category')}<ArrowUpRight size={17} className="rtl-flip" /></Link></div>
     </Reveal>
     {data?.flash_products?.length > 0 && <Reveal className="editorial-container featured-section"><div className="section-heading"><div><span className="eyebrow">{t('home.flash_deals')}</span><h2>{str(data.flash_sale?.title) || t('editorial.special_finds')}</h2></div>{seconds > 0 && <span className="sale-clock">{t('home.flash_deals_ends')} <b dir="ltr">{saleTime}</b></span>}</div><div className="editorial-products">{data.flash_products.map(product => <ProductCard key={product.id} product={product} />)}</div></Reveal>}
-    <Reveal className="editorial-container customer-stories"><span className="eyebrow">{t('home.testimonials')}</span><div className="quote-grid">{testimonials.map(testimonial => <figure key={testimonial.id}><span className="quote-stars" aria-label={`${testimonial.rating || 5} / 5`}>{'★'.repeat(Math.min(5, Math.max(0, testimonial.rating || 5)))}</span><blockquote>“{str(testimonial.quote)}”</blockquote><figcaption>{testimonial.name}</figcaption></figure>)}</div></Reveal>
+    <CustomerTestimonials testimonials={testimonials} />
     <Reveal className="final-cta"><img src={promo?.image || interior} alt="" loading="lazy"/><div><span className="eyebrow">NUVARA / 06</span><h2>{t('editorial.final_title', { defaultValue: 'Find what feels like you.' })}</h2><Link className="editorial-button" to="/category/all">{t('editorial.final_cta', { defaultValue: 'Explore Nuvara' })}<ArrowUpRight size={18} className="rtl-flip" /></Link></div></Reveal>
   </div>;
 };
