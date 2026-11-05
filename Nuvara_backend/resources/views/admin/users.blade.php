@@ -54,10 +54,11 @@
 
     <div class="glass-card rounded-2xl overflow-hidden shadow-lg border border-border">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table id="users-table" class="w-full text-left border-collapse dataTable">
                 <thead>
                     <tr class="bg-surface text-gray-400 text-[10px] uppercase font-bold tracking-wider border-b border-border">
-                        <th class="p-5 w-20">ID</th>
+                        <th class="p-5 w-12 text-center">#</th>
+                        <th class="p-5 w-16">ID</th>
                         <th class="p-5">Customer Profile</th>
                         <th class="p-5">Email Address</th>
                         <th class="p-5">Phone Number</th>
@@ -68,57 +69,54 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border text-sm">
-                    @foreach($users as $u)
-                        <tr class="hover:bg-white/5 transition-colors duration-250">
-                            <td class="p-5 text-gray-500 font-mono text-xs">
-                                #{{ $u->id }}
-                            </td>
-                            <td class="p-5">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-9 h-9 bg-brass/10 border border-brass/15 text-brass font-bold rounded-full flex items-center justify-center uppercase text-sm select-none">
-                                        {{ substr($u->name, 0, 2) }}
-                                    </div>
-                                    <div>
-                                        <div class="font-bold text-[#F5EFE4] text-sm flex items-center space-x-2">
-                                            <span>{{ $u->name }}</span>
-                                            @if($u->role === 'admin')
-                                                <span class="px-2 py-0.5 text-[8px] font-black uppercase bg-brass text-black rounded select-none">Admin</span>
-                                            @else
-                                                <span class="px-2 py-0.5 text-[8px] font-bold uppercase bg-zinc-800 border border-zinc-700 text-gray-400 rounded select-none">Customer</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="p-5 text-gray-400 text-xs font-semibold">
-                                {{ $u->email }}
-                            </td>
-                            <td class="p-5 text-gray-400 font-mono text-xs">
-                                {{ $u->phone ?: 'Not provided' }}
-                            </td>
-                            <td class="p-5 text-center text-xs font-black uppercase text-brass">
-                                {{ $u->locale_preference ?: 'en' }}
-                            </td>
-                            <td class="p-5 text-center">
-                                <span class="px-2.5 py-1 text-[9px] font-bold uppercase rounded-md tracking-wide select-none {{ $u->theme_preference === 'dark' ? 'bg-surface border border-border text-gray-400' : 'bg-gray-200 border border-gray-300 text-gray-800' }}">
-                                    {{ $u->theme_preference ?: 'light' }}
-                                </span>
-                            </td>
-                            <td class="p-5 text-gray-400 text-xs font-semibold">
-                                {{ $u->created_at->format('Y-m-d H:i') }}
-                            </td>
-                            <td class="p-5 text-right">
-                                <button onclick='openEditModal({!! json_encode($u) !!})' class="px-3 py-1.5 border border-brass/35 text-brass hover:bg-brass/10 rounded-lg text-xs font-bold transition-all duration-150">
-                                    Edit
-                                </button>
-                            </td>
-                        </tr>
-                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#users-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '{{ route('admin.users') }}',
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-mono text-xs text-gray-500' },
+                { data: 'user_id', name: 'id' },
+                { data: 'profile', name: 'name' },
+                { data: 'email', name: 'email' },
+                { data: 'phone', name: 'phone' },
+                { data: 'locale', name: 'locale_preference', className: 'text-center' },
+                { data: 'theme', name: 'theme_preference', className: 'text-center' },
+                { data: 'date', name: 'created_at' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-right' }
+            ],
+            order: [[1, 'desc']],
+            language: {
+                search: "SEARCH:",
+                searchPlaceholder: "Search users by name, email...",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ users",
+                paginate: {
+                    previous: "‹ Prev",
+                    next: "Next ›"
+                }
+            }
+        });
+
+        // Delegated event listener for edit modal
+        $(document).on('click', '.btn-edit-user', function() {
+            var usr = $(this).data('user');
+            if (typeof usr === 'string') {
+                try { usr = JSON.parse(usr); } catch(e){}
+            }
+            openEditModal(usr);
+        });
+    });
+</script>
+@endpush
 
 <!-- Edit User Modal Backdrop Overlay -->
 <div id="edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden animate-fade-in">

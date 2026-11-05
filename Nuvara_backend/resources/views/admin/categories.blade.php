@@ -47,9 +47,10 @@
     <!-- Categories Table -->
     <div class="glass-card rounded-2xl overflow-hidden shadow-lg border border-border">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table id="categories-table" class="w-full text-left border-collapse dataTable">
                 <thead>
                     <tr class="bg-surface text-gray-400 text-[10px] uppercase font-bold tracking-wider border-b border-border">
+                        <th class="p-5 w-12 text-center">#</th>
                         <th class="p-5 w-20">Image</th>
                         <th class="p-5">Category Name (EN)</th>
                         <th class="p-5">Category Name (BN)</th>
@@ -58,51 +59,51 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border text-sm">
-                    @foreach($categories as $cat)
-                        <tr class="hover:bg-white/5 transition-colors duration-250">
-                            <td class="p-5">
-                                <img 
-                                    src="{{ $cat->image }}" 
-                                    alt="" 
-                                    class="w-14 h-14 object-cover rounded-lg border border-border shadow"
-                                >
-                            </td>
-                            <td class="p-5 font-bold text-[#F5EFE4] text-sm">
-                                {{ $cat->getLocalized('name', 'en') }}
-                            </td>
-                            <td class="p-5 text-[#F5EFE4] text-sm">
-                                {{ $cat->getLocalized('name', 'bn') }}
-                            </td>
-                            <td class="p-5 text-gray-400 font-mono text-xs">
-                                <div>/category/{{ $cat->slug }}</div>
-                                <div class="mt-1 flex">
-                                    @if($cat->status === 'active')
-                                        <span class="text-[8px] font-bold bg-green-950/20 border border-green-900/30 text-green-400 px-1.5 py-0.5 rounded uppercase">Active</span>
-                                    @else
-                                        <span class="text-[8px] font-bold bg-red-950/20 border border-red-900/30 text-red-400 px-1.5 py-0.5 rounded uppercase">Hidden</span>
-                                    @endif
-                                </div>
-                            </td>
-                            <td class="p-5 text-right">
-                                <div class="flex items-center justify-end space-x-2">
-                                    <button onclick='openEditModal({!! json_encode($cat) !!})' class="px-3 py-1.5 border border-brass/35 text-brass hover:bg-brass/10 rounded-lg text-xs font-bold transition-all duration-150">
-                                        Edit
-                                    </button>
-                                    <form action="{{ route('admin.categories.delete', $cat->id) }}" method="POST" onsubmit="return confirmDelete(event, '{{ addslashes($cat->getLocalized('name', 'en')) }}');" class="inline">
-                                        @csrf
-                                        <button type="submit" class="px-3 py-1.5 border border-red-950/40 border-red-900/30 text-red-400 hover:bg-red-950/20 rounded-lg text-xs font-bold transition-all duration-150">
-                                            Remove
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#categories-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '{{ route('admin.categories') }}',
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-mono text-xs text-gray-500' },
+                { data: 'image', name: 'image', orderable: false, searchable: false },
+                { data: 'name_en', name: 'name' },
+                { data: 'name_bn', name: 'name' },
+                { data: 'slug_path', name: 'slug' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-right' }
+            ],
+            order: [[2, 'asc']],
+            language: {
+                search: "SEARCH:",
+                searchPlaceholder: "Search categories...",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ categories",
+                paginate: {
+                    previous: "‹ Prev",
+                    next: "Next ›"
+                }
+            }
+        });
+
+        // Delegated event listener for edit modal
+        $(document).on('click', '.btn-edit-category', function() {
+            var cat = $(this).data('category');
+            if (typeof cat === 'string') {
+                try { cat = JSON.parse(cat); } catch(e){}
+            }
+            openEditModal(cat);
+        });
+    });
+</script>
+@endpush
 
 <!-- Edit Category Modal Backdrop Overlay -->
 <div id="edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden animate-fade-in">

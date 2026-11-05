@@ -64,9 +64,10 @@
     <!-- Coupons Table -->
     <div class="glass-card rounded-2xl overflow-hidden shadow-lg border border-border">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table id="coupons-table" class="w-full text-left border-collapse dataTable">
                 <thead>
                     <tr class="bg-surface text-gray-400 text-[10px] uppercase font-bold tracking-wider border-b border-border">
+                        <th class="p-5 w-12 text-center">#</th>
                         <th class="p-5">Coupon Code</th>
                         <th class="p-5">Discount Type</th>
                         <th class="p-5">Discount Value</th>
@@ -76,56 +77,52 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border text-sm">
-                    @foreach($coupons as $coup)
-                        <tr class="hover:bg-white/5 transition-colors duration-250">
-                            <td class="p-5 font-mono font-bold text-brass text-sm select-all">
-                                <div>{{ $coup->code }}</div>
-                                <div class="mt-1 flex">
-                                    @if($coup->status === 'active')
-                                        <span class="text-[8px] font-bold bg-green-950/20 border border-green-900/30 text-green-400 px-1.5 py-0.5 rounded uppercase">Active</span>
-                                    @else
-                                        <span class="text-[8px] font-bold bg-red-950/20 border border-red-900/30 text-red-400 px-1.5 py-0.5 rounded uppercase">Inactive</span>
-                                    @endif
-                                </div>
-                            </td>
-                            <td class="p-5 text-gray-400 uppercase text-xs font-bold tracking-wide">
-                                {{ str_replace('_', ' ', $coup->type) }}
-                            </td>
-                            <td class="p-5 font-bold text-[#F5EFE4] text-sm">
-                                @if($coup->type === 'percent')
-                                    {{ $coup->value }}%
-                                @elseif($coup->type === 'free_shipping')
-                                    Free Shipping
-                                @else
-                                    ${{ number_format($coup->value, 2) }}
-                                @endif
-                            </td>
-                            <td class="p-5 text-gray-400 font-semibold text-xs">
-                                ${{ number_format($coup->min_order, 2) }}
-                            </td>
-                            <td class="p-5 text-gray-400 text-xs font-semibold">
-                                {{ $coup->expires_at ? $coup->expires_at->format('Y-m-d') : 'Lifetime (No Expiry)' }}
-                            </td>
-                            <td class="p-5 text-right">
-                                <div class="flex items-center justify-end space-x-2">
-                                    <button onclick='openEditModal({!! json_encode($coup) !!})' class="px-3 py-1.5 border border-brass/35 text-brass hover:bg-brass/10 rounded-lg text-xs font-bold transition-all duration-150">
-                                        Edit
-                                    </button>
-                                    <form action="{{ route('admin.coupons.delete', $coup->id) }}" method="POST" onsubmit="return confirmDelete(event, 'coupon {{ $coup->code }}');" class="inline">
-                                        @csrf
-                                        <button type="submit" class="px-3 py-1.5 border border-red-950/40 border-red-900/30 text-red-400 hover:bg-red-950/20 rounded-lg text-xs font-bold transition-all duration-150">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#coupons-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '{{ route('admin.coupons') }}',
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-mono text-xs text-gray-500' },
+                { data: 'code_badge', name: 'code' },
+                { data: 'type_formatted', name: 'type' },
+                { data: 'value_formatted', name: 'value' },
+                { data: 'min_order_formatted', name: 'min_order' },
+                { data: 'expires_formatted', name: 'expires_at' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-right' }
+            ],
+            order: [[1, 'asc']],
+            language: {
+                search: "SEARCH:",
+                searchPlaceholder: "Search coupon codes...",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ coupons",
+                paginate: {
+                    previous: "‹ Prev",
+                    next: "Next ›"
+                }
+            }
+        });
+
+        // Delegated event listener for edit modal
+        $(document).on('click', '.btn-edit-coupon', function() {
+            var coup = $(this).data('coupon');
+            if (typeof coup === 'string') {
+                try { coup = JSON.parse(coup); } catch(e){}
+            }
+            openEditModal(coup);
+        });
+    });
+</script>
+@endpush
 
 <!-- Edit Coupon Modal Backdrop Overlay -->
 <div id="edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden animate-fade-in">
