@@ -5,7 +5,7 @@
 ## 🎨 Nuvara Frontend (React 19 SPA)
 
 <p align="center">
-  <img width="100%" alt="Nuvara Frontend Preview" src="https://github.com/user-attachments/assets/ae5cafa5-5f3d-42b3-811d-6a72a14f5d2e" />
+  <img width="1920" height="11526" alt="image" src="https://github.com/user-attachments/assets/89a372b8-eb5b-41c6-8fe3-c447c3758dac" />
 </p>
 
 **Nuvara Frontend** is a high-fidelity, responsive client built with **React 19**, **Vite**, and **Tailwind CSS**. It features full dark/light theme switching, multi-language internationalization (i18n) with Right-to-Left (RTL) support, Zustand state management, wishlist controls, and multi-step checkout workflows.
