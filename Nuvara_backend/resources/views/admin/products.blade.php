@@ -71,9 +71,10 @@
     <!-- Products Table -->
     <div class="glass-card rounded-2xl overflow-hidden shadow-lg border border-border">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table id="products-table" class="w-full text-left border-collapse dataTable">
                 <thead>
                     <tr class="bg-surface text-gray-400 text-[10px] uppercase font-bold tracking-wider border-b border-border">
+                        <th class="p-5 w-12 text-center">#</th>
                         <th class="p-5 w-20">Image</th>
                         <th class="p-5">Product Details</th>
                         <th class="p-5">Category</th>
@@ -83,69 +84,52 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border text-sm">
-                    @foreach($products as $prod)
-                    <tr class="hover:bg-white/5 transition-colors duration-250">
-                        <td class="p-5">
-                            <img
-                                src="{{ $prod->images->first()->path ?? 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80' }}"
-                                alt=""
-                                class="w-14 h-14 object-cover rounded-lg border border-border/80 shadow">
-                        </td>
-                        <td class="p-5">
-                            <div class="font-bold text-[#F5EFE4] text-sm">
-                                {{ $prod->getLocalized('name', 'en') }}
-                            </div>
-                            <div class="flex items-center space-x-2 mt-1 select-none">
-                                <span class="text-[9px] font-mono text-gray-500 bg-black/40 border border-border px-2 py-0.5 rounded uppercase">SKU: {{ $prod->sku }}</span>
-                                @if($prod->status === 'active')
-                                <span class="text-[8px] font-bold bg-green-950/20 border border-green-900/30 text-green-400 px-1.5 py-0.5 rounded uppercase">Active</span>
-                                @else
-                                <span class="text-[8px] font-bold bg-red-950/20 border border-red-900/30 text-red-400 px-1.5 py-0.5 rounded uppercase">Hidden</span>
-                                @endif
-                                @if($prod->is_best_seller)
-                                <span class="text-[8px] font-bold bg-amber-500/10 border border-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded uppercase">Best Seller</span>
-                                @endif
-                            </div>
-                        </td>
-                        <td class="p-5">
-                            <span class="text-xs font-semibold text-gray-400">
-                                {{ $prod->category ? $prod->category->getLocalized('name', 'en') : 'Unassigned' }}
-                            </span>
-                        </td>
-                        <td class="p-5 font-black text-brass text-base font-serif">
-                            ${{ number_format($prod->price, 2) }}
-                        </td>
-                        <td class="p-5">
-                            @if($prod->stock > 5)
-                            <span class="px-2.5 py-1 text-[9px] font-extrabold uppercase bg-green-950/30 border border-green-900/40 text-green-400 rounded-full">
-                                {{ $prod->stock }} In Stock
-                            </span>
-                            @else
-                            <span class="px-2.5 py-1 text-[9px] font-extrabold uppercase bg-red-950/30 border border-red-900/40 text-red-400 rounded-full">
-                                LOW STOCK ({{ $prod->stock }})
-                            </span>
-                            @endif
-                        </td>
-                        <td class="p-5 text-right">
-                            <div class="flex items-center justify-end space-x-2">
-                                <button onclick='openEditModal({!! json_encode($prod) !!})' class="px-3 py-1.5 border border-brass/35 text-brass hover:bg-brass/10 rounded-lg text-xs font-bold transition-all duration-150">
-                                    Edit
-                                </button>
-                                <form action="{{ route('admin.products.delete', $prod->id) }}" method="POST" onsubmit="return confirmDelete(event, '{{ addslashes($prod->getLocalized('name', 'en')) }}');" class="inline">
-                                    @csrf
-                                    <button type="submit" class="px-3 py-1.5 border border-red-950/40 border-red-900/30 text-red-400 hover:bg-red-950/20 rounded-lg text-xs font-bold transition-all duration-150">
-                                        Remove
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#products-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '{{ route('admin.products') }}',
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-mono text-xs text-gray-500' },
+                { data: 'image', name: 'image', orderable: false, searchable: false },
+                { data: 'details', name: 'name' },
+                { data: 'category', name: 'category.name' },
+                { data: 'price_formatted', name: 'price' },
+                { data: 'stock_badge', name: 'stock' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-right' }
+            ],
+            order: [[2, 'asc']],
+            language: {
+                search: "SEARCH:",
+                searchPlaceholder: "Search products, SKU...",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ products",
+                paginate: {
+                    previous: "‹ Prev",
+                    next: "Next ›"
+                }
+            }
+        });
+
+        // Delegated event listener for edit modal
+        $(document).on('click', '.btn-edit-product', function() {
+            var prod = $(this).data('product');
+            if (typeof prod === 'string') {
+                try { prod = JSON.parse(prod); } catch(e){}
+            }
+            openEditModal(prod);
+        });
+    });
+</script>
+@endpush
 
 <!-- Edit Product Modal Backdrop Overlay -->
 <div id="edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden animate-fade-in">

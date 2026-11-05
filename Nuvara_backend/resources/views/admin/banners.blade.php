@@ -88,9 +88,10 @@
     <!-- Banners List -->
     <div class="glass-card rounded-2xl overflow-hidden shadow-lg border border-border">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table id="banners-table" class="w-full text-left border-collapse dataTable">
                 <thead>
                     <tr class="bg-surface text-gray-400 text-[10px] uppercase font-bold tracking-wider border-b border-border">
+                        <th class="p-5 w-12 text-center">#</th>
                         <th class="p-5 w-20">Preview</th>
                         <th class="p-5">Banner Info</th>
                         <th class="p-5">Type</th>
@@ -100,49 +101,43 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border text-sm">
-                    @foreach($banners as $banner)
-                        <tr class="hover:bg-white/5 transition-colors">
-                            <td class="p-5">
-                                <img src="{{ $banner->image }}" alt="" class="w-16 h-12 object-cover rounded-lg border border-border">
-                            </td>
-                            <td class="p-5">
-                                <div class="font-bold text-[#F5EFE4]">{{ $banner->getLocalized('title', 'en') }}</div>
-                                <div class="text-xs text-gray-400 mt-0.5">{{ $banner->getLocalized('headline', 'en') }}</div>
-                            </td>
-                            <td class="p-5">
-                                <span class="px-2.5 py-1 rounded text-[10px] font-bold uppercase {{ $banner->type === 'hero_slider' ? 'bg-amber-500/20 text-amber-300' : 'bg-purple-500/20 text-purple-300' }}">
-                                    {{ $banner->type }}
-                                </span>
-                            </td>
-                            <td class="p-5 font-mono text-xs text-gray-400">{{ $banner->link }}</td>
-                            <td class="p-5">
-                                <span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded {{ $banner->status ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400' }}">
-                                    {{ $banner->status ? 'Active' : 'Inactive' }}
-                                </span>
-                            </td>
-                            <td class="p-5"><div class="flex items-center justify-end gap-2 flex-wrap min-w-[150px]">
-                                <a href="{{ route('admin.banners.edit', $banner->id) }}" class="px-3 py-1.5 border border-brass/35 text-brass hover:bg-brass/10 text-xs font-bold rounded-lg transition-colors">Edit</a>
-                                <form action="{{ route('admin.banners.delete', $banner->id) }}" method="POST" class="inline-block" onsubmit="return confirmDelete(event, '{{ addslashes($banner->getLocalized('title', 'en')) }}');">
-                                    @csrf
-                                    <button type="submit" class="px-3 py-1.5 bg-red-950/60 hover:bg-red-900 border border-red-800/50 text-red-300 text-xs font-bold rounded-lg transition-colors">
-                                        Delete
-                                    </button>
-                                </form></div>
-                            </td>
-                        </tr>
-                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+@push('scripts')
 <script>
-function editBanner(b){
- const title=prompt('Banner title', b.title?.en||''); if(title===null)return;
- const headline=prompt('Headline', b.headline?.en||''); if(headline===null)return;
- const sub=prompt('Description', b.sub?.en||''); if(sub===null)return;
- const button=prompt('Button label', b.button_text?.en||''); if(button===null)return;
- const link=prompt('Link URL', b.link||''); if(link===null)return;
+    $(document).ready(function() {
+        $('#banners-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '{{ route('admin.banners') }}',
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-mono text-xs text-gray-500' },
+                { data: 'preview', name: 'image', orderable: false, searchable: false },
+                { data: 'info', name: 'title' },
+                { data: 'type_badge', name: 'type' },
+                { data: 'link_path', name: 'link' },
+                { data: 'status_badge', name: 'status' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-right' }
+            ],
+            order: [[2, 'asc']],
+            language: {
+                search: "SEARCH:",
+                searchPlaceholder: "Search banners...",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ banners",
+                paginate: {
+                    previous: "‹ Prev",
+                    next: "Next ›"
+                }
+            }
+        });
+    });
+</script>
+@endpush
  const f=document.createElement('form'); f.method='POST'; f.action='/admin/banners/'+b.id+'/update'; f.innerHTML=`<input name="_token" value="{{ csrf_token() }}"><input name="title_en"><input name="headline_en"><input name="sub_en"><input name="button_text_en"><input name="link"><input name="type" value="${b.type||'hero_slider'}"><input name="status" value="1">`; const vals=[title,headline,sub,button,link]; ['title_en','headline_en','sub_en','button_text_en','link'].forEach((n,i)=>f.querySelector('[name='+n+']').value=vals[i]); document.body.appendChild(f); f.submit();
 }
 </script>

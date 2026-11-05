@@ -64,9 +64,10 @@
     <!-- Features List -->
     <div class="glass-card rounded-2xl overflow-hidden shadow-lg border border-border">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table id="features-table" class="w-full text-left border-collapse dataTable">
                 <thead>
                     <tr class="bg-surface text-gray-400 text-[10px] uppercase font-bold tracking-wider border-b border-border">
+                        <th class="p-5 w-12 text-center">#</th>
                         <th class="p-5">Icon</th>
                         <th class="p-5">Feature Title</th>
                         <th class="p-5">Subtitle</th>
@@ -75,33 +76,41 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border text-sm">
-                    @foreach($features as $feat)
-                        <tr class="hover:bg-white/5 transition-colors">
-                            <td class="p-5 font-mono text-xs text-brass">
-                                {{ $feat->icon }}
-                            </td>
-                            <td class="p-5 font-bold text-[#F5EFE4]">
-                                {{ $feat->getLocalized('title', 'en') }}
-                            </td>
-                            <td class="p-5 text-xs text-gray-400">
-                                {{ $feat->getLocalized('sub', 'en') }}
-                            </td>
-                            <td class="p-5 font-mono text-xs text-gray-500">
-                                {{ $feat->feature_key }}
-                            </td>
-                            <td class="p-5 text-right">
-                                <form action="{{ route('admin.features.delete', $feat->id) }}" method="POST" class="inline-block" onsubmit="return confirmDelete(event, '{{ addslashes($feat->getLocalized('title', 'en')) }}');">
-                                    @csrf
-                                    <button type="submit" class="px-3 py-1.5 bg-red-950/60 hover:bg-red-900 border border-red-800/50 text-red-300 text-xs font-bold rounded-lg transition-colors">
-                                        Delete
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
+</div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#features-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '{{ route('admin.features') }}',
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-mono text-xs text-gray-500' },
+                { data: 'icon_view', name: 'icon' },
+                { data: 'title_view', name: 'title' },
+                { data: 'sub_view', name: 'sub' },
+                { data: 'key_view', name: 'feature_key' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-right' }
+            ],
+            order: [[2, 'asc']],
+            language: {
+                search: "SEARCH:",
+                searchPlaceholder: "Search trust features...",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ features",
+                paginate: {
+                    previous: "‹ Prev",
+                    next: "Next ›"
+                }
+            }
+        });
+    });
+</script>
+@endpush
 </div>
 @endsection

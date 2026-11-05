@@ -73,9 +73,10 @@
         </h3>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table id="faqs-table" class="w-full text-left border-collapse dataTable">
                 <thead>
                     <tr class="border-b border-border text-[10px] uppercase font-bold text-brass tracking-wider">
+                        <th class="p-5 w-12 text-center">#</th>
                         <th class="p-5">Category</th>
                         <th class="p-5">Question (EN / BN)</th>
                         <th class="p-5">Status</th>
@@ -83,39 +84,40 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border text-sm">
-                    @foreach($faqs as $faq)
-                        <tr class="hover:bg-white/5 transition-colors">
-                            <td class="p-5">
-                                <span class="px-2.5 py-1 text-[10px] font-bold uppercase rounded-full bg-brass/10 border border-brass/30 text-brass">
-                                    {{ strtoupper($faq->category) }}
-                                </span>
-                            </td>
-                            <td class="p-5">
-                                <div class="font-bold text-[#F5EFE4] text-sm">
-                                    {{ $faq->getLocalized('question', 'en') }}
-                                </div>
-                                <div class="text-xs text-gray-400 mt-0.5">
-                                    {{ $faq->getLocalized('question', 'bn') }}
-                                </div>
-                            </td>
-                            <td class="p-5">
-                                <span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded {{ $faq->status ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400' }}">
-                                    {{ $faq->status ? 'Active' : 'Hidden' }}
-                                </span>
-                            </td>
-                            <td class="p-5 text-right">
-                                <form action="{{ route('admin.faqs.delete', $faq->id) }}" method="POST" class="inline-block" onsubmit="return confirmDelete(event, 'FAQ Question');">
-                                    @csrf
-                                    <button type="submit" class="px-3 py-1.5 bg-red-950/60 hover:bg-red-900 border border-red-800/50 text-red-300 text-xs font-bold rounded-lg transition-colors">
-                                        Delete
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
+</div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#faqs-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '{{ route('admin.faqs') }}',
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center font-mono text-xs text-gray-500' },
+                { data: 'category_badge', name: 'category' },
+                { data: 'question_view', name: 'question' },
+                { data: 'status_badge', name: 'status' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-right' }
+            ],
+            order: [[1, 'asc']],
+            language: {
+                search: "SEARCH:",
+                searchPlaceholder: "Search FAQs...",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ FAQs",
+                paginate: {
+                    previous: "‹ Prev",
+                    next: "Next ›"
+                }
+            }
+        });
+    });
+</script>
+@endpush
 </div>
 @endsection
