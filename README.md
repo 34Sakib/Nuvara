@@ -15,7 +15,7 @@
 ## ⚙️ Nuvara Backend (Laravel 12 REST API)
 
 <p align="center">
-  <img width="100%" alt="Nuvara Backend REST API & Database Architecture" src="https://github.com/user-attachments/assets/deaab408-7342-466a-be20-20420724c67e" />
+  <img width="1920" height="1432" alt="image" src="https://github.com/user-attachments/assets/8790988a-3382-4043-a4a5-8eef436a6c35" />
 </p>
 
 **Nuvara Backend** powers the platform with a high-performance RESTful API built on **Laravel 12** and **PHP 8.2+**. It handles user authentication via Laravel Sanctum, database ORM models (Products, Orders, Wishlist, Addresses, Reviews, Coupons), category filtering, search, and checkout processing.
