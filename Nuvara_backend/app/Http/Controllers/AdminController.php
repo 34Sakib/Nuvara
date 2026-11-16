@@ -243,7 +243,8 @@ class AdminController extends Controller
         ProductImage::create([
             'product_id' => $product->id,
             'path' => $imagePath,
-            'sort_order' => 1
+            'sort_order' => 0,
+            'is_primary' => true
         ]);
 
         return redirect()->route('admin.products')->with('success', 'Product created successfully.');
@@ -290,14 +291,18 @@ class AdminController extends Controller
             $file->storeAs('uploads', $filename, 'public');
             $imagePath = '/storage/uploads/' . $filename;
 
-            $img = ProductImage::where('product_id', $product->id)->first();
+            $img = ProductImage::where('product_id', $product->id)->orderBy('sort_order', 'asc')->first();
             if ($img) {
-                $img->update(['path' => $imagePath]);
+                $img->update([
+                    'path' => $imagePath,
+                    'is_primary' => true
+                ]);
             } else {
                 ProductImage::create([
                     'product_id' => $product->id,
                     'path' => $imagePath,
-                    'sort_order' => 1
+                    'sort_order' => 0,
+                    'is_primary' => true
                 ]);
             }
         }

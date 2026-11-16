@@ -12,6 +12,7 @@ import { useToastStore } from '../../store/toastStore';
 import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import { mockProducts, getLocalized, mockCategories } from '../../utils/mockData';
+import { formatImageUrl } from '../../utils/imageUrl';
 
 export const Header = () => {
   const { t } = useTranslation();
@@ -178,7 +179,7 @@ export const Header = () => {
                         className="w-full flex items-center px-4 py-2.5 hover:bg-surface-2 text-start rtl:text-right transition-colors"
                       >
                         <img 
-                          src={product.images[0]} 
+                          src={formatImageUrl(product.images?.[0])} 
                           alt="" 
                           className="w-8 h-8 rounded-[4px] object-cover mr-3 rtl:ml-3 rtl:mr-0 border border-border" 
                         />

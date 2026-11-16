@@ -7,6 +7,7 @@ import { useLocaleStore } from '../store/localeStore';
 import { useToastStore } from '../store/toastStore';
 import { useAuthStore } from '../store/authStore';
 import { getLocalized } from '../utils/mockData';
+import { formatImageUrl } from '../utils/imageUrl';
 import { Button } from '../components/ui/Button';
 
 export const Wishlist = () => {
@@ -76,7 +77,7 @@ export const Wishlist = () => {
             <div>
               <div className="relative aspect-square overflow-hidden bg-bg-primary">
                 <img 
-                  src={prod.images?.[0] || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80'} 
+                  src={formatImageUrl(prod.images?.[0])} 
                   alt={getLocalized(prod.name, locale)} 
                   className="w-full h-full object-cover"
                 />
