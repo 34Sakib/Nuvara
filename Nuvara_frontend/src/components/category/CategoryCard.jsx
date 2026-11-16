@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useLocaleStore } from '../../store/localeStore';
 import { getLocalized } from '../../utils/mockData';
+import { formatImageUrl } from '../../utils/imageUrl';
 
 export const CategoryCard = ({ category, index = 0 }) => {
   const { locale } = useLocaleStore();
@@ -25,7 +26,7 @@ export const CategoryCard = ({ category, index = 0 }) => {
         {/* Compact Aspect Ratio [16/10] (Images are not too big, clean & compact) */}
         <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-2">
           <img
-            src={category.image}
+            src={formatImageUrl(category.image)}
             alt={getLocalized(category.name, locale)}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
             loading="lazy"

@@ -7,9 +7,9 @@ import { useCartStore } from '../../store/cartStore';
 import { useToastStore } from '../../store/toastStore';
 import { useLocaleStore } from '../../store/localeStore';
 import { getLocalized } from '../../utils/mockData';
+import { formatImageUrl, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageUrl';
 import './ProductCard.css';
 
-const imageUrl = image => typeof image === 'object' ? image?.path || image?.url : image;
 export const ProductCard = ({ product }) => {
   const { t } = useTranslation();
   const { locale } = useLocaleStore();
@@ -25,7 +25,9 @@ export const ProductCard = ({ product }) => {
   if (!product) return null;
   const liked = isInWishlist(product.id);
   const name = typeof product.name === 'string' ? product.name : getLocalized(product.name, locale);
-  const images = Array.isArray(product.images) ? product.images.map(imageUrl) : [product.images || product.image];
+  const images = Array.isArray(product.images)
+    ? product.images.map(img => formatImageUrl(img))
+    : [formatImageUrl(product.images || product.image)];
   const price = new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(Number(product.price));
   const discount = product.compare_price > product.price ? Math.round((1 - product.price / product.compare_price) * 100) : 0;
   const quickAdd = () => {
@@ -43,7 +45,7 @@ export const ProductCard = ({ product }) => {
   return <article className="retail-card">
     <div className="retail-image">
       <Link to={`/product/${product.slug}`} aria-label={name} className="retail-image-link">
-        <img src={images[0] || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80'} alt={name} loading="lazy" />
+        <img src={images[0] || DEFAULT_FALLBACK_IMAGE} alt={name} loading="lazy" />
         {images[1] && <img className="retail-alternate" src={images[1]} alt="" loading="lazy" />}
       </Link>
       {(discount > 0 || product.isNew || product.is_new) && <span className="retail-label">{discount > 0 ? `−${discount}%` : t('editorial.new')}</span>}

@@ -10,6 +10,7 @@ import { useLocaleStore } from '../store/localeStore';
 import { useToastStore } from '../store/toastStore';
 import { useAuthStore } from '../store/authStore';
 import { getLocalized } from '../utils/mockData';
+import { formatImageUrl } from '../utils/imageUrl';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { RatingStars } from '../components/ui/RatingStars';
@@ -423,7 +424,7 @@ export const Dashboard = () => {
                   {activeWishlist.map((prod) => (
                     <div key={prod.id} className="border border-border rounded-xl p-4 flex space-x-4 rtl:space-x-reverse bg-bg-primary/20">
                       <img
-                        src={prod.images[0]}
+                        src={formatImageUrl(prod.images?.[0])}
                         alt=""
                         className="w-20 h-20 rounded-lg object-cover border border-border"
                       />

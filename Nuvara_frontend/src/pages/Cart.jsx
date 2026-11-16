@@ -6,6 +6,7 @@ import { useCartStore } from '../store/cartStore';
 import { useLocaleStore } from '../store/localeStore';
 import { useToastStore } from '../store/toastStore';
 import { getLocalized } from '../utils/mockData';
+import { formatImageUrl } from '../utils/imageUrl';
 import { Button } from '../components/ui/Button';
 import { QuantityStepper } from '../components/ui/QuantityStepper';
 import { Card } from '../components/ui/Card';
@@ -96,7 +97,7 @@ export const Cart = () => {
                   {/* Info block */}
                   <div className="col-span-12 md:col-span-6 flex items-center space-x-3 sm:space-x-4 rtl:space-x-reverse text-left rtl:text-right min-w-0">
                     <img 
-                      src={p.images[0]} 
+                      src={formatImageUrl(p.images?.[0])} 
                       alt={getLocalized(p.name, locale)} 
                       className="w-16 h-16 rounded-xl object-cover border border-border bg-bg-primary flex-shrink-0"
                     />

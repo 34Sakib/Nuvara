@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { Maximize2, X } from 'lucide-react';
+import { formatImageUrl } from '../../utils/imageUrl';
 import './ImageGallery.css';
 
 export const ImageGallery = ({ images = [] }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  if (images.length === 0) {
+  const formattedImages = (Array.isArray(images) ? images : [images])
+    .filter(Boolean)
+    .map(img => formatImageUrl(img));
+
+  if (formattedImages.length === 0) {
     return (
       <div className="product-gallery-empty">
         <span className="text-xs text-text-secondary">No images</span>
@@ -14,7 +19,7 @@ export const ImageGallery = ({ images = [] }) => {
     );
   }
 
-  const activeImage = images[activeIndex];
+  const activeImage = formattedImages[activeIndex] || formattedImages[0];
 
   return (
     <div className="product-gallery">
@@ -31,9 +36,9 @@ export const ImageGallery = ({ images = [] }) => {
       </div>
 
       {/* Thumbnail Bar */}
-      {images.length > 1 && (
+      {formattedImages.length > 1 && (
         <div className="product-gallery-thumbs">
-          {images.map((img, idx) => {
+          {formattedImages.map((img, idx) => {
             const isActive = idx === activeIndex;
             return (
               <button

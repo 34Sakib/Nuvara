@@ -38,6 +38,24 @@ class Banner extends Model
         'active_to' => 'datetime',
     ];
 
+    public function getImageAttribute($value)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
+            return $value;
+        }
+
+        $cleanPath = ltrim($value, '/');
+        if (!str_starts_with($cleanPath, 'storage/')) {
+            $cleanPath = 'storage/' . $cleanPath;
+        }
+
+        return url($cleanPath);
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class);
